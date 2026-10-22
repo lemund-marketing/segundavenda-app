@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+// Assinatura oficial só com as 4 variáveis preenchidas (o workflow passa os Secrets).
+def temChaveOficial = ['ANDROID_KEYSTORE_PATH', 'ANDROID_KEYSTORE_PASSWORD', 'ANDROID_KEY_ALIAS', 'ANDROID_KEY_PASSWORD']
+    .every { System.getenv(it) }
+
 android {
     namespace = "br.com.segundavenda.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -30,9 +34,8 @@ android {
         }
         // Chave OFICIAL: vem dos Secrets do GitHub (ver mobile/LEIA-ME.md).
         release {
-            def ks = System.getenv("ANDROID_KEYSTORE_PATH")
-            if (ks) {
-                storeFile file(ks)
+            if (temChaveOficial) {
+                storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))
                 storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
                 keyAlias System.getenv("ANDROID_KEY_ALIAS")
                 keyPassword System.getenv("ANDROID_KEY_PASSWORD")
@@ -48,7 +51,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            if (System.getenv("ANDROID_KEYSTORE_PATH")) {
+            if (temChaveOficial) {
                 signingConfig signingConfigs.release
             }
         }
