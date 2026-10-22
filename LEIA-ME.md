@@ -64,16 +64,18 @@ Comportamento nativo (em `android/app/src/main/java/br/com/segundavenda/app/Main
 - **Voltar** anda no histórico do site. No início (`/`), no login (`/auth`) ou
   na página de erro, manda o app para segundo plano (não fecha, não perde a
   sessão).
-- **Sem internet ao abrir**: aparece a página `www/offline.html`, com o botão
-  "Tentar de novo". Ela também tenta sozinha quando a internet volta.
+- **Sem internet ao abrir** (inclusive Wi-Fi com portal de login ou dados sem
+  crédito): aparece a página `www/offline.html`, com o botão "Tentar de novo".
+  Ela também tenta sozinha quando a internet volta, e só abre o site depois de
+  confirmar que a internet funciona.
 - **Site fora do ar**: na primeira vez que o app abre, aparece a mesma página.
   Depois disso o app abre a cópia do site guardada no celular, e é o próprio
   site que mostra os erros de carregamento.
 - Se o Android matar a página por falta de memória, o app recarrega o site em
   vez de fechar.
 - **Admin → Logar como este usuário / Entrar como cliente** funciona dentro do
-  app: o link de login do Supabase (`/auth/v1/verify`) abre aqui dentro
-  (`NavegacaoPlugin.java`). Os outros links do Supabase, como arquivos do
+  app: o link de login do Supabase (`connect.segundavenda.com.br/auth/v1/verify`)
+  abre aqui dentro (`NavegacaoPlugin.java`). Os outros links do Supabase, como arquivos do
   Storage, continuam abrindo no navegador.
 
 ## Mudar algo aqui

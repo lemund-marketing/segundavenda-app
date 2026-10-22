@@ -22,6 +22,7 @@
       background: #09AF68; color: #fff; font-size: 16px; font-weight: 600;
     }
     button:active { background: #078a52; }
+    button:disabled { opacity: .6; }
   </style>
 </head>
 <body>
@@ -47,12 +48,29 @@
     </defs>
     </svg>
     <h1>Não foi possível abrir o Segunda Venda</h1>
-    <p>Confira se o celular está com internet e tente de novo.</p>
+    <p id="aviso">Confira se o celular está com internet e tente de novo.</p>
     <button id="tentar" type="button">Tentar de novo</button>
   </main>
   <script>
-    function tentar() { location.replace("https://app.segundavenda.com.br/"); }
-    document.getElementById("tentar").addEventListener("click", tentar);
+    var SITE = "https://app.segundavenda.com.br/";
+    var aviso = document.getElementById("aviso");
+    var botao = document.getElementById("tentar");
+    function semInternet() {
+      aviso.textContent = "Ainda sem internet. Assim que o celular conectar, o app abre sozinho.";
+      botao.disabled = false;
+    }
+    // Só sai daqui com a internet funcionando: sem ela, o site abriria da cópia
+    // guardada no celular (service worker) e deslogaria por não renovar a sessão.
+    // Esta consulta parte de https://localhost, então o service worker do site
+    // não responde por ela: falha sem internet, em Wi-Fi com portal de login e
+    // em dados sem crédito.
+    function tentar() {
+      if (!navigator.onLine) { semInternet(); return; }
+      botao.disabled = true;
+      fetch(SITE + "?sonda=" + Date.now(), { mode: "no-cors", cache: "no-store" })
+        .then(function () { location.replace(SITE); }, semInternet);
+    }
+    botao.addEventListener("click", tentar);
     // Voltou a internet: tenta sozinho. Sem repetição automática além disso,
     // senão um erro do servidor viraria um laço de recarregar.
     window.addEventListener("online", tentar);

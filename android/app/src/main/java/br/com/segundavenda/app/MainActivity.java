@@ -79,8 +79,10 @@ public class MainActivity extends BridgeActivity {
 
         // Sem internet ao abrir: vai direto para a página de erro. Sem isto o site
         // abriria da cópia guardada no celular (service worker), sem dados, e o site
-        // desloga quem abre assim por não conseguir renovar a sessão.
-        if (!temInternet()) {
+        // desloga quem abre assim por não conseguir renovar a sessão. Só na abertura
+        // de verdade: na recriação (savedInstanceState != null) o app pode estar em
+        // segundo plano, onde o Android bloqueia a rede e a resposta seria "sem internet".
+        if (savedInstanceState == null && !temInternet()) {
             webView.loadUrl(getBridge().getErrorUrl());
         }
 
@@ -122,7 +124,9 @@ public class MainActivity extends BridgeActivity {
         return CAMINHO_INICIO.equals(caminho) || CAMINHO_LOGIN.equals(caminho);
     }
 
-    // Na dúvida (sem acesso ao serviço), responde que tem: melhor tentar abrir o site.
+    // Rede conectada e validada pelo Android (Wi-Fi com portal de login ou dados
+    // sem crédito ficam de fora). Na dúvida (sem acesso ao serviço), responde que
+    // tem: melhor tentar abrir o site.
     private boolean temInternet() {
         try {
             ConnectivityManager cm = getSystemService(ConnectivityManager.class);
@@ -130,7 +134,9 @@ public class MainActivity extends BridgeActivity {
             Network rede = cm.getActiveNetwork();
             if (rede == null) return false;
             NetworkCapabilities recursos = cm.getNetworkCapabilities(rede);
-            return recursos != null && recursos.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+            return recursos != null
+                && recursos.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                && recursos.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
         } catch (SecurityException e) {
             return true;
         }
