@@ -57,7 +57,6 @@ Ainda **não** funciona no app (use o computador):
 - **Notificação do sistema** (aquela da barra do celular): o som de mensagem
   nova funciona com o app aberto; notificação de verdade exige push (Firebase),
   que é outra etapa.
-- **Admin → Entrar como cliente**: abre no navegador, não no app.
 - Links de e-mail (confirmar conta, trocar senha) abrem no navegador.
 
 Comportamento nativo (em `android/app/src/main/java/br/com/segundavenda/app/MainActivity.java`):
@@ -72,6 +71,10 @@ Comportamento nativo (em `android/app/src/main/java/br/com/segundavenda/app/Main
   site que mostra os erros de carregamento.
 - Se o Android matar a página por falta de memória, o app recarrega o site em
   vez de fechar.
+- **Admin → Logar como este usuário / Entrar como cliente** funciona dentro do
+  app: o link de login do Supabase (`/auth/v1/verify`) abre aqui dentro
+  (`NavegacaoPlugin.java`). Os outros links do Supabase, como arquivos do
+  Storage, continuam abrindo no navegador.
 
 ## Mudar algo aqui
 

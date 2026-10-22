@@ -35,6 +35,8 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Tem que ser registrado antes do super.onCreate, que monta o Capacitor.
+        registerPlugin(NavegacaoPlugin.class);
         super.onCreate(savedInstanceState);
         // Aparelho sem WebView: o Capacitor já mostra o aviso dele.
         if (getBridge() == null) return;
