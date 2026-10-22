@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Nome do app de teste na tela do celular (o oficial continua "Segunda Venda"). -->
+<resources>
+    <string name="app_name">SV Teste</string>
+    <string name="title_activity_main">SV Teste</string>
+</resources>

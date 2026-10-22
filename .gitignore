@@ -1,0 +1,8 @@
+node_modules/
+
+# Chave OFICIAL do app nunca entra no repositório (fica nos Secrets do GitHub
+# e numa cópia guardada pelo dono). A teste.keystore entra de propósito.
+*.jks
+*.keystore
+!android/app/teste.keystore
+ks.b64
