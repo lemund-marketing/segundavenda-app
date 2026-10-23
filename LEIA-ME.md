@@ -63,7 +63,10 @@ Comportamento nativo (em `android/app/src/main/java/br/com/segundavenda/app/Main
 
 - **Voltar** anda no histórico do site. No início (`/`), no login (`/auth`) ou
   na página de erro, manda o app para segundo plano (não fecha, não perde a
-  sessão).
+  sessão). Com uma gaveta, janela ou conversa aberta, fecha ela primeiro: o
+  site marca o endereço com `#janela` enquanto ela está aberta
+  (`src/hooks/useVoltarFecha.tsx`). Nas outras telas isso já funciona sem APK
+  novo; no início e no login precisa do APK com esta regra.
 - **Sem internet ao abrir** (inclusive Wi-Fi com portal de login ou dados sem
   crédito): aparece a página `www/offline.html`, com o botão "Tentar de novo".
   Ela também tenta sozinha quando a internet volta, e só abre o site depois de
