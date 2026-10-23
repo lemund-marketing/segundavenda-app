@@ -20,9 +20,10 @@ cada push que mexe em `mobile/`.
 |---|---|---|
 | Nome no celular | **SV Teste** | **Segunda Venda** |
 | Pacote | `br.com.segundavenda.app.teste` | `br.com.segundavenda.app` |
-| Chave | `android/app/teste.keystore`, no repositório de propósito | sua, nos Secrets do GitHub |
-| Quando sai | todo build | só depois de criar a chave (abaixo) |
-| Onde baixar | Release **apk-teste** (link fixo) e artefato da execução | artefato da execução |
+| Chave | `android/app/teste.keystore`, no repositório de propósito | sua, no Environment `play-store` do GitHub |
+| Quando sai | todo build, de qualquer branch | só na branch `main`, depois de criar a chave (abaixo) |
+| Formato | APK (instala direto) | AAB (o que a Google Play aceita) e APK |
+| Onde baixar | Release **apk-teste** (link fixo) e artefato da execução | artefato `SegundaVenda-oficial` da execução |
 
 Os dois instalam lado a lado. Cada build de teste atualiza o anterior por cima,
 sem perder o login. O Release `apk-teste` é sempre o mesmo link: a cada build
@@ -98,9 +99,19 @@ O ícone foi gerado a partir de `public/favicon-nova.svg` (fundo branco).
 
 ## Criar a chave oficial (quando for distribuir para clientes)
 
-A chave é a identidade do app: **quem perder a chave não consegue mais publicar
-atualização**, e cada cliente teria que desinstalar e instalar de novo. A partir
-de 2027 o Android também vai exigir registrar o pacote junto com essa chave.
+A chave é a identidade do app. Na Google Play, com o **Play App Signing**
+(obrigatório para app novo), ela vira a **chave de envio**: o Google guarda a
+chave final que assina o app nos celulares, e se a chave de envio se perder, a
+Play Console deixa trocar por outra. Fora da Play (APK mandado direto) é mais
+grave: **quem perder a chave não consegue mais publicar atualização**, e cada
+cliente teria que desinstalar e instalar de novo. A partir de 2027 o Android
+também vai exigir registrar o pacote junto com essa chave.
+
+Decida antes de criar: se o app oficial vai sair **só pela Play**, deixe o
+Google gerar a chave final ao configurar o Play App Signing (a sua fica como
+chave de envio). Se você também quiser mandar o APK oficial direto para
+clientes, escolha enviar a sua própria chave ao Google nessa configuração;
+senão quem instalou por fora não recebe atualização da Play sem desinstalar.
 
 Na sua máquina (o `keytool` vem com qualquer Java):
 
@@ -111,8 +122,14 @@ keytool -genkeypair -v -storetype PKCS12 -keystore segundavenda-oficial.jks \
 base64 -w0 segundavenda-oficial.jks > ks.b64      # no macOS: base64 -i segundavenda-oficial.jks -o ks.b64
 ```
 
-No GitHub: **Settings → Secrets and variables → Actions → New repository
-secret**, crie os 4:
+No GitHub, a chave fica num **Environment** (não nos Secrets comuns do
+repositório, que qualquer branch consegue ler):
+
+1. **Settings → Environments → New environment**, nome `play-store`.
+2. Em **Deployment branches and tags**, escolha **Selected branches and tags**
+   e adicione só a regra `main`.
+3. Ainda no `play-store`, em **Environment secrets → Add environment secret**,
+   crie os 4:
 
 | Secret | Valor |
 |---|---|
@@ -129,7 +146,9 @@ Guarde o `.jks` e a senha **fora do GitHub** (gerenciador de senhas, por
 exemplo): os Secrets não podem ser lidos de volta. Apague o `ks.b64` depois.
 Não coloque o `.jks` no repositório (o `.gitignore` já barra).
 
-No próximo build sai também o `SegundaVenda.apk` oficial, como artefato da
-execução (aba Actions → a execução → Artifacts). O passo "Compilar o APK
-oficial" mostra a impressão digital (SHA-256) da chave; ela tem que ser igual
-em todo build.
+O app oficial sai no job **oficial**, que só roda na branch `main` (num push
+que mexa em `mobile/` ou pelo botão **Run workflow**). O artefato
+`SegundaVenda-oficial` traz o `SegundaVenda.aab`, que é o arquivo enviado à
+Google Play, e o `SegundaVenda.apk`. O passo "Compilar o app oficial" mostra a
+impressão digital (SHA-256) da chave; ela tem que ser igual em todo build.
+Sem a chave no `play-store`, o job avisa e termina verde, sem gerar nada.
