@@ -27,10 +27,11 @@ public class MainActivity extends BridgeActivity {
     private static final String CAMINHO_INICIO = "/";
     private static final String CAMINHO_LOGIN = "/auth";
 
-    // Marca que o site põe no endereço enquanto uma gaveta, janela ou conversa
-    // está aberta (useVoltarFecha.tsx). Com ela, voltar fecha o que está aberto,
-    // mesmo no início e no login.
-    private static final String MARCA_JANELA = "janela";
+    // Pergunta ao site se há gaveta, janela ou conversa aberta: se houver, ele
+    // fecha a do topo e responde true (useVoltarFecha.tsx). Na página offline,
+    // ou com o site ainda carregando, a função não existe e a resposta é false.
+    private static final String PERGUNTA_VOLTAR =
+        "(function(){try{return !!(window.svVoltar && window.svVoltar());}catch(e){return false;}})()";
 
     // Hora da última recriação por queda do WebView, para não entrar em laço.
     private static long ultimaRecriacao = 0;
@@ -91,18 +92,21 @@ public class MainActivity extends BridgeActivity {
             webView.loadUrl(getBridge().getErrorUrl());
         }
 
-        // Voltar anda no histórico do site. No início, no login ou na página de
-        // erro, manda o app para segundo plano, como o botão Home: não fecha e
-        // não perde a sessão. Com uma gaveta aberta (#janela no endereço), volta
-        // no histórico em qualquer tela, e o site fecha a gaveta.
+        // Voltar primeiro fecha o que estiver aberto no site (gaveta, janela,
+        // conversa). Sem nada aberto, anda no histórico do site; no início, no
+        // login ou na página de erro, manda o app para segundo plano, como o
+        // botão Home: não fecha e não perde a sessão.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (webView.canGoBack() && !voltarSaiDoApp(webView.getUrl())) {
-                    webView.goBack();
-                } else {
-                    moveTaskToBack(true);
-                }
+                webView.evaluateJavascript(PERGUNTA_VOLTAR, resposta -> {
+                    if ("true".equals(resposta)) return;
+                    if (webView.canGoBack() && !voltarSaiDoApp(webView.getUrl())) {
+                        webView.goBack();
+                    } else {
+                        moveTaskToBack(true);
+                    }
+                });
             }
         });
 
@@ -125,7 +129,6 @@ public class MainActivity extends BridgeActivity {
     private static boolean voltarSaiDoApp(String url) {
         if (url == null) return false;
         if (url.startsWith(ORIGEM_LOCAL)) return true;
-        if (MARCA_JANELA.equals(Uri.parse(url).getFragment())) return false;
         String caminho = Uri.parse(url).getPath();
         if (caminho == null || caminho.isEmpty()) caminho = CAMINHO_INICIO;
         return CAMINHO_INICIO.equals(caminho) || CAMINHO_LOGIN.equals(caminho);
