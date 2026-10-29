@@ -15,6 +15,8 @@ import { noSite } from "@/app/site";
 import Clientes from "@/app/telas/Clientes";
 import Entrar from "@/app/telas/Entrar";
 import Inicio from "@/app/telas/Inicio";
+import LojaDetalhe from "@/app/telas/LojaDetalhe";
+import Lojas from "@/app/telas/Lojas";
 import Menu from "@/app/telas/Menu";
 import Pedidos from "@/app/telas/Pedidos";
 
@@ -133,6 +135,9 @@ export default function App() {
                   <Route path="/menu" element={<ComConta><Menu /></ComConta>} />
                   <Route path="/pedidos" element={<ComConta><ComArea area="pedidos"><Pedidos /></ComArea></ComConta>} />
                   <Route path="/clientes" element={<ComConta><ComArea area="clientes"><Clientes /></ComArea></ComConta>} />
+                  <Route path="/lojas" element={<ComConta><ComArea area="lojas"><Lojas /></ComArea></ComConta>} />
+                  {/* Sem guarda de área, como no site: o detalhe também abre pelo Início. */}
+                  <Route path="/lojas/:marketplace" element={<ComConta><LojaDetalhe /></ComConta>} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </BrowserRouter>

@@ -10,6 +10,10 @@ export default {
 	],
 	prefix: "",
 	theme: {
+		// app: o app é sempre o desenho de celular, também deitado e no tablet
+		// (ver src/hooks/use-mobile.tsx). Os tamanhos de computador (md para
+		// cima) nunca valem nas cópias do site; sm continua, como no celular.
+		screens: { sm: '640px', md: '100000px', lg: '100001px', xl: '100002px', '2xl': '100003px' },
 		container: {
 			center: true,
 			padding: '2rem',
