@@ -104,10 +104,30 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "dff97b71defa8bc2b069ecfdc1d67e7d35a0bd65"
     },
+    "src/components/kpi/KpiPadrao.tsx": {
+      "origem": "src/components/kpi/KpiPadrao.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "f701308356ba2cb5734a845cf67e6a1f3e1a7688"
+    },
     "src/components/pedidos/orderRowShared.ts": {
       "origem": "src/components/pedidos/orderRowShared.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "79d29f510a3e3a67fcfdeed53ec4136bfbce6dcc"
+    },
+    "src/components/regioes/brazilStatePaths.ts": {
+      "origem": "src/components/regioes/brazilStatePaths.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "1917a32d4616bee7c14a56f25e928ab6e3cc70cb"
+    },
+    "src/components/regioes/stateDetailParts.tsx": {
+      "origem": "src/components/regioes/stateDetailParts.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ff86e08eeb2d9ad919daab20f26e1df717e19f74"
+    },
+    "src/components/regioes/StateDetailSheet.tsx": {
+      "origem": "src/components/regioes/StateDetailSheet.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "43e9c936832c6993f1cbbdc6ff234534964262e2"
     },
     "src/components/rfv/RfvBadge.tsx": {
       "origem": "src/components/rfv/RfvBadge.tsx",
@@ -446,15 +466,6 @@
     }
   },
   "derivados": {
-    "src/app/LayoutApp.tsx": {
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "origens": [
-        {
-          "caminho": "src/components/layouts/AppLayout.tsx",
-          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
-        }
-      ]
-    },
     "src/app/blocos/LimiteCaptura.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
@@ -470,6 +481,15 @@
         {
           "caminho": "src/components/AppSidebar.tsx",
           "blob": "72731c8b442995bdeb8a0f9034dc03ce5b7de48d"
+        }
+      ]
+    },
+    "src/app/LayoutApp.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/components/layouts/AppLayout.tsx",
+          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
         }
       ]
     },
@@ -492,6 +512,23 @@
         {
           "caminho": "src/pages/Auth.tsx",
           "blob": "4bb0e5ef69f3f01ec3c73198b4560cf0b24d2ea2"
+        }
+      ]
+    },
+    "src/app/telas/Inicio.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/components/Dashboard.tsx",
+          "blob": "1e7f695d536ba6e124d1e69c93f72cc8e9705f22"
+        },
+        {
+          "caminho": "src/pages/Index.tsx",
+          "blob": "4e32baab15f8a1ce3d22fa5669e8776e6d09b0d9"
+        },
+        {
+          "caminho": "src/components/AreaGuard.tsx",
+          "blob": "aeb8c3ba3a6361df00979df13a405065d8620eb5"
         }
       ]
     },
