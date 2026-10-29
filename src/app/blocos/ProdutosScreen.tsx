@@ -58,7 +58,10 @@ export interface ProdutosScreenProps {
   lockedRange: { start: string; end: string };
   /** false enquanto a aba está escondida: nada consulta e a tela mostra esqueleto. */
   active?: boolean;
-  /** Espaçamento da versão de computador; no celular quem dá o respiro é o pai. */
+  /**
+   * Aceitos e ignorados: a chamada em LojaProdutosTab (cópia) segue igual à do
+   * site, e aqui só existe o caminho de celular embutido.
+   */
   className?: string;
   embutidaMobile?: boolean;
   rotuloPeriodo?: string;

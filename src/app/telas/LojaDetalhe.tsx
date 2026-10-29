@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { Navigate, useParams, useSearchParams } from "react-router-dom";
-import { AlertTriangle, Store } from "lucide-react";
+import { AlertTriangle, Store, WifiOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Aviso, PILULA_ATIVA, PILULA_FILTRO, Pilulas } from "@/components/mobile/blocos";
 import { LojaHeaderMobile } from "@/components/lojas/LojaHeader";
@@ -50,6 +50,13 @@ const PERIODOS = [
   { value: "365", label: "1 ano" },
   { value: "all", label: "Tudo" },
 ];
+
+/**
+ * Sem dado ainda: buscando ou, sem internet, em espera. A consulta parada não
+ * conta como carregando no react-query, mas volta sozinha com a conexão: até lá
+ * o cabeçalho e a aba ficam no esqueleto, e não em "sem pedidos" e zeros.
+ */
+const esperando = (q: { isPending: boolean; fetchStatus: string }) => q.isPending && q.fetchStatus !== "idle";
 
 export default function LojaDetalhe() {
   const { marketplace } = useParams<{ marketplace: string }>();
@@ -113,7 +120,8 @@ export default function LojaDetalhe() {
     lojaSelecionada?.store_id ?? null,
   );
   const rowEmFoco = lojaSelecionada ? metricsLoja.data?.find((r) => r.marketplace === slug) ?? null : row;
-  const carregandoEmFoco = lojaSelecionada ? metricsLoja.isLoading : metrics.isLoading;
+  const carregando = esperando(metrics);
+  const carregandoEmFoco = lojaSelecionada ? esperando(metricsLoja) : carregando;
 
   const setLoja = (storeId: string | null) => {
     const next = new URLSearchParams(searchParams);
@@ -144,7 +152,7 @@ export default function LojaDetalhe() {
             totalPlataformas={pos.totalPlataformas}
             sharePct={sharePct}
             lastOrderAt={row?.last_order_at ?? null}
-            loading={metrics.isLoading}
+            loading={carregando}
           />
           <Pilulas rotulo="Período" opcoes={PERIODOS} valor={period} onChange={(p) => setParam("periodo", p)} />
           <div className="-mx-4 flex flex-col gap-3 border-t border-border/60 px-4 pt-3">
@@ -183,9 +191,14 @@ export default function LojaDetalhe() {
             A consulta falhou. Tente de novo em alguns instantes.
           </Aviso>
         )}
+        {metrics.isPending && metrics.isPaused && (
+          <Aviso tom="neutro" icone={WifiOff} titulo="Sem internet">
+            Os números aparecem assim que a conexão voltar.
+          </Aviso>
+        )}
         {/* Sem pedidos no período não é página inexistente: o seller pode ter
             vendido lá há meses, e ampliar o período mostra. */}
-        {!metrics.isLoading && !metrics.isError && !row && (
+        {!carregando && !metrics.isError && !row && (
           <Aviso tom="neutro" titulo={`Sem pedidos nesta loja em ${range.label.toLowerCase()}`}>
             Amplie o período acima para ver o histórico de {label}.
           </Aviso>

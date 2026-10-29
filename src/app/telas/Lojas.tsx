@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, type TooltipProps } from "recharts";
-import { AlertTriangle, PieChart, ShoppingCart, Store, TrendingUp, Users } from "lucide-react";
+import { AlertTriangle, PieChart, ShoppingCart, Store, TrendingUp, Users, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSellerContext } from "@/contexts/SellerContext";
@@ -177,6 +177,9 @@ export default function Lojas() {
   const carregando = resumoQ.isLoading || metricasQ.isLoading;
   const erro = resumoQ.isError || metricasQ.isError;
   const tentando = resumoQ.isFetching || metricasQ.isFetching;
+  // Sem internet a consulta fica em espera (nem dado, nem erro, nem carregando)
+  // e volta sozinha com a conexão: não pode cair no "Nenhum pedido".
+  const semInternet = (resumoQ.isPending && resumoQ.isPaused) || (metricasQ.isPending && metricasQ.isPaused);
   const receitaTotal = num(resumo?.total_revenue);
 
   const lojas: Loja[] = useMemo(() => {
@@ -284,6 +287,12 @@ export default function Lojas() {
               ))}
             </div>
             <Skeleton className="h-[280px] rounded-3xl" />
+          </div>
+        ) : semInternet ? (
+          <div className="flex flex-col items-center gap-2 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
+            <WifiOff className="h-6 w-6 text-muted-foreground" />
+            <p className="text-sm font-medium text-foreground">Sem internet</p>
+            <p className="text-[13px] text-muted-foreground">Os números aparecem assim que a conexão voltar.</p>
           </div>
         ) : lojas.length === 0 ? (
           <div className="flex flex-col items-center gap-2 rounded-3xl border border-border/60 bg-card px-6 py-10 text-center">
