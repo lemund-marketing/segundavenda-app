@@ -12,6 +12,8 @@ import { Abertura } from "@/app/blocos/Abertura";
 import { noSite } from "@/app/site";
 import Entrar from "@/app/telas/Entrar";
 import Inicio from "@/app/telas/Inicio";
+import LojaDetalhe from "@/app/telas/LojaDetalhe";
+import Lojas from "@/app/telas/Lojas";
 import Menu from "@/app/telas/Menu";
 
 const queryClient = new QueryClient({
@@ -112,6 +114,8 @@ export default function App() {
                   <Route path="/entrar" element={<Entrar />} />
                   <Route path="/" element={<ComConta><Inicio /></ComConta>} />
                   <Route path="/menu" element={<ComConta><Menu /></ComConta>} />
+                  <Route path="/lojas" element={<ComConta><Lojas /></ComConta>} />
+                  <Route path="/lojas/:marketplace" element={<ComConta><LojaDetalhe /></ComConta>} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </BrowserRouter>
