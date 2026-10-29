@@ -40,7 +40,4 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Saber se há internet: o app abre a página offline direto e a página
-         percebe quando a conexão volta. Permissão comum, não pede nada ao usuário. -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>

@@ -1,18 +1,71 @@
-# App Android do Segunda Venda
+# App do Segunda Venda
 
-O app é uma casca nativa (Capacitor 8) que abre **https://app.segundavenda.com.br**.
-Mudança no site chega ao app sem gerar APK novo. Esta pasta só precisa mudar
-quando o assunto é o lado nativo: ícone, nome, botão voltar, downloads,
-permissões.
+O app Android (e, depois, iPhone) do Segunda Venda. É um projeto **separado do
+site**: o site (`lemund-marketing/segundavenda`, app.segundavenda.com.br) é de
+outra pessoa, e o app nunca mexe nele. Os dois só dividem o banco (Supabase), e
+no banco o app só acrescenta coisas ([CONTRATO-BANCO.md](CONTRATO-BANCO.md)).
 
-**Quando a mudança do site aparece no app:** o site fica guardado no celular
-(service worker, o mesmo do navegador), e o app fica aberto em segundo plano
-por dias. A versão nova entra quando o app abre do zero: feche-o pela tela de
-apps recentes e abra de novo. Às vezes só na segunda vez (a primeira baixa a
-versão nova, a segunda usa).
+As telas vão **dentro do APK** (React + Vite + Tailwind, empacotado pelo
+Capacitor 8). O app abre do disco do celular; só os dados vão pela rede, direto
+para o Supabase. Não há endereço na internet, Worker na Cloudflare nem service
+worker.
 
-O APK é compilado pelo GitHub Actions (`.github/workflows/android-apk.yml`) a
-cada push que mexe em `mobile/`.
+## Onde fica cada coisa
+
+| Caminho | O que é |
+|---|---|
+| `src/app/` | **Código do app.** Telas (`telas/`), peças (`blocos/`), navegação, dados e o lado nativo (`nativo/`). Arquivo novo do app vai aqui. |
+| `src/` fora de `src/app/` | **Cópias do site**, no mesmo caminho que têm lá (UI, contextos, cliente do Supabase, tipos do banco, tema). Cada uma está registrada no `ORIGEM.json`. Podem ter ajustes do app. |
+| `ORIGEM.json` | De onde veio cada cópia: caminho no site, commit e versão do arquivo. É o que permite trazer correções do site depois. |
+| `scripts/comparar-origem.mjs` | Compara as cópias com o site e junta as mudanças (ver abaixo). |
+| `CONTRATO-BANCO.md` | Tudo o que o app lê e grava no banco, e as regras para acrescentar. |
+| `android/` | Projeto Android nativo (Capacitor). `MainActivity.java` tem o botão Voltar. |
+| `capacitor.config.json` | Pacote `br.com.segundavenda.app`, telas em `dist/`. |
+| `.github/workflows/app.yml` | Confere e compila a cada push; gera o APK de teste e o app oficial. |
+| `.github/workflows/deriva.yml` | Toda segunda, compara com o site e abre a issue "Mudanças no site para portar". |
+
+## Rodar no computador
+
+```bash
+npm ci
+npm run dev          # http://localhost:8081, no navegador (use o modo celular do DevTools)
+npm run checar       # cópias registradas no ORIGEM.json
+npm run tsc && npm run lint && npm run build
+```
+
+O app usa o banco de **produção** (`.env`, com o endereço e a chave publicável,
+que são públicos). Entre com uma conta de verdade.
+
+Para gerar o APK localmente é preciso o Android Studio (SDK). Normalmente não
+precisa: o GitHub compila.
+
+## Cópias do site: como as correções de lá chegam aqui
+
+O site continua mudando. O que ele muda **no banco** (funções, regras, RLS,
+WhatsApp, e-mails) chega ao app sozinho, porque o banco é o mesmo. O que ele
+muda **nas telas** (rótulos, filtros, contas feitas no navegador) só chega
+quando a gente traz:
+
+1. Toda segunda o workflow `deriva.yml` abre/atualiza a issue **Mudanças no site
+   para portar**, com a lista.
+2. Com um clone do site ao lado, rode:
+   ```bash
+   node scripts/comparar-origem.mjs --site ../segundavenda --juntar
+   ```
+   - **Cópias** (fora de `src/app/`): o script junta em 3 vias o que o site mudou
+     com os ajustes do app e atualiza o `ORIGEM.json`. Conflito fica listado
+     para juntar à mão.
+   - **Derivados** (telas do app escritas a partir de uma tela do site): o
+     script mostra o `git diff` da origem; a regra é portada à mão.
+3. Teste, abra o PR e instale o APK de teste antes de juntar na `main`.
+
+A produção do site sai do computador de quem cuida dele, sem marca no git. A
+comparação usa a branch `test`; antes de publicar no app uma regra trazida de
+lá, confira se ela já está no ar no site.
+
+Copiar um arquivo novo do site: copie no mesmo caminho e registre no
+`ORIGEM.json` (`origem`, `commit` do `test` e `blob` = `git rev-parse <commit>:<caminho>`).
+O CI (`npm run checar`) recusa arquivo fora de `src/app/` sem registro.
 
 ## Dois apps
 
@@ -21,96 +74,62 @@ cada push que mexe em `mobile/`.
 | Nome no celular | **SV Teste** | **Segunda Venda** |
 | Pacote | `br.com.segundavenda.app.teste` | `br.com.segundavenda.app` |
 | Chave | `android/app/teste.keystore`, no repositório de propósito | sua, no Environment `play-store` do GitHub |
-| Quando sai | todo build, de qualquer branch | só na branch `main`, depois de criar a chave (abaixo) |
+| Quando sai | todo push, de qualquer branch | só na `main`, depois de criar a chave (abaixo) |
 | Formato | APK (instala direto) | AAB (o que a Google Play aceita) e APK |
 | Onde baixar | Release **apk-teste** (link fixo) e artefato da execução | artefato `SegundaVenda-oficial` da execução |
 
-Os dois instalam lado a lado. Cada build de teste atualiza o anterior por cima,
-sem perder o login. O Release `apk-teste` é sempre o mesmo link: a cada build
-só o arquivo é trocado.
+Os dois instalam lado a lado. Cada build de teste atualiza o anterior por cima.
+O APK de teste usa a mesma chave e o mesmo pacote do app de teste antigo (a
+casca que abria o site): instalar este **substitui** aquele, e é preciso
+entrar na conta de novo uma vez.
 
 ## Instalar o APK de teste
 
 1. No Chrome do celular, entre em github.com com uma conta que tenha acesso ao
    repositório e abra
-   `https://github.com/lemund-marketing/segundavenda/releases/tag/apk-teste`.
+   `https://github.com/lemund-marketing/segundavenda-app/releases/tag/apk-teste`.
 2. Em **Assets**, toque em `SegundaVenda-teste.apk` e confirme o download.
 3. Abra o arquivo baixado. Se o Android pedir, permita **Instalar apps
    desconhecidos** para o Chrome. Se o Play Protect avisar, escolha
    **Instalar mesmo assim** (o app não está na Play Store, por isso o aviso).
 
-Sem GitHub no celular: baixe no computador e passe o arquivo pelo Drive,
-WhatsApp ou cabo.
+Para inspecionar o app de teste pelo computador: celular no cabo, depuração USB
+ligada, `chrome://inspect` no Chrome (o de teste permite; o oficial não).
 
-## O que funciona e o que ainda não funciona
+## Regras do app (Google Play)
 
-Funciona como no site: login (a sessão fica salva), Omnichannel com atualização
-em tempo real, CRM, pedidos, automações, envio de anexo, links de WhatsApp e
-e-mail (abrem no app certo), pagamento (abre no navegador).
+- **Só login.** Sem cadastro: app que cria conta tem de oferecer exclusão de
+  conta dentro dele. A conta é criada pelo site.
+- **Sem compra nem troca de plano**, nem link para a página de plano: a Play
+  não aceita levar para pagamento fora dela. Por isso Minha Conta e Afiliados
+  ficam fora do Menu até terem tela própria sem plano.
+- **Sem Meta Pixel** ou outro rastreador de anúncio.
+- Telas que o app ainda não tem aparecem no Menu com o ícone de "abre fora" e
+  abrem a página do site no navegador do celular.
 
-Ainda **não** funciona no app (use o computador):
+## Comportamento nativo
 
-- **Conectar o WhatsApp** (Embedded Signup da Meta): o Facebook bloqueia esse
-  login dentro de app.
-- **Exportar CSV/PDF** e **baixar mídia do chat**: o arquivo é gerado dentro da
-  página, e o app ainda não tem como salvá-lo. Aparece o aviso "Este download
-  ainda só funciona no computador".
-- **Notificação do sistema** (aquela da barra do celular): o som de mensagem
-  nova funciona com o app aberto; notificação de verdade exige push (Firebase),
-  que é outra etapa.
-- Links de e-mail (confirmar conta, trocar senha) abrem no navegador.
+Em `android/app/src/main/java/br/com/segundavenda/app/MainActivity.java`:
 
-Comportamento nativo (em `android/app/src/main/java/br/com/segundavenda/app/MainActivity.java`):
+- **Voltar** primeiro fecha a gaveta, janela ou conversa aberta (a página
+  responde por `window.svVoltar()`, em `src/app/nativo/useVoltarFecha.tsx`).
+  Sem nada aberto, volta de tela. No Início e no login, manda o app para
+  segundo plano (não fecha, não perde a sessão).
+- **Sem internet ao abrir**: as telas abrem do mesmo jeito (estão no celular).
+  Com sessão guardada, o app mostra "Sem internet" e continua sozinho quando a
+  conexão volta, sem deslogar.
+- Se o Android matar a página por falta de memória, o app recria a tela em vez
+  de fechar.
+- Link para outro endereço (o site, um arquivo) abre no navegador do celular.
+- **Sair da conta** desconecta só este aparelho; o site continua logado no
+  navegador.
 
-- **Voltar** anda no histórico do site. No início (`/`), no login (`/auth`) ou
-  na página de erro, manda o app para segundo plano (não fecha, não perde a
-  sessão). Com uma gaveta, janela ou conversa aberta, fecha ela primeiro: o app
-  pergunta ao site (`window.svVoltar()`, em `src/hooks/useVoltarFecha.tsx`) se
-  há algo aberto. No navegador ninguém faz essa pergunta, então o site não muda.
-- **Sem internet ao abrir** (inclusive Wi-Fi com portal de login ou dados sem
-  crédito): aparece a página `www/offline.html`, com o botão "Tentar de novo".
-  Ela também tenta sozinha quando a internet volta, e só abre o site depois de
-  confirmar que a internet funciona.
-- **Site fora do ar**: na primeira vez que o app abre, aparece a mesma página.
-  Depois disso o app abre a cópia do site guardada no celular, e é o próprio
-  site que mostra os erros de carregamento.
-- Se o Android matar a página por falta de memória, o app recarrega o site em
-  vez de fechar.
-- **Admin → Logar como este usuário / Entrar como cliente** funciona dentro do
-  app: o link de login do Supabase (`connect.segundavenda.com.br/auth/v1/verify`)
-  abre aqui dentro (`NavegacaoPlugin.java`). Os outros links do Supabase, como arquivos do
-  Storage, continuam abrindo no navegador.
-
-## Mudar algo aqui
-
-```bash
-cd mobile
-npm ci
-# edite capacitor.config.json, www/ ou android/
-npx cap sync android
-```
-
-Commit e push. O workflow compila e publica o APK de teste novo. Para
-inspecionar o app de teste pelo computador: celular no cabo, depuração USB
-ligada, `chrome://inspect` no Chrome (o app de teste permite; o oficial não).
-
-O ícone foi gerado a partir de `public/favicon-nova.svg` (fundo branco).
-
-## Criar a chave oficial (quando for distribuir para clientes)
+## Criar a chave oficial (quando for para a Play)
 
 A chave é a identidade do app. Na Google Play, com o **Play App Signing**
 (obrigatório para app novo), ela vira a **chave de envio**: o Google guarda a
 chave final que assina o app nos celulares, e se a chave de envio se perder, a
-Play Console deixa trocar por outra. Fora da Play (APK mandado direto) é mais
-grave: **quem perder a chave não consegue mais publicar atualização**, e cada
-cliente teria que desinstalar e instalar de novo. A partir de 2027 o Android
-também vai exigir registrar o pacote junto com essa chave.
-
-Decida antes de criar: se o app oficial vai sair **só pela Play**, deixe o
-Google gerar a chave final ao configurar o Play App Signing (a sua fica como
-chave de envio). Se você também quiser mandar o APK oficial direto para
-clientes, escolha enviar a sua própria chave ao Google nessa configuração;
-senão quem instalou por fora não recebe atualização da Play sem desinstalar.
+Play Console deixa trocar por outra.
 
 Na sua máquina (o `keytool` vem com qualquer Java):
 
@@ -121,14 +140,13 @@ keytool -genkeypair -v -storetype PKCS12 -keystore segundavenda-oficial.jks \
 base64 -w0 segundavenda-oficial.jks > ks.b64      # no macOS: base64 -i segundavenda-oficial.jks -o ks.b64
 ```
 
-No GitHub, a chave fica num **Environment** (não nos Secrets comuns do
-repositório, que qualquer branch consegue ler):
+No GitHub deste repositório, a chave fica num **Environment** (não nos Secrets
+comuns, que qualquer branch consegue ler):
 
 1. **Settings → Environments → New environment**, nome `play-store`.
 2. Em **Deployment branches and tags**, escolha **Selected branches and tags**
    e adicione só a regra `main`.
-3. Ainda no `play-store`, em **Environment secrets → Add environment secret**,
-   crie os 4:
+3. Em **Environment secrets → Add environment secret**, crie os 4:
 
 | Secret | Valor |
 |---|---|
@@ -141,13 +159,24 @@ repositório, que qualquer branch consegue ler):
 o valor de todo Secret nos logs, e com `segundavenda` metade do log viraria
 `***`.)
 
-Guarde o `.jks` e a senha **fora do GitHub** (gerenciador de senhas, por
-exemplo): os Secrets não podem ser lidos de volta. Apague o `ks.b64` depois.
-Não coloque o `.jks` no repositório (o `.gitignore` já barra).
+Guarde o `.jks` e a senha **fora do GitHub** (gerenciador de senhas): os
+Secrets não podem ser lidos de volta. Apague o `ks.b64` depois. O `.gitignore`
+já barra o `.jks`.
 
-O app oficial sai no job **oficial**, que só roda na branch `main` (num push
-que mexa em `mobile/` ou pelo botão **Run workflow**). O artefato
-`SegundaVenda-oficial` traz o `SegundaVenda.aab`, que é o arquivo enviado à
-Google Play, e o `SegundaVenda.apk`. O passo "Compilar o app oficial" mostra a
-impressão digital (SHA-256) da chave; ela tem que ser igual em todo build.
-Sem a chave no `play-store`, o job avisa e termina verde, sem gerar nada.
+Se a chave já foi criada para o repositório do site, use **a mesma** aqui (o
+`.jks` e a senha que você guardou): o app oficial sai só deste repositório.
+
+## Token de leitura do site (para a comparação semanal)
+
+O `deriva.yml` precisa ler o repositório do site. Crie um token que **só lê**:
+
+1. github.com → **Settings → Developer settings → Fine-grained tokens →
+   Generate new token**.
+2. **Resource owner**: `lemund-marketing`. **Repository access**: *Only select
+   repositories* → `lemund-marketing/segundavenda`.
+3. **Permissions → Repository permissions → Contents: Read-only** (e nada mais).
+4. Em `segundavenda-app` → **Settings → Secrets and variables → Actions → New
+   repository secret**: nome `SITE_LEITURA_TOKEN`, valor = o token.
+
+Se a organização exigir aprovação de token, um dono da organização aprova em
+**Settings → Personal access tokens → Pending requests**.

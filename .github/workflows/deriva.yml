@@ -1,0 +1,69 @@
+# Toda segunda-feira: o que mudou no site nos arquivos que o app copiou.
+#
+# Lê o site (lemund-marketing/segundavenda, branch test) só para comparar:
+# nunca escreve lá. O resultado vira (ou atualiza) a issue "Mudanças no site
+# para portar" neste repositório, com o que dá para juntar sozinho e o que
+# precisa ser portado à mão (ver ORIGEM.json e scripts/comparar-origem.mjs).
+#
+# PRECISA de um token de leitura do site no Secret SITE_LEITURA_TOKEN deste
+# repositório (passo a passo no LEIA-ME). Sem ele, avisa e termina verde.
+name: Deriva do site
+
+on:
+  schedule:
+    - cron: '17 12 * * 1'   # segunda, 9h17 de Brasília
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  comparar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TEM_TOKEN: ${{ secrets.SITE_LEITURA_TOKEN != '' }}
+    steps:
+      - name: Sem token de leitura do site
+        if: env.TEM_TOKEN != 'true'
+        run: echo "::notice::Falta o Secret SITE_LEITURA_TOKEN (ver LEIA-ME.md). A comparação com o site não rodou."
+
+      - uses: actions/checkout@v7
+        if: env.TEM_TOKEN == 'true'
+
+      - uses: actions/checkout@v7
+        if: env.TEM_TOKEN == 'true'
+        with:
+          repository: lemund-marketing/segundavenda
+          ref: test
+          path: .site
+          token: ${{ secrets.SITE_LEITURA_TOKEN }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        if: env.TEM_TOKEN == 'true'
+        with:
+          node-version: 22
+
+      - name: Comparar
+        if: env.TEM_TOKEN == 'true'
+        run: node scripts/comparar-origem.mjs --site .site --ref HEAD --relatorio "$RUNNER_TEMP/deriva.md"
+
+      - name: Abrir ou atualizar a issue
+        if: env.TEM_TOKEN == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          titulo="Mudanças no site para portar"
+          if grep -q "Nada mudou nos arquivos que o app copiou" "$RUNNER_TEMP/deriva.md"; then
+            echo "Nada mudou."
+            exit 0
+          fi
+          numero=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$titulo\" in:title" --json number --jq '.[0].number')
+          if [ -n "$numero" ]; then
+            gh issue edit "$numero" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/deriva.md"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$titulo" --body-file "$RUNNER_TEMP/deriva.md"
+          fi

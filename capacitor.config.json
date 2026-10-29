@@ -1,16 +1,13 @@
 {
   "appId": "br.com.segundavenda.app",
   "appName": "Segunda Venda",
-  "webDir": "www",
+  "webDir": "dist",
   "server": {
-    "url": "https://app.segundavenda.com.br",
-    "androidScheme": "https",
-    "cleartext": false,
-    "errorPath": "offline.html"
+    "androidScheme": "https"
   },
   "android": {
-    "appendUserAgent": "SegundaVendaApp/1.0",
-    "backgroundColor": "#FFFFFF",
+    "appendUserAgent": "SegundaVendaApp/2.0",
+    "backgroundColor": "#F7F7F7",
     "allowMixedContent": false
   }
 }

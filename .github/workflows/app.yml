@@ -1,0 +1,218 @@
+# Confere e compila o app a cada push.
+#
+# 1. verificar: ORIGEM.json em ordem, TypeScript, lint e build das telas.
+# 2. apk: o APK de TESTE ("SV Teste", pacote br.com.segundavenda.app.teste),
+#    assinado com a chave de teste do repositório. Sai de qualquer branch e
+#    fica no Release "apk-teste" (link fixo) e como artefato da execução.
+# 3. oficial: o app da Google Play ("Segunda Venda", br.com.segundavenda.app),
+#    em AAB (o que a Play aceita) e APK. Só na main e só com os 4 Secrets da
+#    chave no Environment "play-store" (passo a passo no LEIA-ME).
+#
+# POR QUE UM ENVIRONMENT: Secret comum do repositório é lido por qualquer
+# branch, inclusive uma que altere este arquivo para imprimi-lo. Secret de
+# Environment com a regra "só main" não chega a nenhuma outra branch.
+#
+# POR QUE ubuntu-24.04 E NÃO ubuntu-latest: o latest vira 26.04 em nov/2026,
+# com Java 25 de padrão, e o Gradle 8.14 do Capacitor não roda em Java 25.
+name: App
+
+on:
+  push:
+    # Só branches: push de tag (inclusive a apk-teste) não dispara build.
+    branches: ['**']
+  workflow_dispatch:
+
+concurrency:
+  group: app-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Cópias do site registradas (ORIGEM.json)
+        run: npm run checar
+      - name: TypeScript
+        run: npm run tsc
+      - name: Lint
+        run: npm run lint
+      - name: Build das telas
+        run: npm run build
+
+  apk:
+    needs: verificar
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write   # publicar o Release "apk-teste"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # 'basic' = cache aberto e grátis. O padrão ('enhanced') é pago em repositório privado.
+      # Fixado por commit, não por tag: esta action também roda no build que tem a
+      # chave oficial no ambiente.
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        with:
+          cache-provider: basic
+
+      - run: npm ci --no-audit --no-fund
+
+      # As telas vão para dentro do APK: build (dist/) e cópia para o projeto Android.
+      - name: Telas para dentro do Android
+        run: npm run android
+
+      - name: Compilar o APK de teste
+        working-directory: android
+        run: |
+          chmod +x ./gradlew
+          ./gradlew --no-daemon assembleDebug
+          mkdir -p "$RUNNER_TEMP/apk"
+          cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/apk/SegundaVenda-teste.apk"
+
+      # A impressão digital da chave tem que ser a MESMA em todo build: se mudar,
+      # o Android recusa atualizar por cima e obriga a desinstalar.
+      - name: Conferir o APK de teste
+        run: |
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          apk="$RUNNER_TEMP/apk/SegundaVenda-teste.apk"
+          echo "== $(basename "$apk") ($(du -h "$apk" | cut -f1))"
+          "$BT/apksigner" verify --print-certs "$apk" | grep -E "SHA-256|DN:"
+          "$BT/aapt2" dump badging "$apk" | grep -E "^package:|^application-label:"
+          # As telas têm de estar dentro do pacote (sem elas o app abre em branco).
+          unzip -l "$apk" | grep -q "assets/public/index.html"
+
+      - name: Guardar APK de teste
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ runner.temp }}/apk/SegundaVenda-teste.apk
+          archive: false
+          retention-days: 30
+
+      # Link fixo para o celular: .../releases/tag/apk-teste. O Release é criado
+      # uma vez e, a cada build, o arquivo é trocado (--clobber) e a tag anda para
+      # o commit do build. Dois builds de branches diferentes ao mesmo tempo podem
+      # esbarrar na troca do arquivo: por isso até 3 tentativas.
+      - name: Publicar no Release apk-teste
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          apk="$RUNNER_TEMP/apk/SegundaVenda-teste.apk"
+          notas="Build ${GITHUB_RUN_NUMBER} da branch ${GITHUB_REF_NAME}, commit ${GITHUB_SHA::7}. Como instalar: LEIA-ME.md."
+          if gh release view apk-teste --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            ok=0
+            for tentativa in 1 2 3; do
+              if gh release upload apk-teste "$apk" --clobber --repo "$GITHUB_REPOSITORY"; then ok=1; break; fi
+              sleep 5
+            done
+            [ "$ok" = 1 ]
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/apk-teste" -f sha="$GITHUB_SHA" -F force=true > /dev/null
+            gh release edit apk-teste --notes "$notas" --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create apk-teste "$apk" --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" --prerelease --title "APK de teste (SV Teste)" --notes "$notas"
+          fi
+
+  # O app oficial, para a Google Play. Só na main e só com o Environment
+  # "play-store" (que guarda a chave e só libera a main). Sem a chave criada,
+  # avisa e termina verde.
+  oficial:
+    needs: verificar
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: play-store
+    permissions:
+      contents: read
+    env:
+      # 'true' só com os 4 Secrets criados; com um faltando, nem tenta.
+      TEM_CHAVE_OFICIAL: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' && secrets.ANDROID_KEYSTORE_PASSWORD != '' && secrets.ANDROID_KEY_ALIAS != '' && secrets.ANDROID_KEY_PASSWORD != '' }}
+
+    steps:
+      - name: Sem chave oficial ainda
+        if: env.TEM_CHAVE_OFICIAL != 'true'
+        run: echo "::notice::Chave oficial ainda não está no Environment play-store (ver LEIA-ME.md). O app oficial não foi gerado."
+
+      - uses: actions/checkout@v7
+        if: env.TEM_CHAVE_OFICIAL == 'true'
+
+      - uses: actions/setup-node@v7
+        if: env.TEM_CHAVE_OFICIAL == 'true'
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v6
+        if: env.TEM_CHAVE_OFICIAL == 'true'
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        if: env.TEM_CHAVE_OFICIAL == 'true'
+        with:
+          cache-provider: basic
+
+      - if: env.TEM_CHAVE_OFICIAL == 'true'
+        run: npm ci --no-audit --no-fund
+
+      - name: Telas para dentro do Android
+        if: env.TEM_CHAVE_OFICIAL == 'true'
+        run: npm run android
+
+      # AAB (Android App Bundle) é o formato que a Google Play exige para app
+      # novo; assinado com a chave de ENVIO (a nossa). Com o Play App Signing,
+      # o Google assina a versão final que chega aos celulares.
+      - name: Compilar o app oficial (AAB e APK)
+        if: env.TEM_CHAVE_OFICIAL == 'true'
+        working-directory: android
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          chmod +x ./gradlew
+          echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/oficial.jks"
+          export ANDROID_KEYSTORE_PATH="$RUNNER_TEMP/oficial.jks"
+          ./gradlew --no-daemon bundleRelease assembleRelease
+          rm -f "$RUNNER_TEMP/oficial.jks"
+          mkdir -p "$RUNNER_TEMP/oficial"
+          cp app/build/outputs/bundle/release/app-release.aab "$RUNNER_TEMP/oficial/SegundaVenda.aab"
+          cp app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/oficial/SegundaVenda.apk"
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          echo "== SegundaVenda.aab ($(du -h "$RUNNER_TEMP/oficial/SegundaVenda.aab" | cut -f1))"
+          # A impressão digital da chave de envio: a Play confere em todo envio.
+          keytool -printcert -jarfile "$RUNNER_TEMP/oficial/SegundaVenda.aab" | grep -E "SHA256|Owner"
+          echo "== SegundaVenda.apk ($(du -h "$RUNNER_TEMP/oficial/SegundaVenda.apk" | cut -f1))"
+          "$BT/apksigner" verify --print-certs "$RUNNER_TEMP/oficial/SegundaVenda.apk" | grep -E "SHA-256|DN:"
+          "$BT/aapt2" dump badging "$RUNNER_TEMP/oficial/SegundaVenda.apk" | grep -E "^package:|^application-label:"
+
+      - name: Guardar o app oficial
+        if: env.TEM_CHAVE_OFICIAL == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: SegundaVenda-oficial
+          path: |
+            ${{ runner.temp }}/oficial/SegundaVenda.aab
+            ${{ runner.temp }}/oficial/SegundaVenda.apk
+          retention-days: 90

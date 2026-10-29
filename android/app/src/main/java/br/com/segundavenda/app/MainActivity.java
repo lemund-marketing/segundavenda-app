@@ -2,9 +2,6 @@ package br.com.segundavenda.app;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -16,33 +13,30 @@ import androidx.activity.OnBackPressedCallback;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.WebViewListener;
 
+/**
+ * As telas do app vêm de dentro do APK (pasta dist/ do projeto, servida em
+ * https://localhost). Só os dados vão pela rede, direto para o Supabase. Link
+ * para qualquer outro endereço (o site, um arquivo) o Capacitor abre no
+ * navegador do celular.
+ */
 public class MainActivity extends BridgeActivity {
 
-    // Origem das páginas servidas de dentro do APK, como a de erro (errorPath).
-    private static final String ORIGEM_LOCAL = "https://localhost/";
-
-    // Telas do site onde voltar sai do app: o início e o login. O site manda
-    // para o login com navegação comum, então voltar dali levaria a uma página
-    // protegida que redireciona de novo para o login, sem nunca sair.
+    // Telas onde voltar sai do app: o início e o login. Voltar do login levaria
+    // a uma tela que exige conta, que mandaria de novo para o login.
     private static final String CAMINHO_INICIO = "/";
-    private static final String CAMINHO_LOGIN = "/auth";
+    private static final String CAMINHO_LOGIN = "/entrar";
 
-    // Pergunta ao site se há gaveta, janela ou conversa aberta: se houver, ele
-    // fecha a do topo e responde true (useVoltarFecha.tsx). Na página offline,
-    // ou com o site ainda carregando, a função não existe e a resposta é false.
+    // Pergunta à página se há gaveta, janela ou conversa aberta: se houver, ela
+    // fecha a do topo e responde true (src/app/nativo/useVoltarFecha.tsx). Com
+    // a página ainda carregando, a função não existe e a resposta é false.
     private static final String PERGUNTA_VOLTAR =
         "(function(){try{return !!(window.svVoltar && window.svVoltar());}catch(e){return false;}})()";
 
     // Hora da última recriação por queda do WebView, para não entrar em laço.
     private static long ultimaRecriacao = 0;
 
-    // A última página carregada foi a de erro: ao voltar para o site, limpa o histórico.
-    private boolean vinhaDaPaginaLocal = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Tem que ser registrado antes do super.onCreate, que monta o Capacitor.
-        registerPlugin(NavegacaoPlugin.class);
         super.onCreate(savedInstanceState);
         // Aparelho sem WebView: o Capacitor já mostra o aviso dele.
         if (getBridge() == null) return;
@@ -50,23 +44,9 @@ public class MainActivity extends BridgeActivity {
         final WebView webView = getBridge().getWebView();
 
         getBridge().addWebViewListener(new WebViewListener() {
-            @Override
-            public void onPageLoaded(WebView view) {
-                String url = view.getUrl();
-                if (url == null) return;
-                if (url.startsWith(ORIGEM_LOCAL)) {
-                    vinhaDaPaginaLocal = true;
-                } else if (vinhaDaPaginaLocal) {
-                    // Saiu da página de erro para o site: o endereço que falhou ficou
-                    // para trás no histórico, e voltar o recarregaria. Começa do zero.
-                    vinhaDaPaginaLocal = false;
-                    view.clearHistory();
-                }
-            }
-
             // Se o Android matar o processo que desenha a página (celular com pouca
             // memória, app em segundo plano), o padrão do Capacitor é derrubar o app
-            // inteiro. Aqui o WebView morto é descartado e a tela é recriada: o site
+            // inteiro. Aqui o WebView morto é descartado e a tela é recriada: o app
             // abre de novo, já logado. Duas quedas em menos de 10 s indicam erro que
             // se repete: aí segue o padrão.
             @Override
@@ -83,19 +63,9 @@ public class MainActivity extends BridgeActivity {
             }
         });
 
-        // Sem internet ao abrir: vai direto para a página de erro. Sem isto o site
-        // abriria da cópia guardada no celular (service worker), sem dados, e o site
-        // desloga quem abre assim por não conseguir renovar a sessão. Só na abertura
-        // de verdade: na recriação (savedInstanceState != null) o app pode estar em
-        // segundo plano, onde o Android bloqueia a rede e a resposta seria "sem internet".
-        if (savedInstanceState == null && !temInternet()) {
-            webView.loadUrl(getBridge().getErrorUrl());
-        }
-
-        // Voltar primeiro fecha o que estiver aberto no site (gaveta, janela,
-        // conversa). Sem nada aberto, anda no histórico do site; no início, no
-        // login ou na página de erro, manda o app para segundo plano, como o
-        // botão Home: não fecha e não perde a sessão.
+        // Voltar primeiro fecha o que estiver aberto (gaveta, janela, conversa).
+        // Sem nada aberto, volta de tela; no início ou no login, manda o app para
+        // segundo plano, como o botão Home: não fecha e não perde a sessão.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -121,34 +91,15 @@ public class MainActivity extends BridgeActivity {
                     Toast.makeText(this, "Nenhum app para abrir este arquivo", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(this, "Este download ainda só funciona no computador", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Este download ainda não funciona no app", Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private static boolean voltarSaiDoApp(String url) {
         if (url == null) return false;
-        if (url.startsWith(ORIGEM_LOCAL)) return true;
         String caminho = Uri.parse(url).getPath();
         if (caminho == null || caminho.isEmpty()) caminho = CAMINHO_INICIO;
         return CAMINHO_INICIO.equals(caminho) || CAMINHO_LOGIN.equals(caminho);
-    }
-
-    // Rede conectada e validada pelo Android (Wi-Fi com portal de login ou dados
-    // sem crédito ficam de fora). Na dúvida (sem acesso ao serviço), responde que
-    // tem: melhor tentar abrir o site.
-    private boolean temInternet() {
-        try {
-            ConnectivityManager cm = getSystemService(ConnectivityManager.class);
-            if (cm == null) return true;
-            Network rede = cm.getActiveNetwork();
-            if (rede == null) return false;
-            NetworkCapabilities recursos = cm.getNetworkCapabilities(rede);
-            return recursos != null
-                && recursos.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                && recursos.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
-        } catch (SecurityException e) {
-            return true;
-        }
     }
 }

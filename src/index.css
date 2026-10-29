@@ -1,0 +1,565 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design system da Segunda Venda.
+   Estrutura herdada do Segundo Pedido (raios, sombras, espacamento, animacoes),
+   com a identidade da marca: verde #09AF68 primaria, roxo #5A3F91 secundaria.
+   Todas as cores em HSL. */
+
+@layer base {
+  :root {
+    --background: 0 0% 96.9%;        /* #F7F7F7 — pedido de 20/08/2026 */
+    --foreground: 220 15% 15%;
+
+    --card: 0 0% 100%;               /* branco puro — contraste com o fundo #F7F7F7 */
+    --card-foreground: 220 15% 15%;
+
+    --popover: 0 0% 99.6%;
+    --popover-foreground: 220 15% 15%;
+
+    /* Verde da marca #09AF68 */
+    --primary: 154.3 90.2% 36.1%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 154 72% 47%;
+    --primary-dark: 154.3 90.2% 24%;
+
+    /* Roxo da marca #5A3F91 */
+    --secondary: 259.8 39.4% 40.8%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 260 39% 55%;
+
+    --muted: 222 20% 94%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 222 20% 94%;
+    --accent-foreground: 220 15% 15%;
+
+    --success: 154.3 90.2% 36.1%;
+    --success-foreground: 0 0% 100%;
+    --success-glow: 154 72% 47%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --whatsapp: 142 70% 49%;
+    --whatsapp-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 90%;
+    --input: 220 13% 90%;
+    --ring: 154.3 90.2% 36.1%;
+
+    --radius: 0.75rem; /* 12px — arredondamento único do projeto (20/08/2026) */
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 99.6%;
+    --sidebar-foreground: 220 9% 46%;
+    --sidebar-primary: 154.3 90.2% 36.1%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 33% 97%;
+    --sidebar-accent-foreground: 220 15% 15%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 154.3 90.2% 36.1%;
+    --sidebar-active-bg: 154 55% 94%;
+    --sidebar-active-text: 154 90% 26%;
+
+    /* Cores de destaque */
+    --accent-green: 154.3 90.2% 36.1%;
+    --accent-purple: 259.8 39.4% 40.8%;
+    --accent-blue: 217 91% 60%;
+    --accent-amber: 38 92% 50%;
+    --accent-teal: 172 66% 50%;
+
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--success-glow)));
+    --gradient-brand: linear-gradient(135deg, hsl(154.3 90.2% 36.1%), hsl(259.8 39.4% 40.8%));
+    --gradient-positive: linear-gradient(135deg, hsl(154.3 90.2% 36.1%), hsl(259.8 39.4% 40.8%));
+    /* Chapado (20/08/2026): o degradê deixava alguns KPIs levemente azulados
+       enquanto os cards vizinhos eram brancos — "todos os KPIs e blocos têm
+       que ser um padrão" começa pela superfície ser a mesma. */
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--card)));
+
+    /* Sombras — 3 niveis neutros, combinam com os raios maiores */
+    /* Sombras SEM deslocamento (20/08/2026): o pedido foi "expandir mais,
+       uniformemente em todos os lados". Com `0 Ypx` a sombra saía só por baixo
+       e o bloco parecia colado no topo. Offset 0, o que cresce é o blur — o
+       halo fica igual em volta do card inteiro. */
+    --shadow-sm: 0 0 24px -4px rgba(16, 24, 40, 0.08);
+    /* md/lg sustentam camadas FLUTUANTES (popover, dropdown, sheet, toast) —
+       lá o leve deslocamento para baixo é o que dá a leitura de "flutuando".
+       Card e KPI usam sm/card/hover, que são os uniformes. */
+    --shadow-md: 0 4px 22px -2px rgba(16, 24, 40, 0.10);
+    --shadow-lg: 0 8px 34px -6px rgba(16, 24, 40, 0.14);
+    --shadow-elegant: 0 0 20px 0 rgba(16, 24, 40, 0.08);
+    --shadow-card: var(--shadow-sm);
+    --shadow-hover: 0 0 34px -4px rgba(16, 24, 40, 0.13);
+
+    /* Transicoes */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    /* Graficos — verde e roxo da marca na frente */
+    --chart-1: 154.3 90.2% 36.1%;
+    --chart-2: 260 39% 45%;
+    --chart-3: 38 92% 60%;
+    --chart-4: 217 91% 60%;
+    --chart-5: 172 66% 45%;
+  }
+
+  /* Modo escuro (22/10/2026): o cartão fica mais claro que o fundo, como no claro o branco sobre o #F7F7F7.
+     Antes era 4% x 6% de luz — cartão e fundo se confundiam. */
+  .dark {
+    --background: 240 8% 6%;
+    --foreground: 240 5% 96%;
+
+    --card: 240 7% 10%;
+    --card-foreground: 240 5% 96%;
+
+    --popover: 240 7% 11%;
+    --popover-foreground: 240 5% 96%;
+
+    --primary: 154 70% 48%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 154 70% 60%;
+    --primary-dark: 154 70% 30%;
+
+    --secondary: 260 45% 62%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 260 45% 72%;
+
+    --muted: 240 5% 15%;
+    --muted-foreground: 240 5% 66%;
+
+    --accent: 240 5% 16%;
+    --accent-foreground: 240 5% 96%;
+
+    --success: 154 70% 48%;
+    --success-foreground: 0 0% 100%;
+    --success-glow: 154 70% 60%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --whatsapp: 142 70% 49%;
+    --whatsapp-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 5% 19%;
+    --input: 240 5% 21%;
+    --ring: 154 70% 48%;
+
+    --sidebar-background: 240 8% 8%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 154 70% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 154 70% 48%;
+    --sidebar-active-bg: 154 60% 14%;
+    --sidebar-active-text: 154 70% 70%;
+
+    --accent-green: 154 70% 48%;
+    --accent-purple: 260 45% 62%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--success-glow)));
+    --gradient-brand: linear-gradient(135deg, hsl(154 70% 48%), hsl(260 45% 62%));
+    --gradient-positive: linear-gradient(135deg, hsl(154 70% 48%), hsl(260 45% 62%));
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--card)));
+
+    --shadow-sm: 0 0 24px -4px rgba(0,0,0,0.31);
+    --shadow-md: 0 0 22px 0 rgba(0,0,0,0.38);
+    --shadow-lg: 0 0 34px 0 rgba(0,0,0,0.45);
+    --shadow-elegant: 0 0 20px 0 hsl(0 0% 0% / 0.30);
+    --shadow-card: var(--shadow-sm);
+    --shadow-hover: var(--shadow-md);
+
+    --chart-1: 154 70% 55%;
+    --chart-2: 260 55% 70%;
+    --chart-3: 38 92% 65%;
+    --chart-4: 217 80% 70%;
+    --chart-5: 172 60% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    /* Cabin no app inteiro (20/08/2026): estreou no teste e o usuário liberou
+       para produção no mesmo dia. O <link> mora no index.html. */
+    font-family: "Cabin", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Inputs e botões não herdam a família do body por padrão do navegador. */
+  input, textarea, select, button {
+    font-family: inherit;
+  }
+
+  h1 {
+    @apply text-3xl font-bold tracking-tight;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    @apply text-xl font-bold tracking-tight;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    @apply text-base font-semibold;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .font-tabular { font-variant-numeric: tabular-nums; }
+}
+
+/* Editor de template de e-mail (TipTap): chip de variável {{cliente.nome}} */
+.tt-variable-chip {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 0 1px;
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  border: 1px solid hsl(var(--primary) / 0.25);
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  line-height: 1.4;
+  white-space: nowrap;
+  user-select: all;
+}
+.tt-editor .ProseMirror {
+  min-height: 280px;
+  outline: none;
+}
+.tt-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: hsl(var(--muted-foreground));
+  pointer-events: none;
+  height: 0;
+}
+
+/* Bordas e sombras neutras */
+.border-brand {
+  border-color: #E2E5EB;
+}
+.border-brand-hover:hover {
+  border-color: #D2D6DE;
+}
+.shadow-brand {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-brand-hover {
+  box-shadow: var(--shadow-hover);
+}
+.shadow-brand-elevated {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Scrollbar discreta */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.20);
+}
+
+/* Modo escuro (22/10/2026): as bordas "brand" e a barra de rolagem eram cinza/preto fixos — no escuro a borda
+   clara virava um traço branco e a barra sumia. */
+.dark .border-brand { border-color: hsl(var(--border)); }
+.dark .border-brand-hover:hover,
+.dark .card-interactive:hover { border-color: hsl(240 5% 28%); }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.24); }
+
+/* Card com elevacao no hover */
+.card-hover {
+  transition: all 0.2s ease-in-out;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Card clicavel (elevacao + borda) */
+.card-interactive {
+  transition: all 0.2s ease-in-out;
+}
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  border-color: #D2D6DE;
+}
+
+/* Indicador do item ativo no menu lateral */
+.sidebar-nav-item {
+  position: relative;
+  transition: all 0.2s ease-in-out;
+}
+.sidebar-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: hsl(var(--primary));
+  border-radius: 0 4px 4px 0;
+}
+
+/* Entrada suave de conteudo */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-delay-60  { animation-delay: 60ms; }
+.animate-delay-75  { animation-delay: 75ms; }
+.animate-delay-120 { animation-delay: 120ms; }
+.animate-delay-150 { animation-delay: 150ms; }
+.animate-delay-180 { animation-delay: 180ms; }
+.animate-delay-225 { animation-delay: 225ms; }
+.animate-delay-240 { animation-delay: 240ms; }
+.animate-delay-300 { animation-delay: 300ms; }
+
+/* O viewport do ScrollArea do Radix embrulha o conteudo num div `display: table`,
+   que ignora `min-w-0` e cresce com o filho: sem isto o `truncate` dos cards da
+   lista de conversas nunca trunca e um nome longo estoura a coluna de 320px. */
+.omnichannel-list-scroll [data-radix-scroll-area-viewport] > div {
+  display: block !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+/* ---------------------------------------------------------------
+   Especifico da Segunda Venda: canvas de workflow (react-flow)
+   --------------------------------------------------------------- */
+
+/* Destaque do no em execucao durante teste interativo de workflow */
+@layer components {
+  /* Liquid Glass (iOS 26) da cápsula de navegação do celular (22/10).
+     O vidro em si: tom translúcido que se ajusta ao tema (o contraste dos
+     ícones vem daqui), sombra leve, brilho suave por dentro no topo (::before)
+     e o aro especular — claro em cima, fraco embaixo — feito de um degradê
+     recortado em 1px (::after). Sem refração, este é o fallback: desfoque +
+     translucidez. Com refração (Chromium), o NavInferior troca o backdrop-filter
+     pelo filtro SVG de lente e o tom fica mais claro. */
+  .vidro-liquido {
+    isolation: isolate;
+    background-color: rgb(255 255 255 / 0.55);
+    -webkit-backdrop-filter: blur(14px) saturate(1.8);
+    backdrop-filter: blur(14px) saturate(1.8);
+    box-shadow: 0 10px 30px rgb(15 23 42 / 0.16), 0 1px 3px rgb(15 23 42 / 0.08);
+  }
+  .vidro-liquido.vidro-liquido--refracao {
+    background-color: rgb(255 255 255 / 0.32);
+  }
+  .vidro-liquido::before {
+    content: "";
+    position: absolute;
+    inset: 1px 14px auto;
+    height: 46%;
+    border-radius: 9999px;
+    background: linear-gradient(to bottom, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0));
+    pointer-events: none;
+    z-index: 0;
+  }
+  .vidro-liquido::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(172deg, rgb(255 255 255 / 0.95) 0%, rgb(255 255 255 / 0.35) 38%, rgb(255 255 255 / 0.12) 62%, rgb(255 255 255 / 0.45) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .dark .vidro-liquido {
+    background-color: rgb(28 28 30 / 0.55);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
+  }
+  .dark .vidro-liquido.vidro-liquido--refracao {
+    background-color: rgb(28 28 30 / 0.42);
+  }
+  .dark .vidro-liquido::before {
+    background: linear-gradient(to bottom, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0));
+  }
+  .dark .vidro-liquido::after {
+    background: linear-gradient(172deg, rgb(255 255 255 / 0.4) 0%, rgb(255 255 255 / 0.1) 40%, rgb(255 255 255 / 0.04) 62%, rgb(255 255 255 / 0.18) 100%);
+  }
+  /* Sem backdrop-filter nenhum: vidro quase opaco, legível. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .vidro-liquido, .vidro-liquido.vidro-liquido--refracao { background-color: rgb(255 255 255 / 0.94); }
+    .dark .vidro-liquido, .dark .vidro-liquido.vidro-liquido--refracao { background-color: rgb(28 28 30 / 0.94); }
+  }
+  /* "Reduzir transparência" no sistema: sem efeito, fundo quase opaco. O
+     !important vence o filtro de refração, que o NavInferior põe inline. */
+  @media (prefers-reduced-transparency: reduce) {
+    .vidro-liquido, .vidro-liquido.vidro-liquido--refracao {
+      background-color: rgb(255 255 255 / 0.94);
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+    .dark .vidro-liquido, .dark .vidro-liquido.vidro-liquido--refracao { background-color: rgb(28 28 30 / 0.94); }
+  }
+
+  /* Fundo da conversa do WhatsApp no celular (22/10): desenhos próprios de
+     e-commerce (sacola, caixa, etiqueta, coração, estrela, raio da automação,
+     balão) no verde e no roxo da marca, bem claros. É a identidade do Segunda
+     Venda no lugar do bege do WhatsApp. Ícones do lucide (ISC). */
+  .fundo-conversa {
+    background-color: #f3f6f4;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240' fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6'%3E%3Cg transform='translate%2814 16%29 rotate%28-12 12 12%29 scale%280.92%29' stroke='%2309AF68' stroke-opacity='0.13'%3E%3Cpath d='M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z'/%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'/%3E%3C/g%3E%3Cg transform='translate%2896 8%29 rotate%2810 12 12%29 scale%280.92%29' stroke='%235B3F91' stroke-opacity='0.1'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/g%3E%3Cg transform='translate%28168 30%29 rotate%28-6 12 12%29 scale%280.92%29' stroke='%2309AF68' stroke-opacity='0.13'%3E%3Cpath d='M7.9 20A9 9 0 1 0 4 16.1L2 22Z'/%3E%3C/g%3E%3Cg transform='translate%2852 74%29 rotate%2814 12 12%29 scale%280.92%29' stroke='%235B3F91' stroke-opacity='0.1'%3E%3Cpath d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'/%3E%3C/g%3E%3Cg transform='translate%28128 86%29 rotate%28-10 12 12%29 scale%280.92%29' stroke='%2309AF68' stroke-opacity='0.13'%3E%3Cpath d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'/%3E%3Cpath d='M3.29 7 12 12l8.71-5'/%3E%3Cpath d='M12 22V12'/%3E%3C/g%3E%3Cg transform='translate%28196 112%29 rotate%2812 12 12%29 scale%280.92%29' stroke='%235B3F91' stroke-opacity='0.1'%3E%3Cpath d='M13 2 3 14h9l-1 8 10-12h-9l1-8z'/%3E%3C/g%3E%3Cg transform='translate%2820 138%29 rotate%288 12 12%29 scale%280.92%29' stroke='%2309AF68' stroke-opacity='0.13'%3E%3Cpath d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/%3E%3Cpath d='M7.5 7.5h.01'/%3E%3C/g%3E%3Cg transform='translate%2884 152%29 rotate%28-14 12 12%29 scale%280.92%29' stroke='%235B3F91' stroke-opacity='0.1'%3E%3Cpath d='M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z'/%3E%3C/g%3E%3Cg transform='translate%28150 170%29 rotate%2818 12 12%29 scale%280.92%29' stroke='%235B3F91' stroke-opacity='0.1'%3E%3Cpath d='M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z'/%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'/%3E%3C/g%3E%3Cg transform='translate%28214 196%29 rotate%28-10 12 12%29 scale%280.92%29' stroke='%2309AF68' stroke-opacity='0.13'%3E%3Cpath d='M7.9 20A9 9 0 1 0 4 16.1L2 22Z'/%3E%3C/g%3E%3Cg transform='translate%2840 206%29 rotate%28-8 12 12%29 scale%280.92%29' stroke='%2309AF68' stroke-opacity='0.13'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/g%3E%3Cg transform='translate%28116 218%29 rotate%286 12 12%29 scale%280.92%29' stroke='%2309AF68' stroke-opacity='0.13'%3E%3Cpath d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 240px 240px;
+  }
+  .dark .fundo-conversa {
+    background-color: #0f1512;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240' fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6'%3E%3Cg transform='translate%2814 16%29 rotate%28-12 12 12%29 scale%280.92%29' stroke='%232BC785' stroke-opacity='0.08'%3E%3Cpath d='M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z'/%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'/%3E%3C/g%3E%3Cg transform='translate%2896 8%29 rotate%2810 12 12%29 scale%280.92%29' stroke='%23A48BE0' stroke-opacity='0.07'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/g%3E%3Cg transform='translate%28168 30%29 rotate%28-6 12 12%29 scale%280.92%29' stroke='%232BC785' stroke-opacity='0.08'%3E%3Cpath d='M7.9 20A9 9 0 1 0 4 16.1L2 22Z'/%3E%3C/g%3E%3Cg transform='translate%2852 74%29 rotate%2814 12 12%29 scale%280.92%29' stroke='%23A48BE0' stroke-opacity='0.07'%3E%3Cpath d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'/%3E%3C/g%3E%3Cg transform='translate%28128 86%29 rotate%28-10 12 12%29 scale%280.92%29' stroke='%232BC785' stroke-opacity='0.08'%3E%3Cpath d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'/%3E%3Cpath d='M3.29 7 12 12l8.71-5'/%3E%3Cpath d='M12 22V12'/%3E%3C/g%3E%3Cg transform='translate%28196 112%29 rotate%2812 12 12%29 scale%280.92%29' stroke='%23A48BE0' stroke-opacity='0.07'%3E%3Cpath d='M13 2 3 14h9l-1 8 10-12h-9l1-8z'/%3E%3C/g%3E%3Cg transform='translate%2820 138%29 rotate%288 12 12%29 scale%280.92%29' stroke='%232BC785' stroke-opacity='0.08'%3E%3Cpath d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/%3E%3Cpath d='M7.5 7.5h.01'/%3E%3C/g%3E%3Cg transform='translate%2884 152%29 rotate%28-14 12 12%29 scale%280.92%29' stroke='%23A48BE0' stroke-opacity='0.07'%3E%3Cpath d='M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z'/%3E%3C/g%3E%3Cg transform='translate%28150 170%29 rotate%2818 12 12%29 scale%280.92%29' stroke='%23A48BE0' stroke-opacity='0.07'%3E%3Cpath d='M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z'/%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'/%3E%3C/g%3E%3Cg transform='translate%28214 196%29 rotate%28-10 12 12%29 scale%280.92%29' stroke='%232BC785' stroke-opacity='0.08'%3E%3Cpath d='M7.9 20A9 9 0 1 0 4 16.1L2 22Z'/%3E%3C/g%3E%3Cg transform='translate%2840 206%29 rotate%28-8 12 12%29 scale%280.92%29' stroke='%232BC785' stroke-opacity='0.08'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/g%3E%3Cg transform='translate%28116 218%29 rotate%286 12 12%29 scale%280.92%29' stroke='%232BC785' stroke-opacity='0.08'%3E%3Cpath d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .workflow-node-active-test {
+    animation: workflow-test-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes workflow-test-pulse {
+    0%, 100% {
+      filter: drop-shadow(0 0 0 hsl(var(--primary) / 0));
+    }
+    50% {
+      filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.7));
+    }
+  }
+
+  /* Padroniza campos, dropdowns e filtros dos painéis de configuração de nó
+     sem precisar tocar nos 28 arquivos: o ConfigPanelShell aplica a classe
+     .workflow-config-panel no SheetContent e todo campo lá dentro herda.
+
+     Só cor/borda/raio. NÃO mexe em altura: `.workflow-config-panel input`
+     tem especificidade (0,1,1) e venceria as utilitárias de altura escritas
+     no próprio elemento (`h-auto` dos multi-selects que crescem com as
+     badges, `h-8` do campo de peso). E não precisa: Input, SelectTrigger e
+     Button (size default) já nascem com h-10. */
+  .workflow-config-panel input,
+  .workflow-config-panel textarea,
+  .workflow-config-panel button[role="combobox"] {
+    @apply rounded-md bg-card border-border text-foreground placeholder:text-muted-foreground;
+  }
+  /* O bg-card/text-foreground acima (0,2,1) mata o hover:bg-accent que o
+     Button variant="outline" traz de fábrica (0,2,0). Sem isto o combobox
+     não dá nenhum retorno visual de que é clicável. */
+  .workflow-config-panel button[role="combobox"]:hover:not(:disabled) {
+    @apply bg-accent text-accent-foreground;
+  }
+  /* Altura mínima só para textarea que não declarou `rows` — quem declarou
+     escolheu o tamanho de propósito (ex.: rows={2} das transportadoras). */
+  .workflow-config-panel textarea:not([rows]) {
+    @apply min-h-[104px];
+  }
+}
+
+/* No selecionado no canvas */
+/* Nó selecionado: sem contorno. O Segundo Pedido não marca seleção de jeito
+   nenhum, e o contorno verde de 2px + halo de 4px competia com a sombra
+   tingida do card. O feedback de seleção fica por conta do próprio gesto —
+   quem acabou de clicar sabe o que selecionou. */
+
+/* Anel do no em execucao. Depois da regra de selecao e com a mesma
+   especificidade de proposito: um no selecionado que esta executando precisa
+   mostrar o anel do teste, nao o halo de selecao. */
+.react-flow__node.workflow-node-active-test > * {
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.6), 0 0 24px 4px hsl(var(--primary) / 0.35) !important;
+  /* Acompanha o rounded-[14px] do card do BaseNode */
+  border-radius: 14px;
+}
+
+/* Ponteiro sem hover (tablet/touch): sem isso a lixeira do nó nunca sai da
+   opacidade 0 e o nó só pode ser removido por teclado. */
+@media (hover: none) {
+  .workflow-node-delete {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: hsl(var(--primary));
+  stroke-width: 3;
+}
+
+/* Faixa horizontal do Kanban: barra fina na cor primária (aqui, verde) e o
+   cursor de arrasto do pan lateral do quadro. */
+.kanban-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.45) transparent;
+  cursor: grab;
+}
+/* `cursor` é herdado, então a mãozinha do pan vazava para dentro das colunas —
+   nome da fase, textos do card, campo "Buscar..." — justamente onde
+   handleBoardMouseDown DESISTE do pan. O reset devolve o cursor natural de cada
+   coluna; a promessa de arrasto fica só no fundo do quadro, que é onde ele
+   acontece de verdade. */
+.kanban-scroll [data-kanban-column] {
+  cursor: auto;
+}
+/* Classe posta pelo próprio handler de pan, e não `:active`: `:active` pega
+   QUALQUER mousedown dentro do quadro (clicar num card, marcar um checkbox) e
+   virava "agarrando" numa ação que não pana nada. */
+.kanban-scroll.is-panning,
+.kanban-scroll.is-panning [data-kanban-column] {
+  cursor: grabbing;
+}
+.kanban-scroll::-webkit-scrollbar {
+  height: 10px;
+}
+.kanban-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.kanban-scroll::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--primary) / 0.4);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.kanban-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--primary) / 0.7);
+}

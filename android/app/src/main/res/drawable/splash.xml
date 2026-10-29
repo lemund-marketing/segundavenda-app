@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tela de abertura: fundo branco com o símbolo do Segunda Venda no centro.
-     Substitui os splash.png do template, que traziam o logo do Capacitor. -->
+<!-- Tela de abertura: o símbolo do Segunda Venda no centro, sobre o mesmo
+     cinza-claro (#F7F7F7) do fundo das telas e da abertura do index.html, para
+     a passagem do nativo para as telas não piscar. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/white" />
+    <item>
+        <color android:color="#FFF7F7F7" />
+    </item>
     <item
         android:width="192dp"
         android:height="192dp"
