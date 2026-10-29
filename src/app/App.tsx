@@ -12,6 +12,7 @@ import { useAreaPermissions, type AreaKey } from "@/hooks/useAreaPermissions";
 import { Abertura } from "@/app/blocos/Abertura";
 import { TELAS_DO_APP } from "@/app/navegacao/itensMenu";
 import { noSite } from "@/app/site";
+import Clientes from "@/app/telas/Clientes";
 import Entrar from "@/app/telas/Entrar";
 import Inicio from "@/app/telas/Inicio";
 import Menu from "@/app/telas/Menu";
@@ -131,6 +132,7 @@ export default function App() {
                   <Route path="/" element={<ComConta><Inicio /></ComConta>} />
                   <Route path="/menu" element={<ComConta><Menu /></ComConta>} />
                   <Route path="/pedidos" element={<ComConta><ComArea area="pedidos"><Pedidos /></ComArea></ComConta>} />
+                  <Route path="/clientes" element={<ComConta><ComArea area="clientes"><Clientes /></ComArea></ComConta>} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </BrowserRouter>
