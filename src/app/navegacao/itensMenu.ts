@@ -57,7 +57,7 @@ export const gestaoItems: ItemMenu[] = [
  * página do site no navegador (app/site.ts). A cada tela portada, o caminho
  * entra aqui e ela passa a abrir dentro do app.
  */
-export const TELAS_DO_APP = new Set<string>(["/"]);
+export const TELAS_DO_APP = new Set<string>(["/", "/clientes"]);
 
 /**
  * Fora do app até ter tela própria: Minha Conta tem compra e troca de plano, e
