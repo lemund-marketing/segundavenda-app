@@ -1,37 +1,243 @@
 {
   "$explicacao": [
-    "De onde veio cada arquivo que o app copiou do site (lemund-marketing/segundavenda, branch test).",
-    "copias: o arquivo está no mesmo caminho do site e pode ter ajustes do app. scripts/comparar-origem.mjs junta sozinho (em 3 vias) o que o site mudou desde o commit registrado.",
-    "derivados: arquivo do app (src/app/) escrito a partir de um arquivo do site. Quando a origem muda no site, a comparação avisa e a regra é portada à mão.",
-    "Nunca edite commit/blob à mão: o script atualiza ao juntar."
+    "De onde veio cada arquivo fora de src/app/ (e os derivados dentro dele). Site = lemund-marketing/segundavenda, branch test.",
+    "copias: arquivo do site, no mesmo caminho, que pode ter ajustes do app. scripts/comparar-origem.mjs junta sozinho (em 3 vias) o que o site mudou desde o commit registrado.",
+    "novos: peça nova do redesenho de celular que o site não tem. Mora no caminho em que foi criada porque cópias do site a importam por lá. É do app.",
+    "derivados: arquivo do app (src/app/) escrito a partir de arquivos do site. Quando a origem muda no site, a comparação avisa e a regra é portada à mão.",
+    "Para copiar mais: scripts/copiar-do-site.mjs. Não edite commit/blob à mão."
   ],
   "site": "lemund-marketing/segundavenda",
   "branch": "test",
   "copias": {
-    "src/lib/utils.ts": {
-      "origem": "src/lib/utils.ts",
+    "components.json": {
+      "origem": "components.json",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "bd0c391ddd1088e9067844c48835bf4abcd61783"
+      "blob": "f29e3f1610677762f3d97aaefc9ce40a9d410948"
     },
-    "src/vite-env.d.ts": {
-      "origem": "src/vite-env.d.ts",
+    "eslint.config.js": {
+      "origem": "eslint.config.js",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "11f02fe2a0061d6e6e1f271b21da95423b448b32"
+      "blob": "e67846f70fbbe40407fc84875913595ab31c4a47"
     },
-    "src/index.css": {
-      "origem": "src/index.css",
+    "postcss.config.js": {
+      "origem": "postcss.config.js",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "330fae2d234a3543d2a5f0bd27d6d40baf0cd490"
+      "blob": "2e7af2b7f1a6f391da1631d93968a9d487ba977d"
     },
-    "src/integrations/supabase/types.ts": {
-      "origem": "src/integrations/supabase/types.ts",
+    "src/assets/logo-segunda-venda-final.svg": {
+      "origem": "src/assets/logo-segunda-venda-final.svg",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "d34244d721dcb5562713b7504c8391c4cd022fe6"
+      "blob": "d8830c48bed8ea128f777421ec7e2880c0f94954"
     },
-    "src/integrations/supabase/client.ts": {
-      "origem": "src/integrations/supabase/client.ts",
+    "src/components/clients/EditClientDialog.tsx": {
+      "origem": "src/components/clients/EditClientDialog.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "cc724f5bc2ec2b6860aa4ee554791ece4608f68e"
+      "blob": "412f67ad25104eb4b30cbbde6601f2f404c34cc2"
+    },
+    "src/components/clients/NumeroErrado.tsx": {
+      "origem": "src/components/clients/NumeroErrado.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "7dbef4606b680f04675a2603a412d90bdb1f1e6c"
+    },
+    "src/components/clients/sections/ClientBehaviorTab.tsx": {
+      "origem": "src/components/clients/sections/ClientBehaviorTab.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "2a05a47ed38d629004fe7fc544a490812a6e29fb"
+    },
+    "src/components/clients/sections/ClientHeader.tsx": {
+      "origem": "src/components/clients/sections/ClientHeader.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "7113a678ac8812b51dc7334f16d18ff8687c9406"
+    },
+    "src/components/clients/sections/ClientHistoryTab.tsx": {
+      "origem": "src/components/clients/sections/ClientHistoryTab.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "dc1754c08e80a73a12cf06b912665fd28531d04b"
+    },
+    "src/components/clients/sections/ClientOrdersTab.tsx": {
+      "origem": "src/components/clients/sections/ClientOrdersTab.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "c49ee40cbf9ccc11468e2b2d6665d07d7b44cb3d"
+    },
+    "src/components/clients/sections/ClientOverviewTab.tsx": {
+      "origem": "src/components/clients/sections/ClientOverviewTab.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "5b9963e18210b8b6c9bec0cf8b29f940b92ac777"
+    },
+    "src/components/clients/sections/shared.tsx": {
+      "origem": "src/components/clients/sections/shared.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "9b1f87669682403cb8f34f6f6d29930f49536fb1"
+    },
+    "src/components/clients/sections/useClientDetail.ts": {
+      "origem": "src/components/clients/sections/useClientDetail.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "b9518ee33d59b9eae73759de148a2596368b3e82"
+    },
+    "src/components/clients/StoreBadge.tsx": {
+      "origem": "src/components/clients/StoreBadge.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "37c151a80c5ebd62fb7b10bd4857e09aafeb715a"
+    },
+    "src/components/crm/ClientAvatar.tsx": {
+      "origem": "src/components/crm/ClientAvatar.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ffed3612d51cd9a5833843042c1e01dffb72b6e6"
+    },
+    "src/components/crm/ClientDetailSheet.tsx": {
+      "origem": "src/components/crm/ClientDetailSheet.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "88e19c30ddb291c6b6ae699436b09338b3fee202"
+    },
+    "src/components/crm/StageBadge.tsx": {
+      "origem": "src/components/crm/StageBadge.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ad4f019567f4e61b0f49bfe5ed7f7f8280765a2a"
+    },
+    "src/components/crm/TriggerWorkflowDialog.tsx": {
+      "origem": "src/components/crm/TriggerWorkflowDialog.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "8022a14f58ba53e923c0a5ae389b382c10b5cc22"
+    },
+    "src/components/dashboard/shared.tsx": {
+      "origem": "src/components/dashboard/shared.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "dff97b71defa8bc2b069ecfdc1d67e7d35a0bd65"
+    },
+    "src/components/pedidos/orderRowShared.ts": {
+      "origem": "src/components/pedidos/orderRowShared.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "79d29f510a3e3a67fcfdeed53ec4136bfbce6dcc"
+    },
+    "src/components/rfv/RfvBadge.tsx": {
+      "origem": "src/components/rfv/RfvBadge.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "f9799655eac54ae9b2232ce95b4195cd110fd789"
+    },
+    "src/components/SecurityMonitor.tsx": {
+      "origem": "src/components/SecurityMonitor.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "c1d6529fe4d3d8bfb2fb76ee6965b1892055ed6a"
+    },
+    "src/components/ui/alert-dialog.tsx": {
+      "origem": "src/components/ui/alert-dialog.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "8722561cf6bda62d62f9a0c67730aefda971873a"
+    },
+    "src/components/ui/alert.tsx": {
+      "origem": "src/components/ui/alert.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "41fa7e0561a3fdb5f986c1213a35e563de740e96"
+    },
+    "src/components/ui/avatar.tsx": {
+      "origem": "src/components/ui/avatar.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "991f56ecb117e96284bf0f6cad3b14ea2fdf5264"
+    },
+    "src/components/ui/badge.tsx": {
+      "origem": "src/components/ui/badge.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "f000e3ef5176395b067dfc3f3e1256a80c450015"
+    },
+    "src/components/ui/button.tsx": {
+      "origem": "src/components/ui/button.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "1a4612d47d34f51524558a4ed7deac36fbe794f8"
+    },
+    "src/components/ui/card.tsx": {
+      "origem": "src/components/ui/card.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "b593903f75a28c3f896eb0e8a6f23c4442c44206"
+    },
+    "src/components/ui/dialog.tsx": {
+      "origem": "src/components/ui/dialog.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "c23630eb841533af4030574e54106f0fdf0fc677"
+    },
+    "src/components/ui/input.tsx": {
+      "origem": "src/components/ui/input.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "5d84a36ab14de4889d2ff84f6ad6dd29f02ad263"
+    },
+    "src/components/ui/label.tsx": {
+      "origem": "src/components/ui/label.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "683faa793819982d64e21cb2939666fd6d4a7b13"
+    },
+    "src/components/ui/popover.tsx": {
+      "origem": "src/components/ui/popover.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "5f5e5bfeea85e2b1ce89559f20e2c5afdb8d080a"
+    },
+    "src/components/ui/progress.tsx": {
+      "origem": "src/components/ui/progress.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "105fb650055b71797510142dfa041b5d80808041"
+    },
+    "src/components/ui/scroll-area.tsx": {
+      "origem": "src/components/ui/scroll-area.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "cf253cf17056ce04827219643e484ea99c77cf6b"
+    },
+    "src/components/ui/select.tsx": {
+      "origem": "src/components/ui/select.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "fe56d4d3ad53f9c3ec9434f2d39feb7571a3b52f"
+    },
+    "src/components/ui/separator.tsx": {
+      "origem": "src/components/ui/separator.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "6d7f12265ba0338704f013930ce4d52c56527dd1"
+    },
+    "src/components/ui/sheet.tsx": {
+      "origem": "src/components/ui/sheet.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "8ae82cd14e0d69148681d7e742a15c68a70ed7b8"
+    },
+    "src/components/ui/skeleton.tsx": {
+      "origem": "src/components/ui/skeleton.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "01b8b6d4f716ff7c26065bc9e46aebd932729fc1"
+    },
+    "src/components/ui/sonner.tsx": {
+      "origem": "src/components/ui/sonner.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "35418149c0656c2257baf517e85496ef759677f5"
+    },
+    "src/components/ui/tabs.tsx": {
+      "origem": "src/components/ui/tabs.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "f57fffdb5a07cd21b12f8c014513475a6980a469"
+    },
+    "src/components/ui/textarea.tsx": {
+      "origem": "src/components/ui/textarea.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "9f9a6dc56193b728feda6d9b1a3d9302b8880f0b"
+    },
+    "src/components/ui/toast.tsx": {
+      "origem": "src/components/ui/toast.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "dd36297b8a253f5680f05d0f948f27d5bdca0a31"
+    },
+    "src/components/ui/toaster.tsx": {
+      "origem": "src/components/ui/toaster.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "6c67edff67a48c6ac1c46f25a6d468dd461e66cb"
+    },
+    "src/components/ui/tooltip.tsx": {
+      "origem": "src/components/ui/tooltip.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "e121f0aea0b32952ae54d7db8965a2c15168b13e"
+    },
+    "src/components/UsageProgressBar.tsx": {
+      "origem": "src/components/UsageProgressBar.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "7ca86f879e82ea50ecb8e927e883168f2da9abce"
+    },
+    "src/components/WhatsAppIcon.tsx": {
+      "origem": "src/components/WhatsAppIcon.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "46030613e1ec3668ca239b2f4d5682a7772e2f67"
     },
     "src/contexts/AuthContext.tsx": {
       "origem": "src/contexts/AuthContext.tsx",
@@ -48,6 +254,16 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "dd2f4fba8f723624f836ef6da902cce49a08a79a"
     },
+    "src/hooks/rpc.ts": {
+      "origem": "src/hooks/rpc.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "cfc47a67f5bb4792a1dc741796a206e9a052d635"
+    },
+    "src/hooks/use-mobile.tsx": {
+      "origem": "src/hooks/use-mobile.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "6955363194f03b0e9c5f4da987a93dc7e9109bad"
+    },
     "src/hooks/use-toast.ts": {
       "origem": "src/hooks/use-toast.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -58,140 +274,120 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "fb003dde3edba04c14e15de7f6f7c1905c4276bc"
     },
-    "src/utils/validation.ts": {
-      "origem": "src/utils/validation.ts",
+    "src/hooks/useClientOrderStatusHistory.ts": {
+      "origem": "src/hooks/useClientOrderStatusHistory.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "3594ecfd8ec54776bc7f612d1e4dfea52c656753"
+      "blob": "8a5e666b578ca2a2c7d538886160a1593d07f9d2"
+    },
+    "src/hooks/useDashboardV2.ts": {
+      "origem": "src/hooks/useDashboardV2.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "9ce1a4f7dacd1cc0ddddc30a99510c9aa1dac5ee"
+    },
+    "src/hooks/useMarketplaceAliases.ts": {
+      "origem": "src/hooks/useMarketplaceAliases.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "edb1c70a32caabe91c51a53dbe560af43edcb9ff"
+    },
+    "src/hooks/useNumeroErrado.ts": {
+      "origem": "src/hooks/useNumeroErrado.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "b6158af39d18b737103d58fe6903e87cb0ee032c"
+    },
+    "src/hooks/usePedidosKpis.ts": {
+      "origem": "src/hooks/usePedidosKpis.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ee40a3e90ea5b4bee07a7ed0542188f81f8b0036"
+    },
+    "src/hooks/useRegioes.ts": {
+      "origem": "src/hooks/useRegioes.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "84d6cd26738faf5bfd2bea7f23c22467fbb6472c"
+    },
+    "src/hooks/useRfv.ts": {
+      "origem": "src/hooks/useRfv.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "60432b45c6ab0d4715003ae14cb0bec1f337fcd9"
+    },
+    "src/hooks/useWhatsAppConversao7d.ts": {
+      "origem": "src/hooks/useWhatsAppConversao7d.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "c7ad3af13731a04aa4e423b3f4309e5ddd1e2838"
+    },
+    "src/index.css": {
+      "origem": "src/index.css",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "330fae2d234a3543d2a5f0bd27d6d40baf0cd490"
+    },
+    "src/integrations/supabase/client.ts": {
+      "origem": "src/integrations/supabase/client.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "cc724f5bc2ec2b6860aa4ee554791ece4608f68e"
+    },
+    "src/integrations/supabase/types.ts": {
+      "origem": "src/integrations/supabase/types.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "d34244d721dcb5562713b7504c8391c4cd022fe6"
     },
     "src/lib/cicloCaptura.ts": {
       "origem": "src/lib/cicloCaptura.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "46c025d83495f91cc1fac8a8e8104d6c8b797076"
     },
-    "src/components/UsageProgressBar.tsx": {
-      "origem": "src/components/UsageProgressBar.tsx",
+    "src/lib/utils.ts": {
+      "origem": "src/lib/utils.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "7ca86f879e82ea50ecb8e927e883168f2da9abce"
+      "blob": "bd0c391ddd1088e9067844c48835bf4abcd61783"
     },
-    "src/components/WhatsAppIcon.tsx": {
-      "origem": "src/components/WhatsAppIcon.tsx",
+    "src/utils/contrastInk.ts": {
+      "origem": "src/utils/contrastInk.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "46030613e1ec3668ca239b2f4d5682a7772e2f67"
+      "blob": "8f590489e35913bdd1d52785df77beeba269e740"
     },
-    "src/assets/logo-segunda-venda-final.svg": {
-      "origem": "src/assets/logo-segunda-venda-final.svg",
+    "src/utils/formatters.ts": {
+      "origem": "src/utils/formatters.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "d8830c48bed8ea128f777421ec7e2880c0f94954"
+      "blob": "1eccc9819f1719bf741d06bac87eabcbe097a977"
     },
-    "src/components/ui/avatar.tsx": {
-      "origem": "src/components/ui/avatar.tsx",
+    "src/utils/groupOrdersByWindow.ts": {
+      "origem": "src/utils/groupOrdersByWindow.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "991f56ecb117e96284bf0f6cad3b14ea2fdf5264"
+      "blob": "b8aca110d8169c9f6c207f14597e3840e345b531"
     },
-    "src/components/ui/button.tsx": {
-      "origem": "src/components/ui/button.tsx",
+    "src/utils/marketplaceColors.ts": {
+      "origem": "src/utils/marketplaceColors.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "1a4612d47d34f51524558a4ed7deac36fbe794f8"
+      "blob": "b09e868dad6d9b4671905f3413bce3a0af12dacc"
     },
-    "src/components/ui/input.tsx": {
-      "origem": "src/components/ui/input.tsx",
+    "src/utils/showcaseMask.ts": {
+      "origem": "src/utils/showcaseMask.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "5d84a36ab14de4889d2ff84f6ad6dd29f02ad263"
+      "blob": "52acf0ec73d3c4a2e2dad846d99dfc0ad190b54a"
     },
-    "src/components/ui/label.tsx": {
-      "origem": "src/components/ui/label.tsx",
+    "src/utils/validation.ts": {
+      "origem": "src/utils/validation.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "683faa793819982d64e21cb2939666fd6d4a7b13"
+      "blob": "3594ecfd8ec54776bc7f612d1e4dfea52c656753"
     },
-    "src/components/ui/progress.tsx": {
-      "origem": "src/components/ui/progress.tsx",
+    "src/vite-env.d.ts": {
+      "origem": "src/vite-env.d.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "105fb650055b71797510142dfa041b5d80808041"
-    },
-    "src/components/ui/tooltip.tsx": {
-      "origem": "src/components/ui/tooltip.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "e121f0aea0b32952ae54d7db8965a2c15168b13e"
-    },
-    "src/components/ui/toast.tsx": {
-      "origem": "src/components/ui/toast.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "dd36297b8a253f5680f05d0f948f27d5bdca0a31"
-    },
-    "src/components/ui/toaster.tsx": {
-      "origem": "src/components/ui/toaster.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "6c67edff67a48c6ac1c46f25a6d468dd461e66cb"
-    },
-    "src/components/ui/skeleton.tsx": {
-      "origem": "src/components/ui/skeleton.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "01b8b6d4f716ff7c26065bc9e46aebd932729fc1"
-    },
-    "src/components/ui/card.tsx": {
-      "origem": "src/components/ui/card.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "b593903f75a28c3f896eb0e8a6f23c4442c44206"
-    },
-    "src/components/ui/badge.tsx": {
-      "origem": "src/components/ui/badge.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "f000e3ef5176395b067dfc3f3e1256a80c450015"
-    },
-    "src/components/ui/separator.tsx": {
-      "origem": "src/components/ui/separator.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "6d7f12265ba0338704f013930ce4d52c56527dd1"
-    },
-    "src/components/ui/sonner.tsx": {
-      "origem": "src/components/ui/sonner.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "35418149c0656c2257baf517e85496ef759677f5"
-    },
-    "src/components/ui/sheet.tsx": {
-      "origem": "src/components/ui/sheet.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "8ae82cd14e0d69148681d7e742a15c68a70ed7b8"
-    },
-    "src/components/ui/dialog.tsx": {
-      "origem": "src/components/ui/dialog.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "c23630eb841533af4030574e54106f0fdf0fc677"
-    },
-    "src/components/ui/alert-dialog.tsx": {
-      "origem": "src/components/ui/alert-dialog.tsx",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "8722561cf6bda62d62f9a0c67730aefda971873a"
+      "blob": "11f02fe2a0061d6e6e1f271b21da95423b448b32"
     },
     "tailwind.config.ts": {
       "origem": "tailwind.config.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "b41f5bef886bb99901aca359c97798e9adc59416"
     },
-    "postcss.config.js": {
-      "origem": "postcss.config.js",
+    "tsconfig.app.json": {
+      "origem": "tsconfig.app.json",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "2e7af2b7f1a6f391da1631d93968a9d487ba977d"
-    },
-    "eslint.config.js": {
-      "origem": "eslint.config.js",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "e67846f70fbbe40407fc84875913595ab31c4a47"
-    },
-    "components.json": {
-      "origem": "components.json",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "f29e3f1610677762f3d97aaefc9ce40a9d410948"
+      "blob": "a9810758f44c2fb8ee59bbbdea6ea04921eaafc8"
     },
     "tsconfig.json": {
       "origem": "tsconfig.json",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "6b68d80b7d92d0c4a5d774897f2bedfa95b42669"
-    },
-    "tsconfig.app.json": {
-      "origem": "tsconfig.app.json",
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "blob": "a9810758f44c2fb8ee59bbbdea6ea04921eaafc8"
     },
     "tsconfig.node.json": {
       "origem": "tsconfig.node.json",
@@ -199,17 +395,76 @@
       "blob": "3133162c20350e1741b94b8d2ff77b811bec8363"
     }
   },
+  "novos": {
+    "src/components/dashboard/CurvaGrafico.tsx": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/dashboard/DashboardMobile.tsx": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/mobile/blocos.tsx": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/mobile/tamanhoDoValor.ts": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/PedacoComFalha.tsx": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/pedidos/PedidoCardMobile.tsx": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/pedidos/PedidosKpisMobile.tsx": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/pedidos/statusPedido.ts": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/regioes/estadosBrasil.ts": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/regioes/metricasMapa.ts": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/components/regioes/RankingEstados.tsx": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    },
+    "src/utils/lazyComRecarga.ts": {
+      "ramo": "claude/loving-gauss-srm48s",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b"
+    }
+  },
   "derivados": {
-    "src/app/telas/Entrar.tsx": {
+    "src/app/LayoutApp.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
         {
-          "caminho": "src/pages/Auth.tsx",
-          "blob": "4bb0e5ef69f3f01ec3c73198b4560cf0b24d2ea2"
+          "caminho": "src/components/layouts/AppLayout.tsx",
+          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
         }
       ]
     },
-    "src/app/telas/Menu.tsx": {
+    "src/app/blocos/LimiteCaptura.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/components/LimiteCapturaMenu.tsx",
+          "blob": "b9cc46e90ad7b4fe7550967dc3bd54be0cb7bf3b"
+        }
+      ]
+    },
+    "src/app/dados/useEhAfiliado.ts": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
         {
@@ -231,25 +486,16 @@
         }
       ]
     },
-    "src/app/blocos/LimiteCaptura.tsx": {
+    "src/app/telas/Entrar.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
         {
-          "caminho": "src/components/LimiteCapturaMenu.tsx",
-          "blob": "b9cc46e90ad7b4fe7550967dc3bd54be0cb7bf3b"
+          "caminho": "src/pages/Auth.tsx",
+          "blob": "4bb0e5ef69f3f01ec3c73198b4560cf0b24d2ea2"
         }
       ]
     },
-    "src/app/LayoutApp.tsx": {
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "origens": [
-        {
-          "caminho": "src/components/layouts/AppLayout.tsx",
-          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
-        }
-      ]
-    },
-    "src/app/dados/useEhAfiliado.ts": {
+    "src/app/telas/Menu.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
         {

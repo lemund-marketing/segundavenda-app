@@ -3,7 +3,8 @@
 //
 //   node scripts/comparar-origem.mjs --checar
 //       Sem o site. Confere que todo arquivo de src/ fora de src/app/ está
-//       registrado no ORIGEM.json (é cópia do site) e que todo registro existe.
+//       registrado no ORIGEM.json (cópia do site ou peça nova do redesenho) e
+//       que todo registro existe.
 //       Roda no CI de todo push.
 //
 //   node scripts/comparar-origem.mjs --site ../segundavenda [--ref origin/test] [--juntar] [--relatorio saida.md]
@@ -39,9 +40,9 @@ function checar() {
   const arquivos = listar(join(RAIZ, "src")).map((a) => relative(RAIZ, a));
   for (const a of arquivos) {
     if (a.startsWith("src/app/")) continue;
-    if (!origem.copias[a]) problemas.push(`${a}: está fora de src/app/ mas não é cópia registrada no ORIGEM.json`);
+    if (!origem.copias[a] && !origem.novos?.[a]) problemas.push(`${a}: está fora de src/app/ mas não está no ORIGEM.json (copias ou novos)`);
   }
-  for (const a of [...Object.keys(origem.copias), ...Object.keys(origem.derivados)]) {
+  for (const a of [...Object.keys(origem.copias), ...Object.keys(origem.novos ?? {}), ...Object.keys(origem.derivados)]) {
     if (!existsSync(join(RAIZ, a))) problemas.push(`${a}: está no ORIGEM.json mas não existe`);
   }
   for (const a of Object.keys(origem.derivados)) {
@@ -52,7 +53,9 @@ function checar() {
     console.error("\nArquivo novo do app vai em src/app/. Cópia do site entra pelo ORIGEM.json (ver LEIA-ME).");
     return 1;
   }
-  console.log(`ORIGEM.json em ordem: ${Object.keys(origem.copias).length} cópias, ${Object.keys(origem.derivados).length} derivados.`);
+  console.log(
+    `ORIGEM.json em ordem: ${Object.keys(origem.copias).length} cópias, ${Object.keys(origem.novos ?? {}).length} novos, ${Object.keys(origem.derivados).length} derivados.`,
+  );
   return 0;
 }
 
@@ -100,6 +103,10 @@ function comparar(site, ref, juntar, relatorio) {
     }
   }
 
+  // Peça nova do app num caminho do site: se o site criar um arquivo ali, os
+  // dois passam a disputar o mesmo nome.
+  const colisoes = Object.keys(origem.novos ?? {}).filter((a) => blobNo(alvo, a));
+
   const derivadosMudados = [];
   for (const [arquivo, d] of Object.entries(origem.derivados)) {
     const mudadas = d.origens.filter((o) => blobNo(alvo, o.caminho) !== o.blob).map((o) => o.caminho);
@@ -114,11 +121,12 @@ function comparar(site, ref, juntar, relatorio) {
   secao("Conflito: juntar à mão", conflitos);
   secao("Mudaram no site (rode com --juntar para trazer)", mudaram);
   secao("Sumiram do site (o app ainda usa a cópia)", sumiram);
+  secao("O site criou um arquivo no caminho de uma peça nova do app (renomear a do app)", colisoes);
   secao("Derivados: portar a regra à mão", derivadosMudados, (d) => {
     const diff = git("diff", "--stat", d.commit, alvo, "--", ...d.mudadas).trim().split("\n").pop();
     return `- \`${d.arquivo}\` ← ${d.mudadas.map((m) => `\`${m}\``).join(", ")} (${diff}; \`git diff ${d.commit.slice(0, 8)} ${alvo.slice(0, 8)} -- ${d.mudadas.join(" ")}\`)`;
   });
-  const total = juntados.length + conflitos.length + mudaram.length + sumiram.length + derivadosMudados.length;
+  const total = juntados.length + conflitos.length + mudaram.length + sumiram.length + colisoes.length + derivadosMudados.length;
   if (!total) linhas.push("Nada mudou nos arquivos que o app copiou.");
 
   if (juntados.length) writeFileSync(ARQ_ORIGEM, JSON.stringify(origem, null, 2) + "\n");
