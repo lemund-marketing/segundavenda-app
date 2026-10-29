@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ExternalLink, LifeBuoy, Mail, MessageSquare, User as UserIcon } from "lucide-react";
+import { AlertTriangle, ExternalLink, LifeBuoy, Mail, MessageSquare, User as UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,9 +66,8 @@ const CAMPO = "h-11 rounded-xl text-[15px]";
 
 export default function Conta() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const pedida = searchParams.get("tab");
   // Link antigo para uma aba que o app não tem (?tab=plano) cai no Perfil.
-  const abaAtiva = ABAS.some((a) => a.value === pedida) ? (pedida as string) : "perfil";
+  const abaAtiva = ABAS.find((a) => a.value === searchParams.get("tab"))?.value ?? "perfil";
   const trocarAba = (v: string) => {
     const p = new URLSearchParams(searchParams);
     p.set("tab", v);
@@ -80,9 +79,12 @@ export default function Conta() {
   const { toast } = useToast();
   const [salvando, setSalvando] = useState(false);
   const [perfil, setPerfil] = useState<Perfil | null>(null);
+  const [erroAoCarregar, setErroAoCarregar] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
     if (!user) return;
+    setErroAoCarregar(false);
     void (async () => {
       const { data, error } = await supabase
         .from("profiles")
@@ -91,13 +93,14 @@ export default function Conta() {
         .single();
       if (error) {
         toast({ title: "Erro ao carregar perfil", description: error.message, variant: "destructive" });
+        setErroAoCarregar(true);
         return;
       }
       setPerfil(data);
     })();
     // user?.id e não user: o TOKEN_REFRESHED troca o objeto e refaria a busca.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
+  }, [user?.id, tentativa]);
 
   const salvarPerfil = async () => {
     if (!user || !perfil) return;
@@ -145,6 +148,24 @@ export default function Conta() {
     }
   };
 
+  // No site o esqueleto fica até recarregar a página; no app não há o que
+  // recarregar, e sem internet a tela ficaria presa nele.
+  if (!perfil && erroAoCarregar) {
+    return (
+      <LayoutApp>
+        <div className="px-4 pb-6 pt-4">
+          <div className="flex flex-col items-center gap-3 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
+            <AlertTriangle className="h-6 w-6 text-muted-foreground" />
+            <p className="text-sm font-medium text-foreground">Não foi possível carregar o seu perfil.</p>
+            <Button variant="outline" size="sm" className="rounded-full" onClick={() => setTentativa((n) => n + 1)}>
+              Tentar de novo
+            </Button>
+          </div>
+        </div>
+      </LayoutApp>
+    );
+  }
+
   if (!perfil) {
     return (
       <LayoutApp>
@@ -185,7 +206,7 @@ export default function Conta() {
                     <Input
                       id="m_full_name"
                       className={CAMPO}
-                      value={perfil.full_name}
+                      value={perfil.full_name || ""}
                       onChange={(e) => setPerfil({ ...perfil, full_name: e.target.value })}
                     />
                   </div>
