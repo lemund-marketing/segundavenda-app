@@ -29,6 +29,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "d8830c48bed8ea128f777421ec7e2880c0f94954"
     },
+    "src/components/clients/clientesFilters.ts": {
+      "origem": "src/components/clients/clientesFilters.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "6266f4e0a91a8da491e923e618b9ece1b354e469"
+    },
     "src/components/clients/EditClientDialog.tsx": {
       "origem": "src/components/clients/EditClientDialog.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -104,10 +109,55 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "dff97b71defa8bc2b069ecfdc1d67e7d35a0bd65"
     },
+    "src/components/filtros/FiltrosSheetShell.tsx": {
+      "origem": "src/components/filtros/FiltrosSheetShell.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "20128903faa771001c111b012bc603ace31399f1"
+    },
+    "src/components/filtros/numeros.ts": {
+      "origem": "src/components/filtros/numeros.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "f2e6b3e2daa2f77f01ea0a2081670b2bce04a19a"
+    },
+    "src/components/filtros/SecaoFiltros.tsx": {
+      "origem": "src/components/filtros/SecaoFiltros.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "feeef9908bdee9c0b8009e97844109c278c8cd01"
+    },
+    "src/components/orders/OrderShipmentSheet.tsx": {
+      "origem": "src/components/orders/OrderShipmentSheet.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "6faf123ae6d0331745aaf8851df3d9c60f7d1d0b"
+    },
+    "src/components/pedidos/kpiCard.tsx": {
+      "origem": "src/components/pedidos/kpiCard.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "9a302a0bc1fe72875350aa2b405da5fa322f60a4"
+    },
+    "src/components/pedidos/LojaMultiSelect.tsx": {
+      "origem": "src/components/pedidos/LojaMultiSelect.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ba58327c2c7c3326979e3b3d80ddcb42ae91706d"
+    },
     "src/components/pedidos/orderRowShared.ts": {
       "origem": "src/components/pedidos/orderRowShared.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "79d29f510a3e3a67fcfdeed53ec4136bfbce6dcc"
+    },
+    "src/components/pedidos/OrdersTableV2.tsx": {
+      "origem": "src/components/pedidos/OrdersTableV2.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "2574fede8f916199d1b19b202479bba13b389f77"
+    },
+    "src/components/pedidos/PedidosChartCard.tsx": {
+      "origem": "src/components/pedidos/PedidosChartCard.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "cc7d9250ad0772bc6efcba4ca63436b94baa4dc3"
+    },
+    "src/components/pedidos/PedidosFiltersSheet.tsx": {
+      "origem": "src/components/pedidos/PedidosFiltersSheet.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "20595777aaf9ece07e0c9527d2bf9081c0d72b8a"
     },
     "src/components/rfv/RfvBadge.tsx": {
       "origem": "src/components/rfv/RfvBadge.tsx",
@@ -118,6 +168,11 @@
       "origem": "src/components/SecurityMonitor.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "c1d6529fe4d3d8bfb2fb76ee6965b1892055ed6a"
+    },
+    "src/components/ui/accordion.tsx": {
+      "origem": "src/components/ui/accordion.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "e6a723d06574ee5cec8b00759b98f3fbe1ac7cc9"
     },
     "src/components/ui/alert-dialog.tsx": {
       "origem": "src/components/ui/alert-dialog.tsx",
@@ -144,10 +199,25 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "1a4612d47d34f51524558a4ed7deac36fbe794f8"
     },
+    "src/components/ui/calendar.tsx": {
+      "origem": "src/components/ui/calendar.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "3160ad0f396d96ec2f499e3e76aae44656f58497"
+    },
     "src/components/ui/card.tsx": {
       "origem": "src/components/ui/card.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "b593903f75a28c3f896eb0e8a6f23c4442c44206"
+    },
+    "src/components/ui/checkbox.tsx": {
+      "origem": "src/components/ui/checkbox.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ddbdd01d8d1491ab772790db8d40c5ac0a2630f3"
+    },
+    "src/components/ui/collapsible.tsx": {
+      "origem": "src/components/ui/collapsible.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "a23e7a281287e18b1c332498491b6bcc8d8e2b70"
     },
     "src/components/ui/dialog.tsx": {
       "origem": "src/components/ui/dialog.tsx",
@@ -203,6 +273,11 @@
       "origem": "src/components/ui/sonner.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "35418149c0656c2257baf517e85496ef759677f5"
+    },
+    "src/components/ui/switch.tsx": {
+      "origem": "src/components/ui/switch.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "aa58baa29c676db7b14a37436a9662107b0111ec"
     },
     "src/components/ui/tabs.tsx": {
       "origem": "src/components/ui/tabs.tsx",
@@ -274,6 +349,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "fb003dde3edba04c14e15de7f6f7c1905c4276bc"
     },
+    "src/hooks/useClientesFacets.ts": {
+      "origem": "src/hooks/useClientesFacets.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "47efcf21b4a322ce793b7c82f6d355f785a1e5eb"
+    },
     "src/hooks/useClientOrderStatusHistory.ts": {
       "origem": "src/hooks/useClientOrderStatusHistory.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -293,6 +373,16 @@
       "origem": "src/hooks/useNumeroErrado.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "b6158af39d18b737103d58fe6903e87cb0ee032c"
+    },
+    "src/hooks/useOrderShipment.ts": {
+      "origem": "src/hooks/useOrderShipment.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "82d96a8f9ff88998f2e608972bdab17872899dab"
+    },
+    "src/hooks/usePedidosChart.ts": {
+      "origem": "src/hooks/usePedidosChart.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "3a8aafd4399557f54c9a2ba1ac3a9bdfeaed8ecd"
     },
     "src/hooks/usePedidosKpis.ts": {
       "origem": "src/hooks/usePedidosKpis.ts",
@@ -334,6 +424,16 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "46c025d83495f91cc1fac8a8e8104d6c8b797076"
     },
+    "src/lib/regioes.ts": {
+      "origem": "src/lib/regioes.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "26acf4b48722a067c56d56b0592a1b6e98a4f31b"
+    },
+    "src/lib/ufs.ts": {
+      "origem": "src/lib/ufs.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "69ee11437995cce4cb8e99b13d048b781b74e35c"
+    },
     "src/lib/utils.ts": {
       "origem": "src/lib/utils.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -358,6 +458,16 @@
       "origem": "src/utils/marketplaceColors.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "b09e868dad6d9b4671905f3413bce3a0af12dacc"
+    },
+    "src/utils/relativeDate.ts": {
+      "origem": "src/utils/relativeDate.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "f2bd8483f4c38b7e93ef6e4028facedca2e94ca8"
+    },
+    "src/utils/shipmentStatus.ts": {
+      "origem": "src/utils/shipmentStatus.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "08c3b70f616fd576ba8eb4125394240ea1ff11f1"
     },
     "src/utils/showcaseMask.ts": {
       "origem": "src/utils/showcaseMask.ts",
@@ -446,15 +556,6 @@
     }
   },
   "derivados": {
-    "src/app/LayoutApp.tsx": {
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "origens": [
-        {
-          "caminho": "src/components/layouts/AppLayout.tsx",
-          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
-        }
-      ]
-    },
     "src/app/blocos/LimiteCaptura.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
@@ -470,6 +571,24 @@
         {
           "caminho": "src/components/AppSidebar.tsx",
           "blob": "72731c8b442995bdeb8a0f9034dc03ce5b7de48d"
+        }
+      ]
+    },
+    "src/app/dados/usePedidos.ts": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Pedidos.tsx",
+          "blob": "e87dc1aa17a779ee2bc453735ad40616d41bf838"
+        }
+      ]
+    },
+    "src/app/LayoutApp.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/components/layouts/AppLayout.tsx",
+          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
         }
       ]
     },
@@ -501,6 +620,15 @@
         {
           "caminho": "src/components/AppSidebar.tsx",
           "blob": "72731c8b442995bdeb8a0f9034dc03ce5b7de48d"
+        }
+      ]
+    },
+    "src/app/telas/Pedidos.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Pedidos.tsx",
+          "blob": "e87dc1aa17a779ee2bc453735ad40616d41bf838"
         }
       ]
     }

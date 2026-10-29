@@ -13,6 +13,7 @@ import { noSite } from "@/app/site";
 import Entrar from "@/app/telas/Entrar";
 import Inicio from "@/app/telas/Inicio";
 import Menu from "@/app/telas/Menu";
+import Pedidos from "@/app/telas/Pedidos";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -112,6 +113,7 @@ export default function App() {
                   <Route path="/entrar" element={<Entrar />} />
                   <Route path="/" element={<ComConta><Inicio /></ComConta>} />
                   <Route path="/menu" element={<ComConta><Menu /></ComConta>} />
+                  <Route path="/pedidos" element={<ComConta><Pedidos /></ComConta>} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </BrowserRouter>
