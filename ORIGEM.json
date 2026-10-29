@@ -525,6 +525,10 @@
         {
           "caminho": "src/pages/Index.tsx",
           "blob": "4e32baab15f8a1ce3d22fa5669e8776e6d09b0d9"
+        },
+        {
+          "caminho": "src/components/AreaGuard.tsx",
+          "blob": "aeb8c3ba3a6361df00979df13a405065d8620eb5"
         }
       ]
     },

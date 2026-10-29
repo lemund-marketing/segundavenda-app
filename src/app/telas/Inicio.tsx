@@ -1,6 +1,8 @@
-import { Suspense, useMemo, useState } from "react";
-import { AlertTriangle, ShoppingCart } from "lucide-react";
+import { Suspense, useMemo, useState, type ReactNode } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { AlertTriangle, Lock, ShoppingCart, WifiOff } from "lucide-react";
 import { useSellerContext } from "@/contexts/SellerContext";
+import { useAreaPermissions } from "@/hooks/useAreaPermissions";
 import {
   useCrmFunnel,
   useDashboardOverview,
@@ -17,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PedacoComFalha } from "@/components/PedacoComFalha";
 import { lazyComRecarga } from "@/utils/lazyComRecarga";
 import { LayoutApp } from "@/app/LayoutApp";
+import { TELAS_DO_APP } from "@/app/navegacao/itensMenu";
 
 // O detalhe do estado só abre num toque: fica fora do pacote da tela, como no site.
 const StateDetailSheet = lazyComRecarga(
@@ -29,8 +32,36 @@ const StateDetailSheet = lazyComRecarga(
  * aberto por pages/Index.tsx). As mesmas consultas, da loja ativa e do mesmo
  * período, entregues ao DashboardMobile; o toque num estado abre o mesmo
  * detalhe da aba Regiões.
+ *
+ * Com a guarda da rota "/" do site (AreaGuard): enquanto as permissões
+ * carregam, mostra o painel; resolvidas, membro que não vê o Dashboard vai
+ * para a primeira área dele, se ela já tem tela no app, ou vê um aviso que
+ * aponta o Menu.
  */
 export default function Inicio() {
+  const { loading, canView, homePath } = useAreaPermissions();
+  if (loading || canView("dashboard")) return <Painel />;
+  if (TELAS_DO_APP.has(homePath)) return <Navigate to={homePath} replace />;
+  return (
+    <LayoutApp>
+      <div className="px-4 pb-6 pt-4">
+        <div className="flex flex-col items-center gap-2 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
+          <Lock className="h-6 w-6 text-muted-foreground" />
+          <p className="text-sm font-medium text-foreground">Seu acesso nesta loja não inclui o Início</p>
+          <p className="text-[13px] text-muted-foreground">As áreas liberadas para você estão no Menu.</p>
+          <Link
+            to="/menu"
+            className="mt-2 rounded-full bg-primary/10 px-3.5 py-1.5 text-[13px] font-medium text-primary active:bg-primary/15"
+          >
+            Abrir o Menu
+          </Link>
+        </div>
+      </div>
+    </LayoutApp>
+  );
+}
+
+function Painel() {
   const { activeSeller, loading: carregandoLoja } = useSellerContext();
   const [periodo, setPeriodo] = useState("30");
   const [ufSelecionada, setUfSelecionada] = useState<string | null>(null);
@@ -54,9 +85,12 @@ export default function Inicio() {
 
   // Só a visão geral segura o esqueleto: os outros blocos chegam cada um no seu tempo.
   const carregando = carregandoLoja || (overview.isLoading && sellerIds.length > 0);
+  // Sem internet a consulta fica em espera (nem dado, nem erro, nem carregando)
+  // e volta sozinha com a conexão: não pode cair no "nenhum pedido".
+  const semInternet = overview.isPending && overview.isPaused;
   const d = overview.data;
 
-  let conteudo;
+  let conteudo: ReactNode;
   if (carregando) {
     conteudo = <Esqueleto />;
   } else if (activeSeller && !overview.isError && d && d.total_orders > 0) {
@@ -96,6 +130,12 @@ export default function Inicio() {
             >
               {overview.isFetching ? "Tentando…" : "Tentar de novo"}
             </Button>
+          </div>
+        ) : semInternet ? (
+          <div className="flex flex-col items-center gap-2 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
+            <WifiOff className="h-6 w-6 text-muted-foreground" />
+            <p className="text-sm font-medium text-foreground">Sem internet</p>
+            <p className="text-[13px] text-muted-foreground">Os números aparecem assim que a conexão voltar.</p>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-2 rounded-3xl border border-border/60 bg-card px-6 py-10 text-center">
