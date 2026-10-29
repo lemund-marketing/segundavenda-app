@@ -190,7 +190,8 @@ function CellSkeleton({ colKey }: { colKey: string }) {
 function ListaSkeleton({ cols, rows = 8 }: { cols: ColSpec[]; rows?: number }) {
   return (
     <>
-      <div className="hidden md:block overflow-x-auto">
+      {/* app: o app é sempre o desenho de celular, também deitado e no tablet (ver use-mobile) */}
+      <div className="hidden overflow-x-auto">
         <table className="w-full table-fixed" style={{ minWidth: totalWidth(cols) }}>
           <tbody className="divide-y divide-border/60">
             {Array.from({ length: rows }).map((_, i) => (
@@ -206,7 +207,7 @@ function ListaSkeleton({ cols, rows = 8 }: { cols: ColSpec[]; rows?: number }) {
         </table>
       </div>
 
-      <div className="md:hidden divide-y divide-border/60">
+      <div className="divide-y divide-border/60">
         {Array.from({ length: rows }).map((_, i) => (
           <div key={i} className="flex items-start gap-3 px-4 py-4">
             <Skeleton className="h-10 w-10 rounded-full shrink-0" />
@@ -307,7 +308,8 @@ export function OrdersTableV2({
         1366. Abaixo de `md` a tabela sai e entra a lista de cards, o mesmo par
         que a tabela de Clientes usa.
       */}
-      <div className="hidden md:block overflow-x-auto">
+      {/* app: o app é sempre o desenho de celular, também deitado e no tablet (ver use-mobile) */}
+      <div className="hidden overflow-x-auto">
         <table className="w-full table-fixed" style={{ minWidth: totalWidth(cols) }}>
           <thead>
             <tr className="border-b border-border">
@@ -572,7 +574,7 @@ export function OrdersTableV2({
           primeira linha; produto e quando na segunda; loja, status, local e os
           atalhos na terceira — os atalhos em círculo verde a 10%, como o resto
           do app. O toque na linha abre a ficha do cliente. */}
-      <div className="md:hidden divide-y divide-border/60">
+      <div className="divide-y divide-border/60">
         {groups.map((group, i) => {
           const order = group.primary;
           const isGroup = group.count > 1;

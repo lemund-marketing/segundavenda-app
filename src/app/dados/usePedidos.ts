@@ -66,6 +66,9 @@ export interface RecortePedidos {
  * A página de pedidos da lista e o total do recorte. Com busca, junta duas
  * consultas (campos do pedido e clientes que casam) e pagina no aparelho; sem
  * busca, conta pela RPC `get_pedidos_count` e pede só a página ao banco.
+ *
+ * `erro` é do app: no site a falha só vai para o console e a lista vazia diz
+ * "nenhum pedido", o que no celular sem internet seria mentira.
  */
 export function useListaPedidos(r: RecortePedidos) {
   const [orders, setOrders] = useState<OrderRow[]>([]);
@@ -73,6 +76,8 @@ export function useListaPedidos(r: RecortePedidos) {
   const [loading, setLoading] = useState(true);
   /** Só o primeiro carregamento mostra esqueleto; refetch mantém a lista na tela. */
   const [firstLoadDone, setFirstLoadDone] = useState(false);
+  const [erro, setErro] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
 
   const {
     sellerId, dateRange, rangeReady, clienteId, filterLojas, filterState, advanced, searchTerm,
@@ -260,6 +265,9 @@ export function useListaPedidos(r: RecortePedidos) {
           });
 
           const results = await Promise.all([qA, ...chunkQueries]);
+          // Como no site, uma consulta que falha sozinha só some do resultado
+          // (uma vírgula na busca quebra o `.or()`); todas falharem é erro.
+          if (results.every((res) => res?.error)) throw results[0].error;
           const merged: OrderRow[] = [];
           const seen = new Set<string>();
           for (const res of results) {
@@ -277,6 +285,7 @@ export function useListaPedidos(r: RecortePedidos) {
           if (!isMounted) return;
           setTotalOrders(sorted.length);
           setOrders(pageData);
+          setErro(false);
           return;
         }
 
@@ -340,8 +349,10 @@ export function useListaPedidos(r: RecortePedidos) {
 
         // A fatia já vem ordenada do banco (ver `applySort`).
         setOrders((ordersData || []) as OrderRow[]);
+        setErro(false);
       } catch (error) {
         console.error("Error loading orders:", error);
+        if (isMounted) setErro(true);
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -357,10 +368,11 @@ export function useListaPedidos(r: RecortePedidos) {
     };
   }, [
     sellerId, clienteId, currentPage, itemsPerPage, searchTerm, filterState, filterLojas,
-    advanced, sortField, sortDir, rangeReady, dateRange.from, dateRange.to, dataFilters,
+    advanced, sortField, sortDir, rangeReady, dateRange.from, dateRange.to, dataFilters, tentativa,
   ]);
 
-  return { orders, setOrders, totalOrders, loading, firstLoadDone };
+  const tentarDeNovo = () => setTentativa((t) => t + 1);
+  return { orders, setOrders, totalOrders, loading, firstLoadDone, erro, tentarDeNovo };
 }
 
 /** O seller tem pedido com status fora de "approved"? Decide o selo de status nos cards. */
@@ -404,6 +416,7 @@ export function useSugestoesBusca(
 
   useEffect(() => {
     if (!searchInput.trim() || searchInput.length < 2) {
+      escolhidaRef.current = null;
       setSuggestions([]);
       setShowSuggestions(false);
       return;

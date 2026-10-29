@@ -8,7 +8,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SellerProvider, useSellerContext } from "@/contexts/SellerContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
+import { useAreaPermissions, type AreaKey } from "@/hooks/useAreaPermissions";
 import { Abertura } from "@/app/blocos/Abertura";
+import { TELAS_DO_APP } from "@/app/navegacao/itensMenu";
 import { noSite } from "@/app/site";
 import Entrar from "@/app/telas/Entrar";
 import Inicio from "@/app/telas/Inicio";
@@ -52,6 +54,21 @@ function ComConta({ children }: { children: ReactNode }) {
         link={{ rotulo: "Abrir o site", href: noSite("/") }}
       />
     );
+  }
+  return <>{children}</>;
+}
+
+/**
+ * Guarda de área, como o AreaGuard das rotas do site: o membro a quem o dono
+ * tirou a área vai para a primeira que ele vê (no app, ou o Menu). Enquanto as
+ * permissões carregam, a tela aparece. Sem nenhuma área visível o mapa pode só
+ * não ter chegado (sem internet, a consulta fica parada): aí a tela também fica,
+ * em vez de mandar para Minha Conta como o site.
+ */
+function ComArea({ area, children }: { area: AreaKey; children: ReactNode }) {
+  const { loading, canView, homePath } = useAreaPermissions();
+  if (!loading && !canView(area) && homePath !== "/account") {
+    return <Navigate to={TELAS_DO_APP.has(homePath) ? homePath : "/menu"} replace />;
   }
   return <>{children}</>;
 }
@@ -113,7 +130,7 @@ export default function App() {
                   <Route path="/entrar" element={<Entrar />} />
                   <Route path="/" element={<ComConta><Inicio /></ComConta>} />
                   <Route path="/menu" element={<ComConta><Menu /></ComConta>} />
-                  <Route path="/pedidos" element={<ComConta><Pedidos /></ComConta>} />
+                  <Route path="/pedidos" element={<ComConta><ComArea area="pedidos"><Pedidos /></ComArea></ComConta>} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </BrowserRouter>

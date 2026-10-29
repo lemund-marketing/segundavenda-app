@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ArrowDownUp, CalendarRange, ChevronLeft, ChevronRight, MapPin, Search, ShoppingCart, SlidersHorizontal, X } from "lucide-react";
+import {
+  AlertTriangle, ArrowDownUp, CalendarRange, ChevronLeft, ChevronRight, MapPin, Search, ShoppingCart, SlidersHorizontal, X,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -154,7 +156,7 @@ export default function Pedidos() {
     productOperator: advanced.productOperator,
   }), [filterLojas, filterState, advanced, clienteId, searchTerm]);
 
-  const { orders, setOrders, totalOrders, loading, firstLoadDone } = useListaPedidos({
+  const { orders, setOrders, totalOrders, loading, firstLoadDone, erro: erroLista, tentarDeNovo } = useListaPedidos({
     sellerId, dateRange, rangeReady, clienteId, filterLojas, filterState, advanced, searchTerm,
     sortField, sortDir, currentPage, itemsPerPage: ITENS_POR_PAGINA, dataFilters,
   });
@@ -471,9 +473,11 @@ export default function Pedidos() {
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-[19px] font-bold tracking-tight text-foreground">
               Pedidos{" "}
-              <span className="font-semibold tabular-nums text-muted-foreground">
-                ({totalOrders.toLocaleString("pt-BR")})
-              </span>
+              {!erroLista && (
+                <span className="font-semibold tabular-nums text-muted-foreground">
+                  ({totalOrders.toLocaleString("pt-BR")})
+                </span>
+              )}
             </h2>
             {hasAnyFilter && (
               <button
@@ -588,26 +592,39 @@ export default function Pedidos() {
           )}
 
           <div className="overflow-hidden rounded-3xl border border-border/60 bg-card">
-            <OrdersTableV2
-              groups={orderGroups}
-              loading={primeiraCarga}
-              hasStatusUpdates={hasStatusUpdates}
-              expandedGroups={expandedGroups}
-              onToggleGroup={toggleGroup}
-              sortField={sortField}
-              sortDir={sortDir}
-              onSort={handleSort}
-              onViewClient={handleViewClient}
-              onWhatsApp={handleWhatsAppClick}
-              onEmail={handleEmailClick}
-              onShipment={(o) => setShipmentOrder({ id: o.id, external: o.external_order_id })}
-              orderIdsWithShipment={orderIdsWithShipment}
-              hasFilters={hasAnyFilter}
-              onClearFilters={clearAllFilters}
-            />
+            {erroLista ? (
+              <div className="flex flex-col items-center gap-3 px-6 py-8 text-center">
+                <AlertTriangle className="h-6 w-6 text-muted-foreground" />
+                <p className="text-sm font-medium text-foreground">Não foi possível carregar os pedidos.</p>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Confira a internet do celular e tente de novo.
+                </p>
+                <Button variant="outline" size="sm" className="rounded-full" onClick={tentarDeNovo} disabled={loading}>
+                  {loading ? "Tentando…" : "Tentar de novo"}
+                </Button>
+              </div>
+            ) : (
+              <OrdersTableV2
+                groups={orderGroups}
+                loading={primeiraCarga}
+                hasStatusUpdates={hasStatusUpdates}
+                expandedGroups={expandedGroups}
+                onToggleGroup={toggleGroup}
+                sortField={sortField}
+                sortDir={sortDir}
+                onSort={handleSort}
+                onViewClient={handleViewClient}
+                onWhatsApp={handleWhatsAppClick}
+                onEmail={handleEmailClick}
+                onShipment={(o) => setShipmentOrder({ id: o.id, external: o.external_order_id })}
+                orderIdsWithShipment={orderIdsWithShipment}
+                hasFilters={hasAnyFilter}
+                onClearFilters={clearAllFilters}
+              />
+            )}
           </div>
 
-          {totalOrders > 0 && (
+          {totalOrders > 0 && !erroLista && (
             <div className="flex flex-col items-center gap-3 pt-1">
               {totalPages > 1 && (
                 <div className="flex w-full items-center justify-between gap-2">
