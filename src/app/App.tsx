@@ -1,7 +1,7 @@
-import type { ReactNode } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Suspense, useEffect, useLayoutEffect, type ReactNode } from "react";
+import { BrowserRouter, Link, Navigate, Route, Routes, useLocation, useNavigationType } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WifiOff } from "lucide-react";
+import { Lock, WifiOff } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,16 +10,32 @@ import { SellerProvider, useSellerContext } from "@/contexts/SellerContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { useAreaPermissions, type AreaKey } from "@/hooks/useAreaPermissions";
 import { Abertura } from "@/app/blocos/Abertura";
+import { LayoutApp } from "@/app/LayoutApp";
 import { TELAS_DO_APP } from "@/app/navegacao/itensMenu";
 import { noSite } from "@/app/site";
-import Clientes from "@/app/telas/Clientes";
-import Conta from "@/app/telas/Conta";
+import { lazyComRecarga } from "@/utils/lazyComRecarga";
+import { ErroNaTela } from "@/app/blocos/ErroNaTela";
 import Entrar from "@/app/telas/Entrar";
 import Inicio from "@/app/telas/Inicio";
-import LojaDetalhe from "@/app/telas/LojaDetalhe";
-import Lojas from "@/app/telas/Lojas";
 import Menu from "@/app/telas/Menu";
-import Pedidos from "@/app/telas/Pedidos";
+
+// Login, Início e Menu vão no pacote inicial (é por eles que o app abre). As
+// outras telas ficam em arquivos próprios, lidos do celular na primeira vez e
+// adiantados logo depois da abertura (PreCarregarTelas).
+const Pedidos = lazyComRecarga(() => import("@/app/telas/Pedidos"));
+const Clientes = lazyComRecarga(() => import("@/app/telas/Clientes"));
+const Lojas = lazyComRecarga(() => import("@/app/telas/Lojas"));
+const LojaDetalhe = lazyComRecarga(() => import("@/app/telas/LojaDetalhe"));
+const Conta = lazyComRecarga(() => import("@/app/telas/Conta"));
+const TELAS_SOB_DEMANDA = [Pedidos, Clientes, Lojas, LojaDetalhe, Conta];
+
+function PreCarregarTelas() {
+  useEffect(() => {
+    const t = window.setTimeout(() => TELAS_SOB_DEMANDA.forEach((tela) => tela.preload()), 1500);
+    return () => window.clearTimeout(t);
+  }, []);
+  return null;
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,17 +80,46 @@ function ComConta({ children }: { children: ReactNode }) {
 
 /**
  * Guarda de área, como o AreaGuard das rotas do site: o membro a quem o dono
- * tirou a área vai para a primeira que ele vê (no app, ou o Menu). Enquanto as
- * permissões carregam, a tela aparece. Sem nenhuma área visível o mapa pode só
- * não ter chegado (sem internet, a consulta fica parada): aí a tela também fica,
- * em vez de mandar para Minha Conta como o site.
+ * tirou a área vai para a primeira que ele vê, se ela tem tela no app; senão,
+ * um aviso aponta o Menu. Enquanto as permissões carregam (inclusive paradas
+ * sem internet), a tela aparece.
  */
 function ComArea({ area, children }: { area: AreaKey; children: ReactNode }) {
   const { loading, canView, homePath } = useAreaPermissions();
-  if (!loading && !canView(area) && homePath !== "/account") {
-    return <Navigate to={TELAS_DO_APP.has(homePath) ? homePath : "/menu"} replace />;
-  }
-  return <>{children}</>;
+  const { pathname } = useLocation();
+  if (loading || canView(area)) return <>{children}</>;
+  if (TELAS_DO_APP.has(homePath) && homePath !== pathname) return <Navigate to={homePath} replace />;
+  return (
+    <LayoutApp>
+      <div className="px-4 pb-6 pt-4">
+        <div className="flex flex-col items-center gap-2 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
+          <Lock className="h-6 w-6 text-muted-foreground" />
+          <p className="text-sm font-medium text-foreground">Seu acesso nesta loja não inclui esta área</p>
+          <p className="text-[13px] text-muted-foreground">As áreas liberadas para você estão no Menu.</p>
+          <Link
+            to="/menu"
+            className="mt-2 rounded-full bg-primary/10 px-3.5 py-1.5 text-[13px] font-medium text-primary active:bg-primary/15"
+          >
+            Abrir o Menu
+          </Link>
+        </div>
+      </div>
+    </LayoutApp>
+  );
+}
+
+/**
+ * Quem rola é a janela, e trocar de rota não a leva ao topo: a tela nova abria
+ * na altura em que a anterior estava. No Voltar (POP) não mexe, para a lista
+ * voltar onde estava.
+ */
+function TopoAoTrocarDeTela() {
+  const { pathname } = useLocation();
+  const tipo = useNavigationType();
+  useLayoutEffect(() => {
+    if (tipo !== "POP") window.scrollTo({ top: 0 });
+  }, [pathname, tipo]);
+  return null;
 }
 
 function Aviso({
@@ -122,6 +167,28 @@ function Aviso({
   );
 }
 
+function Telas() {
+  const { pathname } = useLocation();
+  return (
+    <ErroNaTela chave={pathname}>
+      <Suspense fallback={<Abertura />}>
+        <Routes>
+          <Route path="/entrar" element={<Entrar />} />
+          <Route path="/" element={<ComConta><ComArea area="dashboard"><Inicio /></ComArea></ComConta>} />
+          <Route path="/menu" element={<ComConta><Menu /></ComConta>} />
+          <Route path="/pedidos" element={<ComConta><ComArea area="pedidos"><Pedidos /></ComArea></ComConta>} />
+          <Route path="/clientes" element={<ComConta><ComArea area="clientes"><Clientes /></ComArea></ComConta>} />
+          <Route path="/lojas" element={<ComConta><ComArea area="lojas"><Lojas /></ComArea></ComConta>} />
+          {/* Sem guarda de área, como no site: o detalhe também abre pelo Início. */}
+          <Route path="/lojas/:marketplace" element={<ComConta><LojaDetalhe /></ComConta>} />
+          <Route path="/account" element={<ComConta><Conta /></ComConta>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </ErroNaTela>
+  );
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -130,18 +197,9 @@ export default function App() {
           <SubscriptionProvider>
             <TooltipProvider>
               <BrowserRouter>
-                <Routes>
-                  <Route path="/entrar" element={<Entrar />} />
-                  <Route path="/" element={<ComConta><Inicio /></ComConta>} />
-                  <Route path="/menu" element={<ComConta><Menu /></ComConta>} />
-                  <Route path="/pedidos" element={<ComConta><ComArea area="pedidos"><Pedidos /></ComArea></ComConta>} />
-                  <Route path="/clientes" element={<ComConta><ComArea area="clientes"><Clientes /></ComArea></ComConta>} />
-                  <Route path="/lojas" element={<ComConta><ComArea area="lojas"><Lojas /></ComArea></ComConta>} />
-                  {/* Sem guarda de área, como no site: o detalhe também abre pelo Início. */}
-                  <Route path="/lojas/:marketplace" element={<ComConta><LojaDetalhe /></ComConta>} />
-                  <Route path="/account" element={<ComConta><Conta /></ComConta>} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                <TopoAoTrocarDeTela />
+                <PreCarregarTelas />
+                <Telas />
               </BrowserRouter>
               <Toaster />
               <Sonner />

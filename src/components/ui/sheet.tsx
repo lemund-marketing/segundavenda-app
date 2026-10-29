@@ -4,7 +4,7 @@ import { X } from "lucide-react"
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-import { comVoltarFecha } from "@/app/nativo/useVoltarFecha"
+import { comVoltarFecha } from "@/app/nativo/useVoltarFecha" // app: o Voltar do Android mora em src/app
 
 // No celular, o Voltar fecha a gaveta antes de trocar de tela (useVoltarFecha).
 const Sheet = comVoltarFecha(SheetPrimitive.Root)

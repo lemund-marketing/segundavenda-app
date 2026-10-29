@@ -3,7 +3,7 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-import { comVoltarFecha } from "@/app/nativo/useVoltarFecha"
+import { comVoltarFecha } from "@/app/nativo/useVoltarFecha" // app: o Voltar do Android mora em src/app
 
 // No celular, o Voltar fecha a confirmação antes de trocar de tela (useVoltarFecha).
 const AlertDialog = comVoltarFecha(AlertDialogPrimitive.Root)

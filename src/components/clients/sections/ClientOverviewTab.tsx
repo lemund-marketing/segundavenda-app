@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { noSite } from "@/app/site"; // app: conversa abre no site
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Mail, MapPin, FileText, User as UserIcon, Cake } from "lucide-react";
 import { formatDocument } from "@/utils/formatters";
@@ -50,7 +49,7 @@ export function ClientOverviewTab({ client, sellerId, masked = false, onConversa
                     <TooltipTrigger asChild>
                       <button
                         // `client_id` (não `client`): é o parâmetro que o Omnichannel lê.
-                        onClick={onConversar ?? (() => window.open(noSite(`/omnichannel?client_id=${client?.id}`), "_blank"))} // app: o WhatsApp ainda não tem tela no app
+                        onClick={onConversar ?? (() => navigate(`/omnichannel?client_id=${client?.id}`))}
                         className="text-primary underline sm:no-underline sm:hover:underline font-medium"
                       >
                         {client.whatsapp}

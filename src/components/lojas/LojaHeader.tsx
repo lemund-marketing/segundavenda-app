@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Medal, Store, TrendingUp, Trophy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -163,6 +163,7 @@ export function LojaHeaderMobile({
   loading,
 }: Omit<Props, "period" | "onPeriodChange" | "uniqueClients">) {
   const navigate = useNavigate();
+  const location = useLocation(); // app: para a seta saber se há tela para voltar
   const ink = useLojaInk(slug);
   const showRank = rank > 0 && totalPlataformas > 1;
   const RankIcon = rank === 1 ? Trophy : rank <= 3 ? Medal : TrendingUp;
@@ -172,7 +173,9 @@ export function LojaHeaderMobile({
     <div className="flex items-center gap-3">
       <button
         type="button"
-        onClick={() => navigate("/lojas")}
+        // app: volta de verdade quando veio de outra tela do app; navigate("/lojas")
+        // empilhava a lista de novo e o Voltar do Android levava ao marketplace.
+        onClick={() => (location.key !== "default" ? navigate(-1) : navigate("/lojas", { replace: true }))}
         aria-label="Voltar para Marketplaces"
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-card to-muted text-foreground/75 shadow-[0_1px_2px_hsl(var(--foreground)/0.06)] ring-1 ring-inset ring-border/80 active:scale-95"
       >

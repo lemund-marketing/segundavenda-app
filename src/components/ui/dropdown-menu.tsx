@@ -3,8 +3,10 @@ import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { comVoltarFecha } from "@/app/nativo/useVoltarFecha"
 
-const DropdownMenu = DropdownMenuPrimitive.Root
+// app: o Voltar do Android fecha o menu antes de trocar de tela (useVoltarFecha).
+const DropdownMenu = comVoltarFecha(DropdownMenuPrimitive.Root)
 
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 

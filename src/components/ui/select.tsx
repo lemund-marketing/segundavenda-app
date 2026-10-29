@@ -3,8 +3,10 @@ import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { comVoltarFecha } from "@/app/nativo/useVoltarFecha"
 
-const Select = SelectPrimitive.Root
+// app: o Voltar do Android fecha a lista de opções antes de trocar de tela (useVoltarFecha).
+const Select = comVoltarFecha(SelectPrimitive.Root)
 
 const SelectGroup = SelectPrimitive.Group
 

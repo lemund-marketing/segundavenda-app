@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { noSite } from "@/app/site"; // app: conversa abre no site
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, DollarSign, Clock, Cake, MessageSquare, Pencil, Zap } from "lucide-react";
 import { formatCurrency } from "@/utils/formatters";
@@ -147,7 +146,7 @@ export function ClientHeader({
                 size="sm"
                 // A página lê `client_id` do querystring; com `client` o link abria o
                 // Omnichannel sem selecionar ninguém.
-                onClick={onConversar ?? (() => window.open(noSite(`/omnichannel?client_id=${client?.id}`), "_blank"))} // app: o WhatsApp ainda não tem tela no app
+                onClick={onConversar ?? (() => navigate(`/omnichannel?client_id=${client?.id}`))}
                 className="rounded-md h-9 px-4"
               >
                 <MessageSquare className="h-4 w-4 mr-1.5" /> Conversar

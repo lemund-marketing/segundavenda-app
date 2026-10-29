@@ -1,8 +1,6 @@
 import { Suspense, useMemo, useState, type ReactNode } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { AlertTriangle, Lock, ShoppingCart, WifiOff } from "lucide-react";
+import { AlertTriangle, ShoppingCart, WifiOff } from "lucide-react";
 import { useSellerContext } from "@/contexts/SellerContext";
-import { useAreaPermissions } from "@/hooks/useAreaPermissions";
 import {
   useCrmFunnel,
   useDashboardOverview,
@@ -19,7 +17,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PedacoComFalha } from "@/components/PedacoComFalha";
 import { lazyComRecarga } from "@/utils/lazyComRecarga";
 import { LayoutApp } from "@/app/LayoutApp";
-import { TELAS_DO_APP } from "@/app/navegacao/itensMenu";
 
 // O detalhe do estado só abre num toque: fica fora do pacote da tela, como no site.
 const StateDetailSheet = lazyComRecarga(
@@ -33,35 +30,9 @@ const StateDetailSheet = lazyComRecarga(
  * período, entregues ao DashboardMobile; o toque num estado abre o mesmo
  * detalhe da aba Regiões.
  *
- * Com a guarda da rota "/" do site (AreaGuard): enquanto as permissões
- * carregam, mostra o painel; resolvidas, membro que não vê o Dashboard vai
- * para a primeira área dele, se ela já tem tela no app, ou vê um aviso que
- * aponta o Menu.
+ * A guarda de área da rota "/" (o AreaGuard do site) fica no ComArea do App.
  */
 export default function Inicio() {
-  const { loading, canView, homePath } = useAreaPermissions();
-  if (loading || canView("dashboard")) return <Painel />;
-  if (TELAS_DO_APP.has(homePath)) return <Navigate to={homePath} replace />;
-  return (
-    <LayoutApp>
-      <div className="px-4 pb-6 pt-4">
-        <div className="flex flex-col items-center gap-2 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
-          <Lock className="h-6 w-6 text-muted-foreground" />
-          <p className="text-sm font-medium text-foreground">Seu acesso nesta loja não inclui o Início</p>
-          <p className="text-[13px] text-muted-foreground">As áreas liberadas para você estão no Menu.</p>
-          <Link
-            to="/menu"
-            className="mt-2 rounded-full bg-primary/10 px-3.5 py-1.5 text-[13px] font-medium text-primary active:bg-primary/15"
-          >
-            Abrir o Menu
-          </Link>
-        </div>
-      </div>
-    </LayoutApp>
-  );
-}
-
-function Painel() {
   const { activeSeller, loading: carregandoLoja } = useSellerContext();
   const [periodo, setPeriodo] = useState("30");
   const [ufSelecionada, setUfSelecionada] = useState<string | null>(null);

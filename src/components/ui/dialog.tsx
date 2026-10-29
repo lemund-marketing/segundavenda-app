@@ -3,7 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { comVoltarFecha } from "@/app/nativo/useVoltarFecha"
+import { comVoltarFecha } from "@/app/nativo/useVoltarFecha" // app: o Voltar do Android mora em src/app
 
 // No celular, o Voltar fecha a janela antes de trocar de tela (useVoltarFecha).
 const Dialog = comVoltarFecha(DialogPrimitive.Root)

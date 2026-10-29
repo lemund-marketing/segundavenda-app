@@ -47,7 +47,9 @@ export function useAreaPermissions(): Resultado {
   const { activeSeller } = useSellerContext();
   const sellerId = activeSeller?.id;
 
-  const { data, isLoading } = useQuery<{ mapa: Record<string, Nivel>; owner: boolean }>({
+  // app: isPending e não isLoading. Sem internet a consulta fica pausada (isLoading
+  // falso, sem dado) e o mapa vazio esconderia todas as áreas do membro.
+  const { data, isPending: isLoading } = useQuery<{ mapa: Record<string, Nivel>; owner: boolean }>({
     queryKey: ["my-area-permissions", sellerId],
     enabled: !!sellerId,
     staleTime: 60 * 1000,

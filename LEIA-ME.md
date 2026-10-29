@@ -10,14 +10,38 @@ Capacitor 8). O app abre do disco do celular; só os dados vão pela rede, diret
 para o Supabase. Não há endereço na internet, Worker na Cloudflare nem service
 worker.
 
+## Telas
+
+| Tela | Rota | De onde veio no site |
+|---|---|---|
+| Entrar (só login) | `/entrar` | `src/pages/Auth.tsx` |
+| Início | `/` | `src/components/Dashboard.tsx` (o DashboardMobile do redesenho) |
+| Pedidos | `/pedidos` | `src/pages/Pedidos.tsx` |
+| Clientes | `/clientes` | `src/pages/Clientes.tsx` + `ClientesScreen` |
+| Marketplaces | `/lojas`, `/lojas/:marketplace` | `src/pages/Lojas.tsx`, `src/pages/LojaDetail.tsx` |
+| Minha Conta (sem plano) | `/account` | `src/pages/Account.tsx` |
+| Menu | `/menu` | o menu do site |
+
+Cada tela é o desenho de **celular** do redesenho (o ramo `isMobile` das
+páginas do site), sem o de computador. As áreas que o app ainda não tem
+(WhatsApp, CRM, Regiões, RFV, Automações, Produtos...) aparecem no Menu e
+abrem o site no navegador. Uma tela nova entra em `src/app/App.tsx` (rota,
+com a guarda de área `ComArea`) e em `TELAS_DO_APP`
+(`src/app/navegacao/itensMenu.ts`), que a barra de baixo e o Menu usam.
+
+Login, Início e Menu vão no pacote inicial; as outras telas ficam em arquivos
+próprios, lidos do celular na primeira vez e adiantados logo depois da
+abertura.
+
 ## Onde fica cada coisa
 
 | Caminho | O que é |
 |---|---|
 | `src/app/` | **Código do app.** Telas (`telas/`), peças (`blocos/`), navegação, dados e o lado nativo (`nativo/`). Arquivo novo do app vai aqui. |
-| `src/` fora de `src/app/` | **Cópias do site**, no mesmo caminho que têm lá (UI, contextos, cliente do Supabase, tipos do banco, tema). Cada uma está registrada no `ORIGEM.json`. Podem ter ajustes do app. |
+| `src/` fora de `src/app/` | **Cópias do site**, no mesmo caminho que têm lá (UI, contextos, hooks de dados, componentes das telas, cliente do Supabase, tipos do banco, tema), e as peças novas do redesenho que elas importam. Tudo registrado no `ORIGEM.json`. Ajuste do app numa cópia é marcado com `// app:`. |
 | `ORIGEM.json` | De onde veio cada cópia: caminho no site, commit e versão do arquivo. É o que permite trazer correções do site depois. |
 | `scripts/comparar-origem.mjs` | Compara as cópias com o site e junta as mudanças (ver abaixo). |
+| `scripts/copiar-do-site.mjs` | Copia um arquivo do site para o app e registra no `ORIGEM.json`. |
 | `CONTRATO-BANCO.md` | Tudo o que o app lê e grava no banco, e as regras para acrescentar. |
 | `android/` | Projeto Android nativo (Capacitor). `MainActivity.java` tem o botão Voltar. |
 | `capacitor.config.json` | Pacote `br.com.segundavenda.app`, telas em `dist/`. |
@@ -63,9 +87,20 @@ A produção do site sai do computador de quem cuida dele, sem marca no git. A
 comparação usa a branch `test`; antes de publicar no app uma regra trazida de
 lá, confira se ela já está no ar no site.
 
-Copiar um arquivo novo do site: copie no mesmo caminho e registre no
-`ORIGEM.json` (`origem`, `commit` do `test` e `blob` = `git rev-parse <commit>:<caminho>`).
-O CI (`npm run checar`) recusa arquivo fora de `src/app/` sem registro.
+Copiar um arquivo novo do site:
+`node scripts/copiar-do-site.mjs --site ../segundavenda caminho...` (copia do
+`test` e registra). Tela do app escrita a partir de uma do site:
+`--derivado src/app/telas/X.tsx <origem...>`. O CI (`npm run checar`) recusa
+arquivo fora de `src/app/` sem registro.
+
+As cópias trazem o desenho de celular e o de computador. No app, o
+`useIsMobile()` responde sempre "celular" e o Tailwind não tem os tamanhos de
+computador (`md:` para cima nunca vale), então elas desenham só o de celular,
+também com o aparelho deitado e no tablet.
+
+As bibliotecas estão na **mesma versão que o site roda** (por exemplo
+`@supabase/supabase-js` 2.56.1), para as cópias se comportarem igual. Ao
+atualizar uma biblioteca no site, atualize aqui também.
 
 ## Dois apps
 
@@ -113,13 +148,20 @@ ligada, `chrome://inspect` no Chrome (o de teste permite; o oficial não).
 
 Em `android/app/src/main/java/br/com/segundavenda/app/MainActivity.java`:
 
-- **Voltar** primeiro fecha a gaveta, janela ou conversa aberta (a página
-  responde por `window.svVoltar()`, em `src/app/nativo/useVoltarFecha.tsx`).
+- **Voltar** primeiro fecha o que estiver aberto: gaveta, janela, lista de
+  opções, calendário ou menu (a página responde por `window.svVoltar()`, em
+  `src/app/nativo/useVoltarFecha.tsx`; os componentes Sheet, Dialog,
+  AlertDialog, Select, Popover e DropdownMenu já entram nessa pilha).
   Sem nada aberto, volta de tela. No Início e no login, manda o app para
   segundo plano (não fecha, não perde a sessão).
-- **Sem internet ao abrir**: as telas abrem do mesmo jeito (estão no celular).
-  Com sessão guardada, o app mostra "Sem internet" e continua sozinho quando a
-  conexão volta, sem deslogar.
+- **Sem internet**: as telas abrem do mesmo jeito (estão no celular). Ao abrir
+  com sessão guardada, o app mostra "Sem internet" e continua sozinho quando a
+  conexão volta, sem deslogar. Dentro das telas, os números esperam a conexão
+  com o aviso "Sem internet" em vez de aparecerem zerados.
+- **Downloads**: arquivo com endereço (o CSV de clientes) abre no navegador.
+  Arquivo gerado na própria tela (exportar CSV de produto) ainda não é salvo:
+  aparece o aviso "Este download ainda não funciona no app". Exportar pedidos
+  abre o site.
 - Se o Android matar a página por falta de memória, o app recria a tela em vez
   de fechar.
 - Link para outro endereço (o site, um arquivo) abre no navegador do celular.

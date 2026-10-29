@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Navigate, useParams, useSearchParams } from "react-router-dom";
 import { AlertTriangle, Store, WifiOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
@@ -65,12 +65,6 @@ export default function LojaDetalhe() {
   const { getDisplayName } = useMarketplaceAliases(activeSeller?.id);
 
   const slug = (marketplace ?? "").trim().toLowerCase();
-
-  // Quem rola é a janela, e trocar de rota não a leva ao topo: sem isto o
-  // marketplace abria na altura em que a lista estava rolada.
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [slug]);
 
   const abaCrua = searchParams.get("tab") ?? "visao";
   const aba: Aba = ABAS.some((t) => t.value === abaCrua) ? (abaCrua as Aba) : "visao";

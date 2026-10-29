@@ -2,8 +2,10 @@ import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
+import { comVoltarFecha } from "@/app/nativo/useVoltarFecha"
 
-const Popover = PopoverPrimitive.Root
+// app: o Voltar do Android fecha o balão (calendário, seletores) antes de trocar de tela (useVoltarFecha).
+const Popover = comVoltarFecha(PopoverPrimitive.Root)
 
 const PopoverTrigger = PopoverPrimitive.Trigger
 
