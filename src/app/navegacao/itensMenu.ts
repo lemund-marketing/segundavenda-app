@@ -57,13 +57,14 @@ export const gestaoItems: ItemMenu[] = [
  * página do site no navegador (app/site.ts). A cada tela portada, o caminho
  * entra aqui e ela passa a abrir dentro do app.
  */
-export const TELAS_DO_APP = new Set<string>(["/", "/pedidos", "/clientes", "/lojas"]);
+export const TELAS_DO_APP = new Set<string>(["/", "/pedidos", "/clientes", "/lojas", "/account"]);
 
 /**
- * Fora do app até ter tela própria: Minha Conta tem compra e troca de plano, e
- * a Play não aceita app que leve para pagamento fora dela. Afiliados idem.
+ * Fora do app até ter tela própria sem plano: a Play não aceita app que leve
+ * para pagamento fora dela. Minha Conta saiu daqui ao ganhar tela no app sem a
+ * parte de plano; Afiliados continua.
  */
-export const SO_NO_SITE = new Set<string>(["/account", "/affiliate-dashboard"]);
+export const SO_NO_SITE = new Set<string>(["/affiliate-dashboard"]);
 
 /** Afiliados entra antes de "Minha Conta", o rodapé lógico do grupo Gestão. */
 export const itemAfiliados: ItemMenu = { path: "/affiliate-dashboard", label: "Afiliados", icon: Users };

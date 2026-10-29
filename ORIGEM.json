@@ -59,6 +59,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "46030613e1ec3668ca239b2f4d5682a7772e2f67"
     },
+    "src/components/account/MembersTab.tsx": {
+      "origem": "src/components/account/MembersTab.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "c5a67f28f81affcc0f5fec894c6aea7f87509122"
+    },
     "src/components/clients/ActiveConversationSheet.tsx": {
       "origem": "src/components/clients/ActiveConversationSheet.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -443,6 +448,11 @@
       "origem": "src/components/rfv/RfvBadge.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "f9799655eac54ae9b2232ce95b4195cd110fd789"
+    },
+    "src/components/skeletons/FormSkeleton.tsx": {
+      "origem": "src/components/skeletons/FormSkeleton.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "75f40c33f44f5f15e4120aafdfa8a1d2da996cbb"
     },
     "src/components/skeletons/PageSkeletons.tsx": {
       "origem": "src/components/skeletons/PageSkeletons.tsx",
@@ -974,6 +984,15 @@
         {
           "caminho": "src/pages/Clientes.tsx",
           "blob": "5eb3545ba8f243b9957bd8719c91cd528ef56783"
+        }
+      ]
+    },
+    "src/app/telas/Conta.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Account.tsx",
+          "blob": "fd55911b802cba31f18bdfee4bd158bae82582ca"
         }
       ]
     },
