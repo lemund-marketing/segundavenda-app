@@ -99,10 +99,12 @@ ligada, `chrome://inspect` no Chrome (o de teste permite; o oficial não).
 ## Regras do app (Google Play)
 
 - **Só login.** Sem cadastro: app que cria conta tem de oferecer exclusão de
-  conta dentro dele. A conta é criada pelo site.
+  conta dentro dele. A conta é criada pelo site, e o membro novo da loja
+  também (em Minha Conta, "Adicionar Membro" abre o site).
 - **Sem compra nem troca de plano**, nem link para a página de plano: a Play
-  não aceita levar para pagamento fora dela. Por isso Minha Conta e Afiliados
-  ficam fora do Menu até terem tela própria sem plano.
+  não aceita levar para pagamento fora dela. Por isso Minha Conta não tem as
+  abas Plano e Número virtual, e Afiliados fica fora do Menu até ter tela
+  própria sem plano.
 - **Sem Meta Pixel** ou outro rastreador de anúncio.
 - Telas que o app ainda não tem aparecem no Menu com o ícone de "abre fora" e
   abrem a página do site no navegador do celular.

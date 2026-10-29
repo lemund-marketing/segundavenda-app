@@ -29,6 +29,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "d8830c48bed8ea128f777421ec7e2880c0f94954"
     },
+    "src/components/account/MembersTab.tsx": {
+      "origem": "src/components/account/MembersTab.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "c5a67f28f81affcc0f5fec894c6aea7f87509122"
+    },
     "src/components/clients/EditClientDialog.tsx": {
       "origem": "src/components/clients/EditClientDialog.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -118,6 +123,11 @@
       "origem": "src/components/SecurityMonitor.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "c1d6529fe4d3d8bfb2fb76ee6965b1892055ed6a"
+    },
+    "src/components/skeletons/FormSkeleton.tsx": {
+      "origem": "src/components/skeletons/FormSkeleton.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "75f40c33f44f5f15e4120aafdfa8a1d2da996cbb"
     },
     "src/components/ui/alert-dialog.tsx": {
       "origem": "src/components/ui/alert-dialog.tsx",
@@ -446,15 +456,6 @@
     }
   },
   "derivados": {
-    "src/app/LayoutApp.tsx": {
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "origens": [
-        {
-          "caminho": "src/components/layouts/AppLayout.tsx",
-          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
-        }
-      ]
-    },
     "src/app/blocos/LimiteCaptura.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
@@ -473,6 +474,15 @@
         }
       ]
     },
+    "src/app/LayoutApp.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/components/layouts/AppLayout.tsx",
+          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
+        }
+      ]
+    },
     "src/app/navegacao/itensMenu.ts": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
@@ -483,6 +493,15 @@
         {
           "caminho": "src/hooks/useAreaPermissions.ts",
           "blob": "fb003dde3edba04c14e15de7f6f7c1905c4276bc"
+        }
+      ]
+    },
+    "src/app/telas/Conta.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Account.tsx",
+          "blob": "fd55911b802cba31f18bdfee4bd158bae82582ca"
         }
       ]
     },
