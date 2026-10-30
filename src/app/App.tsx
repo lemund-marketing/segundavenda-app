@@ -27,7 +27,8 @@ const Clientes = lazyComRecarga(() => import("@/app/telas/Clientes"));
 const Lojas = lazyComRecarga(() => import("@/app/telas/Lojas"));
 const LojaDetalhe = lazyComRecarga(() => import("@/app/telas/LojaDetalhe"));
 const Conta = lazyComRecarga(() => import("@/app/telas/Conta"));
-const TELAS_SOB_DEMANDA = [Pedidos, Clientes, Lojas, LojaDetalhe, Conta];
+const Automacoes = lazyComRecarga(() => import("@/app/telas/Automacoes"));
+const TELAS_SOB_DEMANDA = [Pedidos, Clientes, Lojas, LojaDetalhe, Conta, Automacoes];
 
 function PreCarregarTelas() {
   useEffect(() => {
@@ -182,6 +183,7 @@ function Telas() {
           {/* Sem guarda de área, como no site: o detalhe também abre pelo Início. */}
           <Route path="/lojas/:marketplace" element={<ComConta><LojaDetalhe /></ComConta>} />
           <Route path="/account" element={<ComConta><Conta /></ComConta>} />
+          <Route path="/workflows" element={<ComConta><ComArea area="workflows"><Automacoes /></ComArea></ComConta>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
