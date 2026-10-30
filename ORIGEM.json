@@ -1715,6 +1715,15 @@
         }
       ]
     },
+    "src/app/telas/Produtos.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Produtos.tsx",
+          "blob": "762e0c20e3292071edf3136531a442a5eb3a38c3"
+        }
+      ]
+    },
     "src/app/telas/RFV.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
