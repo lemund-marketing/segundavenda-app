@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -58,8 +59,7 @@ public class ArquivosPlugin extends Plugin {
             try {
                 byte[] conteudo = Base64.decode(base64, Base64.DEFAULT);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    salvarEmDownloads(nome, tipo, conteudo);
-                    avisar("Salvo em Downloads: " + nome);
+                    avisar("Salvo em Downloads: " + salvarEmDownloads(nome, tipo, conteudo));
                 } else {
                     compartilhar(nome, tipo, conteudo);
                 }
@@ -71,8 +71,9 @@ public class ArquivosPlugin extends Plugin {
         });
     }
 
+    /** Devolve o nome com que ficou: se já houver um igual, o Android salva como "nome (1).csv". */
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    private void salvarEmDownloads(String nome, String tipo, byte[] conteudo) throws IOException {
+    private String salvarEmDownloads(String nome, String tipo, byte[] conteudo) throws IOException {
         ContentResolver resolver = getContext().getContentResolver();
         ContentValues valores = new ContentValues();
         valores.put(MediaStore.MediaColumns.DISPLAY_NAME, nome);
@@ -92,6 +93,25 @@ public class ArquivosPlugin extends Plugin {
         valores.clear();
         valores.put(MediaStore.MediaColumns.IS_PENDING, 0);
         resolver.update(uri, valores, null, null);
+        return nomeSalvo(resolver, uri, nome);
+    }
+
+    // O caminho (DATA) vem primeiro: no Android 10 o arquivo é renomeado no disco,
+    // mas o DISPLAY_NAME continua com o nome pedido.
+    @SuppressWarnings("deprecation")
+    private static String nomeSalvo(ContentResolver resolver, Uri uri, String pedido) {
+        String[] colunas = {MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME};
+        try (Cursor c = resolver.query(uri, colunas, null, null, null)) {
+            if (c == null || !c.moveToFirst()) return pedido;
+            String caminho = c.getString(0);
+            if (caminho != null && caminho.lastIndexOf('/') < caminho.length() - 1) {
+                return caminho.substring(caminho.lastIndexOf('/') + 1);
+            }
+            String exibido = c.getString(1);
+            return exibido != null && !exibido.isEmpty() ? exibido : pedido;
+        } catch (RuntimeException e) {
+            return pedido;
+        }
     }
 
     private void compartilhar(String nome, String tipo, byte[] conteudo) throws IOException {

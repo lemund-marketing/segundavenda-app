@@ -476,8 +476,11 @@ export function ProdutosScreen({
         r.set("tab", "itens");
         r.set("cat", categoryId);
       });
+      // A categoria é tocada lá embaixo da aba: sem isto a lista abria no meio,
+      // sem a busca e o filtro à vista. Dentro do marketplace a aba rola sozinha.
+      if (!lojaTravada) window.scrollTo({ top: 0 });
     },
-    [mudar],
+    [mudar, lojaTravada],
   );
 
   const temFiltro = !!busca || categoria !== "all" || loja !== "all";

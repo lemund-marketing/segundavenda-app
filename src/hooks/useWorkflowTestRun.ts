@@ -56,8 +56,10 @@ export const useWorkflowTestRun = (testRunId: string | null): UseWorkflowTestRun
     }
 
     let cancelled = false;
-    // app: o polling seguia a cada 2 s depois do fim do teste, com a janela e
-    // o fluxo fechados, até sair da tela (o diálogo fica montado na página).
+    // app: o polling seguia consultando a cada 2 s depois do fim do teste, com a
+    // janela e o fluxo fechados, até sair da tela (o diálogo fica montado na
+    // página). Terminado, o tique só pula a consulta: uma resposta lenta que
+    // chegue depois com 'running' volta a consultar e a tela se corrige.
     let terminou = false;
     const anotarStatus = (run: any) => {
       terminou = ['completed', 'error', 'cancelled'].includes(run?.status);
@@ -109,10 +111,7 @@ export const useWorkflowTestRun = (testRunId: string | null): UseWorkflowTestRun
     // antes do subscribe estar pronto e qualquer gap na entrega do realtime).
     const interval = setInterval(() => {
       if (cancelled) return;
-      if (terminou) {
-        clearInterval(interval); // app: ver anotarStatus
-        return;
-      }
+      if (terminou) return; // app: ver anotarStatus
       fetchSnapshot();
     }, 2000);
 
