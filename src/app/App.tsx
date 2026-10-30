@@ -29,7 +29,8 @@ const LojaDetalhe = lazyComRecarga(() => import("@/app/telas/LojaDetalhe"));
 const Conta = lazyComRecarga(() => import("@/app/telas/Conta"));
 const WhatsApp = lazyComRecarga(() => import("@/app/telas/WhatsApp"));
 const CRM = lazyComRecarga(() => import("@/app/telas/CRM"));
-const TELAS_SOB_DEMANDA = [Pedidos, Clientes, Lojas, LojaDetalhe, Conta, WhatsApp, CRM];
+const Automacoes = lazyComRecarga(() => import("@/app/telas/Automacoes"));
+const TELAS_SOB_DEMANDA = [Pedidos, Clientes, Lojas, LojaDetalhe, Conta, WhatsApp, CRM, Automacoes];
 
 function PreCarregarTelas() {
   useEffect(() => {
@@ -186,6 +187,7 @@ function Telas() {
           <Route path="/account" element={<ComConta><Conta /></ComConta>} />
           <Route path="/omnichannel" element={<ComConta><ComArea area="omnichannel"><WhatsApp /></ComArea></ComConta>} />
           <Route path="/crm" element={<ComConta><ComArea area="crm"><CRM /></ComArea></ComConta>} />
+          <Route path="/workflows" element={<ComConta><ComArea area="workflows"><Automacoes /></ComArea></ComConta>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
