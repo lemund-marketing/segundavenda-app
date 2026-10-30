@@ -523,53 +523,54 @@ export function ProdutosScreen({
         <p className="text-[13px] text-muted-foreground">Os produtos aparecem assim que a conexão voltar.</p>
       </div>
     );
-  } else if (aba === "analytics") {
-    conteudo = (
-      <AnalyticsTab
-        loading={loading}
-        productStats={productStats}
-        filteredStats={filtrados}
-        marketplaceLabel={marketplaceLabel}
-        onSelectProduct={abrirProduto}
-        onCategorizeNow={() => irParaItensDaCategoria("__none__")}
-        onSelectCategoryFromRanking={irParaItensDaCategoria}
-        mobile
-        rotuloPeriodo={rotuloPeriodo ?? `últimos ${periodo} dias`}
-        rotuloComparacao={rotuloComparacao ?? `${periodo} dias antes`}
-      />
-    );
-  } else if (aba === "itens") {
-    conteudo = (
-      <ItensTab
-        loading={loading}
-        filteredStats={filtrados}
-        categories={categories}
-        sortField={campoOrdem}
-        sortDir={direcao}
-        onSortChange={setOrdem}
-        onSelectProduct={abrirProduto}
-        onAssignCategory={categorizar}
-        onAssignCategoryBulk={categorizarVarios}
-        onSaveProductEdit={salvarProduto}
-        onToggleProductActive={alternarAtivo}
-        mobile
-      />
-    );
   } else {
-    // `buscados` e não `filtrados`: esta aba MEDE as categorias, e com uma
-    // categoria escolhida ela veria só a dela.
+    // `buscados` e não `filtrados` nas Categorias: a aba MEDE as categorias, e
+    // com uma categoria escolhida ela veria só a dela. O `mt-2` é o do
+    // TabsContent em que o site monta cada aba.
     conteudo = (
-      <CategoriasTab
-        loading={loading}
-        categories={categories}
-        filteredStats={buscados}
-        onCreateCategory={criarCategoria}
-        onUpdateCategory={renomearCategoria}
-        onDeleteCategory={excluirCategoria}
-        onSelectCategoryFromList={irParaItensDaCategoria}
-        onOpenCategoryDetail={setCategoriaAberta}
-        mobile
-      />
+      <div className="mt-2">
+        {aba === "analytics" ? (
+          <AnalyticsTab
+            loading={loading}
+            productStats={productStats}
+            filteredStats={filtrados}
+            marketplaceLabel={marketplaceLabel}
+            onSelectProduct={abrirProduto}
+            onCategorizeNow={() => irParaItensDaCategoria("__none__")}
+            onSelectCategoryFromRanking={irParaItensDaCategoria}
+            mobile
+            rotuloPeriodo={rotuloPeriodo ?? `últimos ${periodo} dias`}
+            rotuloComparacao={rotuloComparacao ?? `${periodo} dias antes`}
+          />
+        ) : aba === "itens" ? (
+          <ItensTab
+            loading={loading}
+            filteredStats={filtrados}
+            categories={categories}
+            sortField={campoOrdem}
+            sortDir={direcao}
+            onSortChange={setOrdem}
+            onSelectProduct={abrirProduto}
+            onAssignCategory={categorizar}
+            onAssignCategoryBulk={categorizarVarios}
+            onSaveProductEdit={salvarProduto}
+            onToggleProductActive={alternarAtivo}
+            mobile
+          />
+        ) : (
+          <CategoriasTab
+            loading={loading}
+            categories={categories}
+            filteredStats={buscados}
+            onCreateCategory={criarCategoria}
+            onUpdateCategory={renomearCategoria}
+            onDeleteCategory={excluirCategoria}
+            onSelectCategoryFromList={irParaItensDaCategoria}
+            onOpenCategoryDetail={setCategoriaAberta}
+            mobile
+          />
+        )}
+      </div>
     );
   }
 

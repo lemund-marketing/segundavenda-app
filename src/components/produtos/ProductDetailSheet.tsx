@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, RotateCw } from "lucide-react";
+import { WifiOff } from "lucide-react"; // app: aviso de sem internet
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -102,7 +103,7 @@ export function ProductDetailSheet({
   const categoriasQuery = useProductCategories(categories ? null : sellerId);
   const categorias = categories ?? categoriasQuery.data ?? [];
 
-  const { data: stats, isLoading, isError, error, refetch } = useProductDetailStats({
+  const { data: stats, isLoading, isError, error, refetch, isPaused } = useProductDetailStats({ // app: isPaused
     sellerId,
     productKey,
     marketplace,
@@ -192,6 +193,14 @@ export function ProductDetailSheet({
                   </div>
                   <Skeleton className="h-48 rounded-2xl" />
                   <Skeleton className="h-48 rounded-2xl" />
+                </div>
+              ) : isPaused && !stats ? (
+                // app: sem internet a consulta espera a conexão (nem dado, nem
+                // erro). Não é falha, e "Tentar novamente" não faria nada.
+                <div className="py-16 flex flex-col items-center text-center gap-2">
+                  <WifiOff className="w-6 h-6 text-muted-foreground" />
+                  <p className="text-sm font-medium text-foreground">Sem internet</p>
+                  <p className="text-[13px] text-muted-foreground">Os dados aparecem assim que a conexão voltar.</p>
                 </div>
               ) : isError || !stats ? (
                 // Falha de consulta não pode cair no estado vazio: "sem pedidos

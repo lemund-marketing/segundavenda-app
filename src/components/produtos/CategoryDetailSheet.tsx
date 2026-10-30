@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, RotateCw } from "lucide-react";
+import { WifiOff } from "lucide-react"; // app: aviso de sem internet
 
 import {
   Sheet,
@@ -76,7 +77,7 @@ export function CategoryDetailSheet({
     [dateFrom, dateTo, compareMode],
   );
 
-  const { data: stats, isLoading, isError, error, refetch } = useCategoryDetailStats({
+  const { data: stats, isLoading, isError, error, refetch, isPaused } = useCategoryDetailStats({ // app: isPaused
     sellerId,
     categoryId,
     marketplace,
@@ -126,6 +127,14 @@ export function CategoryDetailSheet({
                   </div>
                   <Skeleton className="h-48 rounded-2xl" />
                   <Skeleton className="h-48 rounded-2xl" />
+                </div>
+              ) : isPaused && !stats ? (
+                // app: sem internet a consulta espera a conexão (nem dado, nem
+                // erro). Não é falha, e "Tentar novamente" não faria nada.
+                <div className="py-16 flex flex-col items-center text-center gap-2">
+                  <WifiOff className="w-6 h-6 text-muted-foreground" />
+                  <p className="text-sm font-medium text-foreground">Sem internet</p>
+                  <p className="text-[13px] text-muted-foreground">Os dados aparecem assim que a conexão voltar.</p>
                 </div>
               ) : isError || !stats ? (
                 <div className="py-16 flex flex-col items-center text-center gap-3">

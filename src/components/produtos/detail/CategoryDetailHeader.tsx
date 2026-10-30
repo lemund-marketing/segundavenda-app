@@ -85,9 +85,12 @@ export function CategoryDetailHeader({ fallbackName, color, stats, onClose }: Pr
               {name}
             </h2>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
+              {/* app: sem os dados (sem internet) a contagem diria "0 produtos". */}
+              {stats && (
               <span className="text-xs text-muted-foreground tabular-nums">
                 {productCount} produto{productCount === 1 ? "" : "s"}
               </span>
+              )}
               {stats?.first_order_at && (
                 <>
                   <span className="text-xs text-muted-foreground">·</span>

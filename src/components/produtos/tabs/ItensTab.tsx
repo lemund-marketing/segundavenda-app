@@ -20,6 +20,7 @@ import { ItensTabSkeleton, ProdutosMobileSkeleton } from "./ProdutosTabSkeletons
 import { Distribuicao, PILULA_FILTRO, Secao } from "@/components/mobile/blocos";
 import { cn } from "@/lib/utils";
 import type { ProductCategory, ProductStats } from "@/hooks/useProductStats";
+import { useVoltarFecha } from "@/app/nativo/useVoltarFecha"; // app: o Voltar do Android mora em src/app
 
 const ITEMS_PAGE_SIZE = 50;
 
@@ -99,6 +100,8 @@ export function ItensTab({
   // e a edição de apelido/SKU abre numa janela, não na linha.
   const [selecionando, setSelecionando] = useState(false);
   const [editandoMobile, setEditandoMobile] = useState<ProductStats | null>(null);
+  // app: o Voltar do Android sai da seleção (e esconde a barra de ação) antes de sair da tela.
+  useVoltarFecha(selecionando, () => { setSelecionando(false); setSelected(new Set()); });
 
   const sortedStats = useMemo(() => {
     const arr = [...filteredStats];
