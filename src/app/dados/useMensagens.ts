@@ -303,8 +303,12 @@ export function useMensagens(
   return { messages, clientOrders, carregando, erro, tentarDeNovo: () => setTentativa((t) => t + 1) };
 }
 
-/** Templates aprovados do seller, para o seletor e para desenhar as bolhas de template. */
-export function useTemplatesAprovados() {
+/**
+ * Templates aprovados do seller, para o seletor e para desenhar as bolhas de
+ * template. `recarga` (de useConversas) relê quando a conexão volta: sem
+ * template, a conversa com a janela fechada não tem como ser respondida.
+ */
+export function useTemplatesAprovados(recarga = 0) {
   const { user } = useAuth();
   const { activeSeller } = useSellerContext();
   const [templates, setTemplates] = useState<SemTipo[]>([]);
@@ -316,13 +320,14 @@ export function useTemplatesAprovados() {
     let cancelado = false;
     (async () => {
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from("whatsapp_templates" as SemTipo)
           .select("*")
           .eq("seller_id", sellerId)
           .eq("status", "APPROVED")
           .order("name");
-        if (!cancelado) setTemplates(data || []);
+        // Uma releitura que falhe não apaga a lista que já veio.
+        if (!cancelado && !error) setTemplates(data || []);
       } catch (error) {
         console.error("Error loading templates:", error);
       }
@@ -330,7 +335,7 @@ export function useTemplatesAprovados() {
     return () => {
       cancelado = true;
     };
-  }, [userId, activeSeller?.id]);
+  }, [userId, activeSeller?.id, recarga]);
 
   return templates;
 }

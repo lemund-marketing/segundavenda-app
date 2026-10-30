@@ -96,6 +96,14 @@ export function useConversas({
    * vazia diz "Nenhuma conversa", o que no celular sem internet seria mentira.
    */
   const [erro, setErro] = useState(false);
+  /**
+   * Também do app: sobe quando a conexão volta depois de uma carga que falhou.
+   * Os efeitos que buscam no servidor dependem dele e refazem a busca; sem isto,
+   * quem abria a tela sem internet seguia sem fases, tags, oportunidades e
+   * templates depois que a lista voltava.
+   */
+  const [recarga, setRecarga] = useState(0);
+  const falhouRef = useRef(false);
 
   useEffect(() => {
     selectedConversationIdRef.current = selectedConversation?.id ?? null;
@@ -468,7 +476,8 @@ export function useConversas({
     } catch (error) {
       console.error("Error loading conversations:", error);
       setErro(true);
-      // app: sem internet o aviso fica na própria lista ("Sem internet"); o toast
+      falhouRef.current = true;
+      // Sem internet o aviso fica na própria lista ("Sem internet"); o toast
       // diria só "Failed to fetch".
       if (navigator.onLine) {
         toast({
@@ -522,12 +531,16 @@ export function useConversas({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, activeSeller?.id, dateFrom?.getTime(), dateTo?.getTime()]);
 
-  // Do app: a lista que não veio por falta de rede volta sozinha com a conexão.
+  // Do app: o que não veio por falta de rede volta sozinho com a conexão.
   const erroRef = useRef(erro);
   erroRef.current = erro;
   useEffect(() => {
     const aoVoltarRede = () => {
       if (erroRef.current) void loadInitialConversations();
+      if (falhouRef.current) {
+        falhouRef.current = false;
+        setRecarga((n) => n + 1);
+      }
     };
     window.addEventListener("online", aoVoltarRede);
     return () => window.removeEventListener("online", aoVoltarRede);
@@ -569,6 +582,7 @@ export function useConversas({
           .limit(200);
         if (clientsErr) {
           console.warn("[omnichannel] client search error:", clientsErr);
+          falhouRef.current = true;
           return;
         }
         const candidateIds = (clientMatches || []).map((c: SemTipo) => c.id);
@@ -616,6 +630,7 @@ export function useConversas({
         void fetchStagesAndTagsForClients(newClientIds, sellerId, false);
       } catch (err) {
         console.warn("Falha na busca server-side do omnichannel:", err);
+        falhouRef.current = true;
       }
     }, 300);
 
@@ -623,7 +638,7 @@ export function useConversas({
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [searchQuery, activeSeller?.id]);
+  }, [searchQuery, activeSeller?.id, recarga]);
 
   // Tempo real da lista, separado da carga inicial.
   useEffect(() => {
@@ -690,7 +705,7 @@ export function useConversas({
     const sellerId = activeSeller?.id;
     if (!sellerId) return;
     (async () => {
-      const [{ data: stages }, { data: tags }, marketplacesRes, instancesRes] = await Promise.all([
+      const [stagesRes, tagsRes, marketplacesRes, instancesRes] = await Promise.all([
         supabase.from("pipeline_stages").select("id, name, color, position").eq("seller_id", sellerId).order("position"),
         supabase.from("client_tags").select("id, name, color").eq("seller_id", sellerId).order("name"),
         supabase.rpc("get_omnichannel_marketplaces", { p_seller_id: sellerId }),
@@ -700,20 +715,24 @@ export function useConversas({
           .eq("seller_id", sellerId)
           .order("is_default", { ascending: false }),
       ]);
-      setPipelineStages(stages || []);
-      setSellerTags(tags || []);
+      // Uma releitura que falhe não apaga o que a anterior trouxe.
+      if (stagesRes.error || tagsRes.error || marketplacesRes.error || instancesRes.error) falhouRef.current = true;
+      if (!stagesRes.error) setPipelineStages(stagesRes.data || []);
+      if (!tagsRes.error) setSellerTags(tagsRes.data || []);
       if (marketplacesRes.error) console.warn("[omnichannel] get_omnichannel_marketplaces error:", marketplacesRes.error);
-      setSellerMarketplaces((marketplacesRes.data || []).map((d: SemTipo) => d.marketplace).filter(Boolean));
+      else setSellerMarketplaces((marketplacesRes.data || []).map((d: SemTipo) => d.marketplace).filter(Boolean));
       // Rótulo dado pelo usuário quando existir; senão o próprio número do WhatsApp.
       if (instancesRes.error) console.warn("[omnichannel] whatsapp_cloud_instances error:", instancesRes.error);
-      setSellerInstances(
-        (instancesRes.data || []).map((i: SemTipo) => ({
-          id: i.id,
-          label: i.label?.trim() || i.business_phone_number || "Número",
-        })),
-      );
+      else {
+        setSellerInstances(
+          (instancesRes.data || []).map((i: SemTipo) => ({
+            id: i.id,
+            label: i.label?.trim() || i.business_phone_number || "Número",
+          })),
+        );
+      }
     })();
-  }, [activeSeller?.id]);
+  }, [activeSeller?.id, recarga]);
 
   // Filtro de loja: traz do servidor as conversas de quem comprou nela.
   useEffect(() => {
@@ -728,6 +747,7 @@ export function useConversas({
         await carregarConversasDosClientes(clientIds, sellerId, () => cancelled);
       } catch (err) {
         console.warn("[omnichannel] marketplace filter full-load error:", err);
+        falhouRef.current = true;
       }
     })();
 
@@ -735,7 +755,15 @@ export function useConversas({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSeller?.id, marketplaceFilter]);
+  }, [activeSeller?.id, marketplaceFilter, recarga]);
+
+  // Zera SEMPRE na troca de seller: o mapa do anterior ficaria na tela. A
+  // releitura depois de uma falha (recarga) não zera, para o contador e a aba
+  // não piscarem vazios.
+  useEffect(() => {
+    setOportunidades({});
+    oportunidadesCarregadasRef.current = "";
+  }, [activeSeller?.id]);
 
   // Oportunidades de venda que a IA achou nas conversas deste seller. Carrega
   // TODAS de uma vez (o contador da aba precisa do número real). O embed
@@ -744,9 +772,6 @@ export function useConversas({
   // descartou não volta como oportunidade.
   useEffect(() => {
     const sellerId = activeSeller?.id;
-    // Zera SEMPRE: na troca de seller o mapa do anterior ficaria na tela.
-    setOportunidades({});
-    oportunidadesCarregadasRef.current = "";
     if (!sellerId) return;
 
     let cancelado = false;
@@ -762,6 +787,7 @@ export function useConversas({
       if (cancelado) return;
       if (error) {
         console.warn("[omnichannel] falha ao carregar oportunidades da IA:", error.message);
+        falhouRef.current = true;
         return;
       }
 
@@ -780,7 +806,7 @@ export function useConversas({
     return () => {
       cancelado = true;
     };
-  }, [activeSeller?.id]);
+  }, [activeSeller?.id, recarga]);
 
   // Aba Oportunidades: sem esta carga ela filtraria só as 20 conversas da página.
   useEffect(() => {
@@ -802,6 +828,7 @@ export function useConversas({
       } catch (err) {
         oportunidadesCarregadasRef.current = "";
         console.warn("[omnichannel] falha ao carregar conversas das oportunidades:", err);
+        falhouRef.current = true;
       }
     })();
 
@@ -809,7 +836,7 @@ export function useConversas({
       cancelado = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSeller?.id, statusFilter, oportunidades]);
+  }, [activeSeller?.id, statusFilter, oportunidades, recarga]);
 
   // Filtro de fase do Kanban: mesma carga do filtro de loja. 'none' (sem fase)
   // fica de fora: não dá para enumerar quem NÃO tem linha em client_pipeline.
@@ -825,6 +852,7 @@ export function useConversas({
         await carregarConversasDosClientes(clientIds, sellerId, () => cancelled);
       } catch (err) {
         console.warn("[omnichannel] stage filter full-load error:", err);
+        falhouRef.current = true;
       }
     })();
 
@@ -832,7 +860,7 @@ export function useConversas({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSeller?.id, stageFilter]);
+  }, [activeSeller?.id, stageFilter, recarga]);
 
   // Filtro de segmento RFV: a RPC pagina por segmento no servidor e devolve id
   // de CONVERSA (as 300 mais recentes; o resto chega pela paginação normal).
@@ -853,6 +881,7 @@ export function useConversas({
         await carregarConversasPorIds((ids as string[]) || [], sellerId, () => cancelled);
       } catch (err) {
         console.warn("[omnichannel] rfv filter full-load error:", err);
+        falhouRef.current = true;
       }
     })();
 
@@ -860,11 +889,11 @@ export function useConversas({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSeller?.id, rfvFilter]);
+  }, [activeSeller?.id, rfvFilter, recarga]);
 
   return {
     conversations, setConversations, selectedConversation, setSelectedConversation,
-    loading, loadingMore, page, hasMoreData, waCursor, activeSellerId, erro,
+    loading, loadingMore, page, hasMoreData, waCursor, activeSellerId, erro, recarga,
     serverMatchedConvIds, oportunidades,
     pipelineStages, sellerTags, setSellerTags, sellerInstances, sellerMarketplaces,
     clientMarketplaces, clientStages, setClientStages, clientTagsMap, setClientTagsMap, clientRfvMap,

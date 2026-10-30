@@ -193,7 +193,7 @@ export default function WhatsApp() {
 
   const {
     conversations, setConversations, selectedConversation, setSelectedConversation,
-    loading, loadingMore, hasMoreData, waCursor, activeSellerId, erro: erroLista, tentarDeNovo,
+    loading, loadingMore, hasMoreData, waCursor, activeSellerId, erro: erroLista, tentarDeNovo, recarga,
     serverMatchedConvIds, oportunidades,
     pipelineStages, sellerTags, setSellerTags, sellerInstances, sellerMarketplaces,
     clientMarketplaces, clientStages, setClientStages, clientTagsMap, setClientTagsMap, clientRfvMap,
@@ -202,7 +202,7 @@ export default function WhatsApp() {
   const {
     messages, clientOrders, carregando: carregandoThread, erro: erroThread, tentarDeNovo: tentarThreadDeNovo,
   } = useMensagens(selectedConversation, activeSellerId, setConversations);
-  const templates = useTemplatesAprovados();
+  const templates = useTemplatesAprovados(recarga);
 
   // ── Suporte do Mercado Livre (via hub) ──
   // Estado À PARTE de `conversations`: contadores das abas, busca no servidor,
@@ -260,7 +260,7 @@ export default function WhatsApp() {
 
   // Abrir a conversa de um cliente pela URL (?client_id=xxx).
   useEffect(() => {
-    // app: com a lista sem rede (erroLista) espera a conexão em vez de avisar
+    // Com a lista sem rede (erroLista), espera a conexão em vez de avisar
     // "Erro ao buscar conversa" e perder o pedido.
     if (!clientIdFromUrl || !activeSellerId || loading || erroLista) return;
 
@@ -485,6 +485,10 @@ export default function WhatsApp() {
     const matchesInstance = instanceFilter === "all" ? true : conv.whatsapp_instance_id === instanceFilter;
     return matchesSearch && matchesTemplate && matchesSentiment && matchesWorkflow && matchesMarketplace && matchesStage && matchesRfv && matchesInstance;
   });
+
+  // Sem a lista, ou sem rede com a peneira vazia (a busca e os filtros que vão
+  // ao servidor não rodaram), os números das pílulas seriam zeros falsos.
+  const semBaseParaContar = erroLista || (semRede && conversationsBeforeStatus.length === 0);
 
   const totalOportunidades = Object.keys(oportunidades).length;
   const unansweredCount = conversationsBeforeStatus.filter(isUnanswered).length;
@@ -819,8 +823,7 @@ export default function WhatsApp() {
                       }`}
                     >
                       {a.label}
-                      {/* Sem a lista (sem rede ou com erro) o número seria um zero falso. */}
-                      {!erroLista && (
+                      {!semBaseParaContar && (
                         <span className="text-[12px] tabular-nums opacity-80">
                           {a.count}
                           {!a.exato && hasMoreData ? "+" : ""}
@@ -853,23 +856,23 @@ export default function WhatsApp() {
               <MlFalhaLista erro={ml.erro!} onTentarDeNovo={carregarMaisMl} carregando={ml.carregando} />
             )}
             {/* A lista que sobrou na tela é de antes (outro período, outra busca):
-                sem a página nova ela sai, para não passar por atual. */}
-            {erroLista ? (
-              semRede ? (
-                <div className="mx-3 mb-3 mt-1 flex flex-col items-center gap-2 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
-                  <WifiOff className="h-6 w-6 text-muted-foreground" />
-                  <p className="text-sm font-medium text-foreground">Sem internet</p>
-                  <p className="text-[13px] text-muted-foreground">As conversas aparecem assim que a conexão voltar.</p>
-                </div>
-              ) : (
-                <div className="mx-3 mb-3 mt-1 flex flex-col items-center gap-3 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
-                  <AlertTriangle className="h-6 w-6 text-muted-foreground" />
-                  <p className="text-sm font-medium text-foreground">Não foi possível carregar as conversas.</p>
-                  <Button variant="outline" size="sm" className="rounded-full" onClick={() => void tentarDeNovo()} disabled={loading}>
-                    {loading ? "Tentando…" : "Tentar de novo"}
-                  </Button>
-                </div>
-              )
+                sem a página nova ela sai, para não passar por atual. Sem rede,
+                lista vazia também não quer dizer "nenhuma": a busca, a aba e os
+                filtros que vão ao servidor não chegaram a rodar. */}
+            {semRede && (erroLista || filteredConversations.length === 0) ? (
+              <div className="mx-3 mb-3 mt-1 flex flex-col items-center gap-2 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
+                <WifiOff className="h-6 w-6 text-muted-foreground" />
+                <p className="text-sm font-medium text-foreground">Sem internet</p>
+                <p className="text-[13px] text-muted-foreground">As conversas aparecem assim que a conexão voltar.</p>
+              </div>
+            ) : erroLista ? (
+              <div className="mx-3 mb-3 mt-1 flex flex-col items-center gap-3 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
+                <AlertTriangle className="h-6 w-6 text-muted-foreground" />
+                <p className="text-sm font-medium text-foreground">Não foi possível carregar as conversas.</p>
+                <Button variant="outline" size="sm" className="rounded-full" onClick={() => void tentarDeNovo()} disabled={loading}>
+                  {loading ? "Tentando…" : "Tentar de novo"}
+                </Button>
+              </div>
             ) : filteredConversations.length === 0 && statusFilter === "opportunity" && !filtroExternoLigado ? (
               /* Vazio próprio: aqui a lista vazia é a resposta certa e precisa dizer isso. */
               <div className="flex flex-col items-center justify-center px-6 py-10 text-center text-muted-foreground">
@@ -1007,7 +1010,7 @@ export default function WhatsApp() {
                       {carregandoThread ? (
                         <Loader2 className="mx-auto h-6 w-6 animate-spin" />
                       ) : erroThread ? (
-                        // app: sem a thread, "Nenhuma mensagem" seria mentira.
+                        // Sem a thread, "Nenhuma mensagem" seria mentira.
                         semRede ? (
                           <>
                             <WifiOff className="mx-auto mb-3 h-8 w-8 opacity-50" />

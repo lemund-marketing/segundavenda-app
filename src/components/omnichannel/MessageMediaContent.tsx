@@ -217,7 +217,7 @@ export function MessageMediaContent({
           src={mediaDataUrl}
           alt="Imagem enviada"
           className="max-w-full max-h-[300px] rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-          onClick={() => window.open(mediaDataUrl, '_blank')}
+          // app: sem o window.open da imagem. No WebView ele não abre outra janela: o data: toma o lugar do app e o Voltar não volta.
         />
         <Button
           size="icon"
