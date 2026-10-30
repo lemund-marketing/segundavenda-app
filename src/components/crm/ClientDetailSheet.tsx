@@ -11,7 +11,6 @@ import { ClientOrdersTab } from "@/components/clients/sections/ClientOrdersTab";
 import { ClientHistoryTab } from "@/components/clients/sections/ClientHistoryTab";
 import type { ClientSavedPatch } from "@/components/clients/EditClientDialog";
 import { maskFullName } from "@/utils/showcaseMask";
-import { noSite } from "@/app/site";
 
 interface ClientDetailSheetProps {
   clientId: string | null;
@@ -54,11 +53,6 @@ export function ClientDetailSheet({ clientId, sellerId, open, onOpenChange, mask
     );
   }
 
-  // app: o Omnichannel ainda não tem tela no app; "Conversar" e o telefone abrem a
-  // conversa no site, no navegador (sem isto iam para /omnichannel, que o app não tem).
-  const conversarNoSite = () =>
-    window.open(noSite(`/omnichannel?client_id=${client.id}`), "_blank", "noopener,noreferrer");
-
   const abaClasse =
     "rounded-lg text-[12px] data-[state=active]:bg-foreground data-[state=active]:text-background py-2";
 
@@ -77,7 +71,6 @@ export function ClientDetailSheet({ clientId, sellerId, open, onOpenChange, mask
           sellerId={sellerId}
           isWindowOpen={isWindowOpen}
           masked={masked}
-          onConversar={conversarNoSite}
           onClientSaved={onClientSaved}
         />
 
@@ -92,7 +85,7 @@ export function ClientDetailSheet({ clientId, sellerId, open, onOpenChange, mask
           </div>
 
           <TabsContent value="overview" className="px-6 py-5 mt-0">
-            <ClientOverviewTab client={client} sellerId={sellerId} masked={masked} onConversar={conversarNoSite} />
+            <ClientOverviewTab client={client} sellerId={sellerId} masked={masked} />
           </TabsContent>
 
           <TabsContent value="behavior" className="px-6 py-5 mt-0">
