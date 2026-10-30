@@ -1505,6 +1505,15 @@
         }
       ]
     },
+    "src/app/dados/useClientesDoSegmento.ts": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/RFV.tsx",
+          "blob": "580d3935f5c3d564e5c231d7d438640622bc242e"
+        }
+      ]
+    },
     "src/app/dados/useConversas.ts": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
@@ -1703,6 +1712,15 @@
         {
           "caminho": "src/pages/TemplatePerformance.tsx",
           "blob": "d2e0bf9ffbd6b3a2c8a6a939e0338c7c54ef158f"
+        }
+      ]
+    },
+    "src/app/telas/RFV.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/RFV.tsx",
+          "blob": "580d3935f5c3d564e5c231d7d438640622bc242e"
         }
       ]
     },
