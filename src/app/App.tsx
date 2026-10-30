@@ -27,7 +27,14 @@ const Clientes = lazyComRecarga(() => import("@/app/telas/Clientes"));
 const Lojas = lazyComRecarga(() => import("@/app/telas/Lojas"));
 const LojaDetalhe = lazyComRecarga(() => import("@/app/telas/LojaDetalhe"));
 const Conta = lazyComRecarga(() => import("@/app/telas/Conta"));
-const TELAS_SOB_DEMANDA = [Pedidos, Clientes, Lojas, LojaDetalhe, Conta];
+const Performance = lazyComRecarga(() => import("@/app/telas/Performance"));
+const PerformanceModeloWhatsApp = lazyComRecarga(() => import("@/app/telas/PerformanceModeloWhatsApp"));
+const PerformanceModeloEmail = lazyComRecarga(() => import("@/app/telas/PerformanceModeloEmail"));
+const PerformanceModeloSms = lazyComRecarga(() => import("@/app/telas/PerformanceModeloSms"));
+const TELAS_SOB_DEMANDA = [
+  Pedidos, Clientes, Lojas, LojaDetalhe, Conta,
+  Performance, PerformanceModeloWhatsApp, PerformanceModeloEmail, PerformanceModeloSms,
+];
 
 function PreCarregarTelas() {
   useEffect(() => {
@@ -182,6 +189,11 @@ function Telas() {
           {/* Sem guarda de área, como no site: o detalhe também abre pelo Início. */}
           <Route path="/lojas/:marketplace" element={<ComConta><LojaDetalhe /></ComConta>} />
           <Route path="/account" element={<ComConta><Conta /></ComConta>} />
+          <Route path="/workflow-stats" element={<ComConta><ComArea area="workflow_stats"><Performance /></ComArea></ComConta>} />
+          {/* Os detalhes de template ficam sem guarda de área, como no site. */}
+          <Route path="/workflow-stats/template/:templateName" element={<ComConta><PerformanceModeloWhatsApp /></ComConta>} />
+          <Route path="/workflow-stats/email-template/:templateId" element={<ComConta><PerformanceModeloEmail /></ComConta>} />
+          <Route path="/workflow-stats/sms-template/:templateName" element={<ComConta><PerformanceModeloSms /></ComConta>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
