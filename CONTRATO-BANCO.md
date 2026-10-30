@@ -57,7 +57,6 @@ function `update-member-password`, igual ao site.
 |---|---|---|
 | `seller_members` | lojas do usuário (`seller_id, created_at`); `seller_id` do usuário nas respostas rápidas e nos números de WhatsApp | todas (SellerContext); WhatsApp, Automações |
 | `sellers` | `*` das lojas do usuário; `max_members` da loja | todas; Minha Conta |
-| `affiliates` | `status` do usuário logado | Menu |
 | `admin_users` | `id` do usuário logado (`maybeSingle`): o admin vê a chave "Incluir dados de teste" | Performance |
 | `profiles` | `full_name, email, company_name, cnpj, whatsapp` do usuário logado | Minha Conta |
 | `member_permissions` | `member_id` da loja (contagem de áreas) | Minha Conta (Membros) |

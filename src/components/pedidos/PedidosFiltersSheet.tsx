@@ -389,8 +389,8 @@ export const PedidosFiltersSheet = ({ open, onOpenChange, filters, onChange, sta
               Dentro do sheet ele fica ao lado do recorte que acabou de ser
               montado — e recebe a contagem de filtros ativos, que é o aviso de
               que o CSV do servidor não conhece esse recorte. */}
-          {/* app: exportar gera um arquivo no aparelho, que o app ainda não
-              consegue salvar; a exportação abre no site, no navegador. */}
+          {/* app: a exportação de pedidos (ExportOrdersDialog: arquivos montados
+              no servidor, em partes, com histórico) fica no site, no navegador. */}
           <Button variant="outline" size="sm" asChild>
             <a href={noSite("/pedidos")} target="_blank" rel="noopener noreferrer">
               <Download className="w-4 h-4 mr-2" />

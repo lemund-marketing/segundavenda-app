@@ -31,6 +31,7 @@ import { DailyEvolutionChart, type DailyPoint } from "@/components/workflow-stat
 import { AvgTimeKpi } from "@/components/workflow-stats/AvgTimeKpi";
 import { ReadHeatmap } from "@/components/workflow-stats/ReadHeatmap";
 import { ClientDetailSheet } from "@/components/crm/ClientDetailSheet";
+import { isConditionalStage } from "@/components/crm/kanbanFilters";
 import { ConversionFunnel } from "@/components/performance/ConversionFunnel";
 import { ClassificacaoPorFluxo } from "@/components/template-performance/ClassificacaoPorFluxo";
 import { TopFailureReasons } from "@/components/performance/TopFailureReasons";
@@ -266,13 +267,16 @@ export default function PerformanceModeloWhatsApp() {
   const queryClient = useQueryClient();
   const sellerId = activeSeller?.id;
 
+  // A chave é a mesma do KanbanBoard, do ChatHeader e da ficha: o formato tem
+  // de ser o deles (*). Só com id/nome, o CRM aberto em seguida lia do cache
+  // fases sem stage_type nem is_entry, e a fase por regra virava coluna manual.
   const { data: stages = [] } = useQuery({
     queryKey: ["pipeline-stages", sellerId],
     enabled: !!sellerId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("pipeline_stages")
-        .select("id, name, position, color")
+        .select("*")
         .eq("seller_id", sellerId!)
         .order("position");
       if (error) throw error;
@@ -747,7 +751,9 @@ export default function PerformanceModeloWhatsApp() {
                             <SelectValue placeholder="Mover para fase do CRM…" />
                           </SelectTrigger>
                           <SelectContent>
-                            {stages.map((st) => (
+                            {/* Fase por regra não é destino, como no menu Mover do CRM: o
+                                vínculo gravado nela tira o cliente do quadro. */}
+                            {stages.filter((st) => !isConditionalStage(st)).map((st) => (
                               <SelectItem key={st.id} value={st.id}>
                                 <span className="inline-flex items-center gap-2">
                                   <span

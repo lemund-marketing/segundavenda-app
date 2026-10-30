@@ -37,6 +37,8 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Antes do super: o Capacitor monta a ponte com os plugins registrados até ali.
+        registerPlugin(ArquivosPlugin.class);
         super.onCreate(savedInstanceState);
         // Aparelho sem WebView: o Capacitor já mostra o aviso dele.
         if (getBridge() == null) return;
@@ -82,7 +84,8 @@ public class MainActivity extends BridgeActivity {
 
         // Sem isto o WebView ignora downloads em silêncio. Link de arquivo (http/https)
         // abre no navegador, que baixa. Arquivo gerado na própria página (blob:/data:,
-        // como as exportações em CSV) ainda não tem como ser salvo daqui: avisa.
+        // como as exportações em CSV) a página entrega ao ArquivosPlugin antes de
+        // chegar aqui; se mesmo assim chegar, não há o que salvar: avisa.
         webView.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) -> {
             if (url.startsWith("http://") || url.startsWith("https://")) {
                 try {
@@ -91,7 +94,7 @@ public class MainActivity extends BridgeActivity {
                     Toast.makeText(this, "Nenhum app para abrir este arquivo", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(this, "Este download ainda não funciona no app", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Não foi possível salvar este arquivo no app", Toast.LENGTH_LONG).show();
             }
         });
     }

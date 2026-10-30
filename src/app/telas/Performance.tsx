@@ -36,6 +36,8 @@ import {
   usePerformanceAlerts,
   useWhatsAppFailures,
   useWhatsAppAvgReadTime,
+  inicioNoMinuto,
+  fimNoMinuto,
 } from "@/hooks/useWorkflowStatsData";
 import { LayoutApp } from "@/app/LayoutApp";
 
@@ -107,18 +109,23 @@ export default function Performance() {
   const [customRange, setCustomRange] = useState<DateRange | undefined>(undefined);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
+  // No minuto cheio, como o usePerformanceStats: com milissegundos cada volta
+  // do detalhe de um modelo gerava chaves novas e refazia 7 consultas pesadas
+  // com os blocos em "carregando", em vez de mostrar o cache e conferir por trás.
   const startDate = useMemo(() => {
     if (period === "custom" && customRange?.from) return customRange.from;
     const d = new Date();
     d.setDate(d.getDate() - periodToDays(period));
-    return d;
+    return new Date(inicioNoMinuto(d));
   }, [period, customRange]);
   const endDate = useMemo(() => {
     if (period === "custom" && customRange?.to) {
       return new Date(customRange.to.getTime() + 86400000 - 1);
     }
-    return new Date();
+    return new Date(fimNoMinuto(new Date()));
   }, [period, customRange]);
+  // O detalhe do modelo abre no mesmo período (ele entende 7, 30, 90 e 365).
+  const periodoDoDetalhe = ["7", "90", "365"].includes(period) ? `?period=${period}` : "";
 
   const sellerId = activeSeller?.id;
 
@@ -470,7 +477,7 @@ export default function Performance() {
                   templates={s.templates as Template[]}
                   channel="whatsapp"
                   isLoading={!ready}
-                  onTemplateClick={(t) => navigate(`/workflow-stats/template/${encodeURIComponent(t.name)}`)}
+                  onTemplateClick={(t) => navigate(`/workflow-stats/template/${encodeURIComponent(t.name)}${periodoDoDetalhe}`)}
                 />
               </div>
             )}
@@ -511,7 +518,7 @@ export default function Performance() {
                   channel="email"
                   isLoading={emailLoading}
                   onTemplateClick={(t) => {
-                    if (t.id) navigate(`/workflow-stats/email-template/${t.id}`);
+                    if (t.id) navigate(`/workflow-stats/email-template/${t.id}${periodoDoDetalhe}`);
                   }}
                 />
               </div>

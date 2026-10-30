@@ -23,6 +23,7 @@ import { useMarketplaceAliases } from "@/hooks/useMarketplaceAliases";
 import { formatMarketplaceName } from "@/utils/formatters";
 import { cn } from "@/lib/utils";
 import { LayoutApp } from "@/app/LayoutApp";
+import { useSemRede } from "@/app/nativo/useSemRede";
 
 /**
  * Um marketplace por dentro: o desenho de celular do detalhe do site
@@ -116,6 +117,10 @@ export default function LojaDetalhe() {
   const rowEmFoco = lojaSelecionada ? metricsLoja.data?.find((r) => r.marketplace === slug) ?? null : row;
   const carregando = esperando(metrics);
   const carregandoEmFoco = lojaSelecionada ? esperando(metricsLoja) : carregando;
+  // Com o topo já carregado e a rede caindo depois, as abas (cópias do site)
+  // desenham zeros e "sem pedidos" com as consultas paradas: o aviso fica
+  // enquanto não houver rede, não só enquanto o topo espera.
+  const semRede = useSemRede();
 
   const setLoja = (storeId: string | null) => {
     const next = new URLSearchParams(searchParams);
@@ -185,9 +190,11 @@ export default function LojaDetalhe() {
             A consulta falhou. Tente de novo em alguns instantes.
           </Aviso>
         )}
-        {metrics.isPending && metrics.isPaused && (
+        {(semRede || (metrics.isPending && metrics.isPaused)) && (
           <Aviso tom="neutro" icone={WifiOff} titulo="Sem internet">
-            Os números aparecem assim que a conexão voltar.
+            {metrics.isPending
+              ? "Os números aparecem assim que a conexão voltar."
+              : "Até a conexão voltar, os números abaixo podem estar zerados ou desatualizados."}
           </Aviso>
         )}
         {/* Sem pedidos no período não é página inexistente: o seller pode ter

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ChangeEvent, type UIEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type UIEvent } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   AlertTriangle, ArrowLeft, CheckCheck, FileText, Film, Image as ImageIcon, Loader2, MessageSquare, Music,
@@ -37,6 +37,7 @@ import { corIntencao, rotuloIntencao } from "@/utils/conversionIntent";
 import { conversationHasWhatsApp, conversationHasSms, conversationHasEmail } from "@/utils/conversationChannels";
 import { LayoutApp } from "@/app/LayoutApp";
 import { BolhaMensagem } from "@/app/blocos/whatsapp/BolhaMensagem";
+import { useSemRede } from "@/app/nativo/useSemRede";
 import { useVoltarFecha } from "@/app/nativo/useVoltarFecha";
 import {
   useConversas, buscarConversaDoCliente, normalizeSearchTerm, LIMITE_OPORTUNIDADES,
@@ -45,15 +46,6 @@ import {
 import {
   useMensagens, useTemplatesAprovados, enviarPelaCloud, subirAnexo, getEdgeFunctionErrorMessage, type Mensagem,
 } from "@/app/dados/useMensagens";
-
-const assinarRede = (avisar: () => void) => {
-  window.addEventListener("online", avisar);
-  window.addEventListener("offline", avisar);
-  return () => {
-    window.removeEventListener("online", avisar);
-    window.removeEventListener("offline", avisar);
-  };
-};
 
 const MEDIA_LIMITS: Record<string, number> = {
   image: 5 * 1024 * 1024,
@@ -155,7 +147,7 @@ export default function WhatsApp() {
   const canEdit = true;
   const { user } = useAuth();
   const { toast } = useToast();
-  const semRede = useSyncExternalStore(assinarRede, () => !navigator.onLine);
+  const semRede = useSemRede();
 
   const [newMessage, setNewMessage] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("");
@@ -658,6 +650,21 @@ export default function WhatsApp() {
     });
     return () => cancelAnimationFrame(quadro);
   }, [idConversaAberta, visibleMessages.length]);
+
+  // O teclado encolhe o WebView (o Capacitor tira a altura dele da janela) e a
+  // thread perdia a parte de baixo sem rolar: a mensagem que se ia responder
+  // sumia atrás da caixa. Quem estava no fim continua no fim, também com a
+  // caixa de texto crescendo enquanto se digita. Encolher não dispara scroll,
+  // então o pertoDoFimRef ainda diz onde a pessoa estava.
+  useEffect(() => {
+    const viewport = threadRef.current?.querySelector<HTMLElement>("[data-radix-scroll-area-viewport]");
+    if (!viewport) return;
+    const observador = new ResizeObserver(() => {
+      if (pertoDoFimRef.current) viewport.scrollTop = viewport.scrollHeight;
+    });
+    observador.observe(viewport);
+    return () => observador.disconnect();
+  }, [idConversaAberta]);
 
   const aoRolarThread = (e: UIEvent<HTMLDivElement>) => {
     // e.target (o viewport do Radix): a raiz da ScrollArea nunca rola.

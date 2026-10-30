@@ -321,6 +321,10 @@ export function KanbanBoard({ sellerId, dbClient, onClientSelected, onClientMove
         queryClient.invalidateQueries({ queryKey: ['column-count', sellerId, oldStageId] });
       }
       invalidateMetrics();
+      // app: a ficha (useClientDetail) e a fase do ChatHeader/EditClientDialog
+      // mostravam a fase antiga ao reabrir o cliente logo depois de mover.
+      queryClient.invalidateQueries({ queryKey: ['client-detail', clientId] });
+      queryClient.invalidateQueries({ queryKey: ['client-pipeline', clientId] });
 
       // Notify embed parent
       if (onClientMoved) {
@@ -461,6 +465,9 @@ export function KanbanBoard({ sellerId, dbClient, onClientSelected, onClientMove
       queryClient.invalidateQueries({ queryKey: ['column-initial', sellerId] });
       queryClient.invalidateQueries({ queryKey: ['column-count', sellerId] });
       invalidateMetrics();
+      // app: mesma razão do handleMoveClient (a ficha com a fase antiga).
+      queryClient.invalidateQueries({ queryKey: ['client-detail'] });
+      queryClient.invalidateQueries({ queryKey: ['client-pipeline'] });
       exitSelection();
       toast.success(`${moved} cliente${moved === 1 ? '' : 's'} movido${moved === 1 ? '' : 's'}`);
     } catch {

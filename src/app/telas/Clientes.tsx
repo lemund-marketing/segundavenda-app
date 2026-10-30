@@ -1,16 +1,7 @@
-import { useSyncExternalStore } from "react";
-import { WifiOff } from "lucide-react";
 import { LayoutApp } from "@/app/LayoutApp";
+import { FaixaSemRede } from "@/app/blocos/FaixaSemRede";
+import { useSemRede } from "@/app/nativo/useSemRede";
 import { ClientesScreen } from "@/components/clients/ClientesScreen";
-
-const assinarRede = (avisar: () => void) => {
-  window.addEventListener("online", avisar);
-  window.addEventListener("offline", avisar);
-  return () => {
-    window.removeEventListener("online", avisar);
-    window.removeEventListener("offline", avisar);
-  };
-};
 
 /**
  * Clientes: a casca da página do site (src/pages/Clientes.tsx) no desenho de
@@ -23,17 +14,12 @@ export default function Clientes() {
   // Sem internet as consultas dos números ficam em espera (nem dado, nem erro,
   // nem carregando) e o ClientesScreen desenha zero: "0 clientes" numa troca de
   // período no metrô. O aviso diz que aquele zero não é da loja.
-  const semRede = useSyncExternalStore(assinarRede, () => !navigator.onLine);
+  const semRede = useSemRede();
 
   return (
     <LayoutApp>
       {semRede && (
-        <div className="mx-4 mt-4 flex items-center gap-2.5 rounded-2xl border border-border/60 bg-card px-4 py-3">
-          <WifiOff className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <p className="text-[13px] leading-snug text-muted-foreground">
-            Sem internet. Até a conexão voltar, os números abaixo podem estar zerados ou desatualizados.
-          </p>
-        </div>
+        <FaixaSemRede>Sem internet. Até a conexão voltar, os números abaixo podem estar zerados ou desatualizados.</FaixaSemRede>
       )}
       <ClientesScreen tituloMobile="Clientes" />
     </LayoutApp>

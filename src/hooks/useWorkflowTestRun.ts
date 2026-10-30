@@ -56,6 +56,12 @@ export const useWorkflowTestRun = (testRunId: string | null): UseWorkflowTestRun
     }
 
     let cancelled = false;
+    // app: o polling seguia a cada 2 s depois do fim do teste, com a janela e
+    // o fluxo fechados, até sair da tela (o diálogo fica montado na página).
+    let terminou = false;
+    const anotarStatus = (run: any) => {
+      terminou = ['completed', 'error', 'cancelled'].includes(run?.status);
+    };
     setLoading(true);
 
     const fetchSnapshot = async () => {
@@ -67,6 +73,7 @@ export const useWorkflowTestRun = (testRunId: string | null): UseWorkflowTestRun
 
       if (cancelled) return;
       if (!error && data) {
+        anotarStatus(data);
         setTestRun(data as any);
       }
     };
@@ -90,6 +97,7 @@ export const useWorkflowTestRun = (testRunId: string | null): UseWorkflowTestRun
         },
         (payload) => {
           if (cancelled) return;
+          anotarStatus(payload.new);
           setTestRun(payload.new as any);
         }
       )
@@ -101,8 +109,10 @@ export const useWorkflowTestRun = (testRunId: string | null): UseWorkflowTestRun
     // antes do subscribe estar pronto e qualquer gap na entrega do realtime).
     const interval = setInterval(() => {
       if (cancelled) return;
-      const currentStatus = (channelRef.current as any)?.__lastStatus;
-      // Sempre faz refetch, mas só durante estados ativos
+      if (terminou) {
+        clearInterval(interval); // app: ver anotarStatus
+        return;
+      }
       fetchSnapshot();
     }, 2000);
 

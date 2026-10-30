@@ -6,9 +6,8 @@ import { useAreaPermissions, PATH_AREA } from "@/hooks/useAreaPermissions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LayoutApp } from "@/app/LayoutApp";
 import { LimiteCaptura } from "@/app/blocos/LimiteCaptura";
-import { useEhAfiliado } from "@/app/dados/useEhAfiliado";
 import {
-  overviewItems, gestaoItems, comAfiliados, TELAS_DO_APP, SO_NO_SITE, type ItemMenu,
+  overviewItems, gestaoItems, TELAS_DO_APP, SO_NO_SITE, type ItemMenu,
 } from "@/app/navegacao/itensMenu";
 import { noSite } from "@/app/site";
 
@@ -22,7 +21,6 @@ export default function Menu() {
   const { user, signOut } = useAuth();
   const { activeSeller } = useSellerContext();
   const { canView } = useAreaPermissions();
-  const ehAfiliado = useEhAfiliado();
 
   const visivel = (i: ItemMenu) => {
     if (SO_NO_SITE.has(i.path)) return false;
@@ -31,8 +29,10 @@ export default function Menu() {
   };
   const grupos = [
     { titulo: "Visão geral", itens: overviewItems.filter(visivel) },
-    { titulo: "Gestão", itens: comAfiliados(gestaoItems, ehAfiliado).filter(visivel) },
+    { titulo: "Gestão", itens: gestaoItems.filter(visivel) },
   ];
+  // A legenda do ícone só quando algum item mostra o ícone.
+  const algumNoSite = grupos.some((g) => g.itens.some((i) => !TELAS_DO_APP.has(i.path)));
   const iniciais = (activeSeller?.name || user?.email || "SV").substring(0, 2).toUpperCase();
 
   return (
@@ -65,10 +65,12 @@ export default function Menu() {
           ),
         )}
 
-        <p className="px-1 text-xs text-muted-foreground">
-          <ExternalLink className="mr-1 inline h-3 w-3 align-[-1px]" />
-          abre no site, no navegador do celular, até ganhar tela no app.
-        </p>
+        {algumNoSite && (
+          <p className="px-1 text-xs text-muted-foreground">
+            <ExternalLink className="mr-1 inline h-3 w-3 align-[-1px]" />
+            abre no site, no navegador do celular, até ganhar tela no app.
+          </p>
+        )}
 
         <button
           type="button"

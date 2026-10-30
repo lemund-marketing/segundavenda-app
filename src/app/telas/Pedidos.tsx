@@ -33,6 +33,8 @@ import { UF_LIST } from "@/lib/ufs";
 import { cn } from "@/lib/utils";
 import { groupOrdersByWindow, type OrderGroup } from "@/utils/groupOrdersByWindow";
 import { LayoutApp } from "@/app/LayoutApp";
+import { FaixaSemRede } from "@/app/blocos/FaixaSemRede";
+import { useSemRede } from "@/app/nativo/useSemRede";
 import {
   useListaPedidos,
   useLojasDoPeriodo,
@@ -414,9 +416,14 @@ export default function Pedidos() {
    * deles. Troca de página, de filtro ou volta ao app mantêm a lista na tela.
    */
   const primeiraCarga = loading && !firstLoadDone;
+  const semRede = useSemRede();
 
   return (
     <LayoutApp>
+      {/* Sem internet o gráfico (cópia do site) diria "Sem pedidos no período". */}
+      {semRede && (
+        <FaixaSemRede>Sem internet. Até a conexão voltar, os números abaixo podem estar zerados ou desatualizados.</FaixaSemRede>
+      )}
       <div className="flex flex-col gap-7 px-4 pb-6 pt-4">
         <div className="flex flex-col gap-3">
           <CabecalhoTela icone={ShoppingCart} titulo="Pedidos" />

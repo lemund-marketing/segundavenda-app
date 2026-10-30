@@ -1523,15 +1523,6 @@
         }
       ]
     },
-    "src/app/dados/useEhAfiliado.ts": {
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "origens": [
-        {
-          "caminho": "src/components/AppSidebar.tsx",
-          "blob": "72731c8b442995bdeb8a0f9034dc03ce5b7de48d"
-        }
-      ]
-    },
     "src/app/dados/useMensagens.ts": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [

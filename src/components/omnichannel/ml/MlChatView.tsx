@@ -247,6 +247,18 @@ export function MlChatView({ conversa, aberta, isMobile, onBack, onVerPedido }: 
     return () => cancelAnimationFrame(quadro);
   }, [conversa.id, mensagens.length]);
 
+  // app: o teclado encolhe o WebView e a thread perdia a parte de baixo sem
+  // rolar (a última mensagem sumia atrás da caixa). Quem estava no fim fica no fim.
+  useEffect(() => {
+    const viewport = threadRef.current?.querySelector<HTMLElement>("[data-radix-scroll-area-viewport]");
+    if (!viewport) return;
+    const observador = new ResizeObserver(() => {
+      if (pertoDoFimRef.current) viewport.scrollTop = viewport.scrollHeight;
+    });
+    observador.observe(viewport);
+    return () => observador.disconnect();
+  }, [conversa.id]);
+
   const aoRolar = (e: UIEvent<HTMLDivElement>) => {
     const el = e.target as HTMLElement;
     if (!el?.hasAttribute?.("data-radix-scroll-area-viewport")) return;

@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AlertTriangle, BarChart3, ChevronLeft, Monitor, Search, Send, TestTube2, WifiOff, Zap } from "lucide-react";
@@ -47,7 +47,10 @@ export default function Automacoes() {
   const { activeSeller } = useSellerContext();
 
   const fluxoId = searchParams.get("fluxo");
-  const abriuFluxoPorToque = useRef(false);
+  // Fica no histórico, e não num ref: a tela remonta ao voltar de outra (o
+  // "Conecte um agora" do Testar leva a Minha Conta), e o fluxo reaberto pelo
+  // Voltar tem de fechar com navigate(-1) também, sem deixar /workflows dobrado.
+  const abriuFluxoPorToque = (useLocation().state as { fluxoPorToque?: boolean } | null)?.fluxoPorToque === true;
   const [busca, setBusca] = useState("");
 
   const [testeAberto, setTesteAberto] = useState(false);
@@ -67,14 +70,12 @@ export default function Automacoes() {
   const fluxo = fluxoId ? workflows.find((w) => w.id === fluxoId) ?? null : null;
 
   const abrirFluxo = (w: Workflow) => {
-    abriuFluxoPorToque.current = true;
     const p = new URLSearchParams(searchParams);
     p.set("fluxo", w.id);
-    setSearchParams(p);
+    setSearchParams(p, { state: { fluxoPorToque: true } });
   };
   const fecharFluxo = () => {
-    if (abriuFluxoPorToque.current) {
-      abriuFluxoPorToque.current = false;
+    if (abriuFluxoPorToque) {
       navigate(-1);
       return;
     }

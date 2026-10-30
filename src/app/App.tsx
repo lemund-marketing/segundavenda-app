@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useLayoutEffect, type ReactNode } from "react";
+import { Suspense, useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation, useNavigationType } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Lock, WifiOff } from "lucide-react";
@@ -58,9 +58,13 @@ function PreCarregarTelas() {
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    // O app volta do segundo plano o tempo todo: sem isto cada volta refaria
-    // todas as consultas da tela.
-    queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: false },
+    // O app volta do segundo plano o tempo todo: sem o refetchOnWindowFocus
+    // desligado cada volta refaria todas as consultas da tela.
+    // refetchOnMount "always", como no App do site: abrir uma tela mostra o que
+    // está no cache e confere no banco por trás. As cópias contam com isto (o
+    // funil do Início depois de mover cliente no CRM, as fases do CRM depois
+    // de Performance); quem quer o cache ao reabrir passa refetchOnMount: true.
+    queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: false, refetchOnMount: "always" },
   },
 });
 
@@ -130,14 +134,34 @@ function ComArea({ area, children }: { area: AreaKey; children: ReactNode }) {
 /**
  * Quem rola é a janela, e trocar de rota não a leva ao topo: a tela nova abria
  * na altura em que a anterior estava. No Voltar (POP) não mexe, para a lista
- * voltar onde estava.
+ * voltar onde estava. Só a troca de caminho conta: filtro na URL (?f=, ?ordem=,
+ * ?fluxo=) é a mesma tela, e a pessoa fica onde estava.
  */
 function TopoAoTrocarDeTela() {
   const { pathname } = useLocation();
   const tipo = useNavigationType();
+  const anterior = useRef(pathname);
   useLayoutEffect(() => {
+    if (anterior.current === pathname) return;
+    anterior.current = pathname;
     if (tipo !== "POP") window.scrollTo({ top: 0 });
   }, [pathname, tipo]);
+  return null;
+}
+
+/**
+ * Sair da conta esvazia o cache: várias chaves levam só a loja (as áreas do
+ * membro, os números do Início), e quem entrasse em seguida no mesmo celular,
+ * na mesma loja, veria por um tempo o que era da conta anterior.
+ */
+function LimparCacheAoSair() {
+  const { user } = useAuth();
+  const id = user?.id ?? null;
+  const anterior = useRef(id);
+  useEffect(() => {
+    if (anterior.current !== null && anterior.current !== id) queryClient.clear();
+    anterior.current = id;
+  }, [id]);
   return null;
 }
 
@@ -223,6 +247,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <LimparCacheAoSair />
         <SellerProvider>
           <SubscriptionProvider>
             <TooltipProvider>

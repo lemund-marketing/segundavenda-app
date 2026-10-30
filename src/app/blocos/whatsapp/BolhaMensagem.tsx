@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { format, isToday, isYesterday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Check, Mail, Smartphone } from "lucide-react";
@@ -15,7 +16,7 @@ import type { Mensagem } from "@/app/dados/useMensagens";
  * lido é o roxo da marca. A thread mistura WhatsApp, SMS e e-mail, então cada
  * bolha diz por onde saiu.
  */
-export function BolhaMensagem({
+function Bolha({
   message,
   prevMessage,
   botoesPorTemplate,
@@ -153,3 +154,11 @@ export function BolhaMensagem({
     </div>
   );
 }
+
+/**
+ * Com memo: o texto que se digita é estado da tela da conversa, e sem isto
+ * cada tecla redesenhava todas as bolhas (143 ms por letra numa conversa de 800
+ * mensagens, com a CPU a 4x). As props são estáveis: a mensagem só vira outro
+ * objeto quando muda, e os mapas de template são useMemo.
+ */
+export const BolhaMensagem = memo(Bolha);

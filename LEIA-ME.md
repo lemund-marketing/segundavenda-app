@@ -156,9 +156,9 @@ ligada, `chrome://inspect` no Chrome (o de teste permite; o oficial não).
   abas Plano e Número virtual, e Afiliados fica fora do Menu até ter tela
   própria sem plano.
 - **Sem Meta Pixel** ou outro rastreador de anúncio.
-- O que fica no site (Afiliados no Menu, as abas de WhatsApp, e-mail e SMS de
-  Minha Conta) aparece com o ícone de "abre fora" e abre a página do site no
-  navegador do celular.
+- O que fica no site (as abas de WhatsApp, e-mail e SMS de Minha Conta)
+  aparece com o ícone de "abre fora" e abre a página do site no navegador do
+  celular.
 
 ## Comportamento nativo
 
@@ -175,15 +175,20 @@ Em `android/app/src/main/java/br/com/segundavenda/app/MainActivity.java`:
 - **Sem internet**: as telas abrem do mesmo jeito (estão no celular). Ao abrir
   com sessão guardada, o app mostra "Sem internet" e continua sozinho quando a
   conexão volta, sem deslogar. Dentro das telas, os números esperam a conexão
-  com o aviso "Sem internet" em vez de aparecerem zerados.
+  com o aviso "Sem internet" em vez de aparecerem zerados (Clientes, CRM,
+  WhatsApp, Pedidos e o detalhe do marketplace, por `src/app/nativo/useSemRede.ts`).
 - **Sem internet** depende da permissão `ACCESS_NETWORK_STATE` no
   AndroidManifest (normal, não pergunta nada): sem ela o WebView não acompanha
   a rede e `navigator.onLine` fica sempre `true`.
 - **Downloads**: arquivo com endereço (o CSV de clientes) abre no navegador.
   Arquivo gerado na própria tela (CSV de produto, de categoria, das colunas e
-  da seleção do CRM, dos destinatários em Performance) e baixar mídia de uma
-  conversa do WhatsApp ainda não são salvos: aparece o aviso "Este download
-  ainda não funciona no app". Exportar pedidos abre o site.
+  da seleção do CRM, dos destinatários em Performance) e a mídia baixada de
+  uma conversa do WhatsApp vão para a pasta **Downloads**, com o aviso "Salvo
+  em Downloads". A página entrega o arquivo ao `ArquivosPlugin.java`
+  (`src/app/nativo/salvarArquivos.ts` intercepta o `<a download>` de
+  `blob:`/`data:`, sem mexer nas cópias). No Android 9 ou anterior, que
+  pediria permissão de armazenamento, abre o "Compartilhar" para escolher onde
+  guardar. Exportar pedidos abre o site.
 - **Mensagem nova no WhatsApp** com o app aberto toca o som do site; não há
   notificação do sistema (o WebView não tem a API de notificação; push pede
   trabalho nativo).

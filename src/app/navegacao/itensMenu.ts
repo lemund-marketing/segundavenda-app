@@ -66,12 +66,6 @@ export const TELAS_DO_APP = new Set<string>(["/", "/pedidos", "/clientes", "/loj
  */
 export const SO_NO_SITE = new Set<string>(["/affiliate-dashboard"]);
 
-/** Afiliados entra antes de "Minha Conta", o rodapé lógico do grupo Gestão. */
-export const itemAfiliados: ItemMenu = { path: "/affiliate-dashboard", label: "Afiliados", icon: Users };
-
-export const comAfiliados = (itens: ItemMenu[], ehAfiliado: boolean): ItemMenu[] =>
-  ehAfiliado ? [...itens.slice(0, -1), itemAfiliados, ...itens.slice(-1)] : itens;
-
 /**
  * Atalhos da barra inferior, em ordem de prioridade. Entram os 4 primeiros que
  * já existem no app e que o membro pode ver; o último lugar é sempre o Menu.
