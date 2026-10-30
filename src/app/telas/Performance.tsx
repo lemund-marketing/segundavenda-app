@@ -1,4 +1,4 @@
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
@@ -72,20 +72,22 @@ const ABAS: { value: TabKey; label: string }[] = [
   { value: "sms", label: "SMS" },
 ];
 
+/** Sem internet a consulta fica em espera (nem dado, nem erro, nem carregando) e volta sozinha com a conexão. */
+const emEspera = (q: { isPending: boolean; isPaused: boolean }) => q.isPending && q.isPaused;
+
 /**
- * Sem internet a consulta fica em espera (nem dado, nem erro, nem carregando)
- * e volta sozinha com a conexão. O e-mail é consultado dentro do
- * useEmailPerformance (cópia do site), que não mostra essa espera: aqui se lê o
- * estado da mesma consulta no cache, sem buscar de novo.
+ * O mesmo, para consultas que moram dentro das cópias do site e não mostram
+ * essa espera (o e-mail no useEmailPerformance, os complementos da aba SMS no
+ * SmsWorkflowTab): lê o estado delas no cache pela chave, sem buscar de novo.
  */
-function useConsultaEmEspera(queryKey: readonly unknown[]): boolean {
+function useAlgumaEmEspera(chaves: readonly (readonly unknown[])[]): boolean {
   const cache = useQueryClient().getQueryCache();
-  return useSyncExternalStore(
-    (avisar) => cache.subscribe(avisar),
-    () => {
+  const assinar = useCallback((avisar: () => void) => cache.subscribe(avisar), [cache]);
+  return useSyncExternalStore(assinar, () =>
+    chaves.some((queryKey) => {
       const q = cache.find({ queryKey, exact: true });
       return !!q && q.state.status === "pending" && q.state.fetchStatus === "paused";
-    },
+    }),
   );
 }
 
@@ -125,14 +127,20 @@ export default function Performance() {
     data: stats, isLoading: statsLoading, isError: statsErro, refetch: recarregarStats, isFetching: statsBuscando,
   } = statsQ;
   const { data: alerts = [] } = usePerformanceAlerts(sellerId);
-  const { data: failures = [], isLoading: failuresLoading } = useWhatsAppFailures(sellerId, startDate);
-  const { data: avgReadTime = null, isLoading: avgLoading } = useWhatsAppAvgReadTime(sellerId, startDate);
+  const falhasQ = useWhatsAppFailures(sellerId, startDate);
+  const { data: failures = [], isLoading: failuresLoading } = falhasQ;
+  const leituraQ = useWhatsAppAvgReadTime(sellerId, startDate);
+  const { data: avgReadTime = null, isLoading: avgLoading } = leituraQ;
   const { data: emailData, loading: emailLoading } = useEmailPerformance({
     sellerId, start: startDate, end: endDate, includeTest: false,
   });
-  // A mesma chave que o useEmailPerformance monta.
-  const emailEmEspera = useConsultaEmEspera([
-    "email-performance", sellerId, startDate.toISOString(), endDate.toISOString(), false,
+  // As mesmas chaves que o useEmailPerformance e o SmsWorkflowTab montam.
+  const emailEmEspera = useAlgumaEmEspera([
+    ["email-performance", sellerId, startDate.toISOString(), endDate.toISOString(), false],
+  ]);
+  const complementosSmsEmEspera = useAlgumaEmEspera([
+    ["sms-raw-supplement", sellerId, startDate.toISOString(), endDate.toISOString()],
+    ["sms-templates-active", sellerId],
   ]);
 
   // SMS da visão geral: a queryKey é a MESMA do SmsWorkflowTab de propósito,
@@ -155,7 +163,7 @@ export default function Performance() {
   });
   const { data: smsOverview, isLoading: smsLoading } = smsQ;
 
-  const { data: templateCounts } = useQuery({
+  const contagemQ = useQuery({
     queryKey: ["active-template-counts", sellerId],
     enabled: !!sellerId,
     queryFn: async () => {
@@ -164,17 +172,15 @@ export default function Performance() {
       return data as { whatsapp: number; email: number; sms: number; total: number };
     },
   });
+  const templateCounts = contagemQ.data;
 
   // Recompra: a MESMA RPC (get_pedidos_kpis) e o MESMO recorte da tela de
   // Pedidos, sem filtros extras, para os dois números nunca discordarem.
-  const { data: pedidosKpis, isLoading: recompraLoading } = usePedidosKpis(
-    sellerId,
-    startDate.toISOString(),
-    endDate.toISOString(),
-  );
+  const recompraQ = usePedidosKpis(sellerId, startDate.toISOString(), endDate.toISOString());
+  const { data: pedidosKpis, isLoading: recompraLoading } = recompraQ;
 
   // Gasto por canal no período (price_cents = valor cobrado ao cliente; WhatsApp = por conversa/0).
-  const { data: channelSummary } = useQuery({
+  const gastoQ = useQuery({
     queryKey: ["seller-channel-summary", sellerId, startDate.toISOString(), endDate.toISOString()],
     enabled: !!sellerId,
     queryFn: async () => {
@@ -185,6 +191,7 @@ export default function Performance() {
       return (data as { channel: string; price_cents: number | string | null }[]) || [];
     },
   });
+  const channelSummary = gastoQ.data;
 
   const smsKpis = smsOverview?.kpis ?? { sent: 0, delivered: 0, failed: 0, cost_cents_total: 0, unique_clicks: 0 };
   const smsDaily = (smsOverview?.daily ?? []).map((d) => ({ date: d.day, sent: d.sent }));
@@ -233,12 +240,17 @@ export default function Performance() {
   // de fora: as consultas dela moram no SmsWorkflowTab, que tem o próprio
   // esqueleto (e assim as auxiliares partem junto com a principal).
   const carregandoAba = tab === "email" ? emailLoading : tab === "sms" ? false : statsLoading;
+  // Sem internet, cada aba espera por TODAS as consultas cujos números mostra:
+  // com só parte delas no cache (voltar a um período já visto, ou abrir a aba
+  // SMS depois da visão geral), as outras sairiam zeradas ou "nenhum".
   const semInternet =
-    tab === "email"
-      ? emailEmEspera
-      : tab === "sms"
-        ? smsQ.isPending && smsQ.isPaused
-        : statsQ.isPending && statsQ.isPaused;
+    tab === "overview"
+      ? [statsQ, smsQ, contagemQ, gastoQ, recompraQ].some(emEspera) || emailEmEspera
+      : tab === "whatsapp"
+        ? [statsQ, falhasQ, leituraQ].some(emEspera)
+        : tab === "email"
+          ? emailEmEspera
+          : emEspera(smsQ) || complementosSmsEmEspera;
 
   const channelBlocks: ChannelSummary[] = [
     {

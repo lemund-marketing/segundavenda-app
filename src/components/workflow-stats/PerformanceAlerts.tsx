@@ -22,7 +22,7 @@ export interface PerformanceAlert {
 
 function FailureSheet({ sellerId }: { sellerId: string }) {
   const [open, setOpen] = useState(false);
-  const { data: failures = [], isLoading } = useRecentFailures(sellerId, open);
+  const { data: failures = [], isLoading, isPending, isPaused } = useRecentFailures(sellerId, open); // app: isPending/isPaused para o "Sem internet"
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -43,6 +43,11 @@ function FailureSheet({ sellerId }: { sellerId: string }) {
             <div className="p-5 space-y-3">
               {isLoading ? (
                 <p className="text-sm text-muted-foreground text-center py-8">Carregando…</p>
+              ) : isPending && isPaused ? (
+                // app: sem internet a consulta espera a conexão, e a lista vazia diria "Nenhuma" ao lado do aviso de falhas.
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  Sem internet. A lista aparece assim que a conexão voltar.
+                </p>
               ) : failures.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">
                   Nenhuma mensagem não entregue nas últimas 24h.
