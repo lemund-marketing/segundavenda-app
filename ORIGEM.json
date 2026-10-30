@@ -439,6 +439,26 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "20595777aaf9ece07e0c9527d2bf9081c0d72b8a"
     },
+    "src/components/performance/ConversionFunnel.tsx": {
+      "origem": "src/components/performance/ConversionFunnel.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "292514ba61f1d6907c2ae3222fedd5d4c2b455c5"
+    },
+    "src/components/performance/DeltaCanalPill.tsx": {
+      "origem": "src/components/performance/DeltaCanalPill.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "2598ba9dbd4c6a289351a3a7bc52e6b2ce848e84"
+    },
+    "src/components/performance/TemplatesList.tsx": {
+      "origem": "src/components/performance/TemplatesList.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "f2b81c03dfc2ce66414fabec51aea79f866bc0d5"
+    },
+    "src/components/performance/TopFailureReasons.tsx": {
+      "origem": "src/components/performance/TopFailureReasons.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "001047964eee3e7a29b74f6d2355694c361680fa"
+    },
     "src/components/produtos/CategoryDetailSheet.tsx": {
       "origem": "src/components/produtos/CategoryDetailSheet.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -604,6 +624,26 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "1dbda98cd56abcf798d51360f07d286bfc18d639"
     },
+    "src/components/skeletons/WorkflowStatsSkeleton.tsx": {
+      "origem": "src/components/skeletons/WorkflowStatsSkeleton.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "11bf8426236f2820ebcb6723107f05963a50e9da"
+    },
+    "src/components/sms/SmsHealthBadge.tsx": {
+      "origem": "src/components/sms/SmsHealthBadge.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "f9f6262910ccaa038e0d0a98137ece93770d410d"
+    },
+    "src/components/sms/SmsPerformanceTemplateCard.tsx": {
+      "origem": "src/components/sms/SmsPerformanceTemplateCard.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "3b2a9ee416410f46679d2d117ae5e355878211ee"
+    },
+    "src/components/template-performance/ClassificacaoPorFluxo.tsx": {
+      "origem": "src/components/template-performance/ClassificacaoPorFluxo.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "90ecf8aff36c2aa3329119917b779edf55e1365e"
+    },
     "src/components/ui/accordion.tsx": {
       "origem": "src/components/ui/accordion.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -678,6 +718,11 @@
       "origem": "src/components/ui/label.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "683faa793819982d64e21cb2939666fd6d4a7b13"
+    },
+    "src/components/ui/metric-tooltip.tsx": {
+      "origem": "src/components/ui/metric-tooltip.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "5b176d4c7b10e588b4ddb5ca92bb8d89a621fbb5"
     },
     "src/components/ui/pagination.tsx": {
       "origem": "src/components/ui/pagination.tsx",
@@ -773,6 +818,76 @@
       "origem": "src/components/WhatsAppIcon.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "46030613e1ec3668ca239b2f4d5682a7772e2f67"
+    },
+    "src/components/workflow-stats/AvgTimeKpi.tsx": {
+      "origem": "src/components/workflow-stats/AvgTimeKpi.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "232ae83063f363b6b23439850bfac05531892731"
+    },
+    "src/components/workflow-stats/CompactFunnel.tsx": {
+      "origem": "src/components/workflow-stats/CompactFunnel.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "d2732accb8bee7998e25e6c2fd5347bbe0a4fd7c"
+    },
+    "src/components/workflow-stats/DailyEvolutionChart.tsx": {
+      "origem": "src/components/workflow-stats/DailyEvolutionChart.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "9a01f2146e81dc4191ce7ba60f0cbaf205ccfdbf"
+    },
+    "src/components/workflow-stats/PerformanceAlerts.tsx": {
+      "origem": "src/components/workflow-stats/PerformanceAlerts.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "c20423cb287cb2733f5927440c67275eb269acf3"
+    },
+    "src/components/workflow-stats/ReadHeatmap.tsx": {
+      "origem": "src/components/workflow-stats/ReadHeatmap.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ac88595ddbb3f975dc270604ce55b19f248d8336"
+    },
+    "src/components/workflow-stats/TopEmailTemplatesByEngagement.tsx": {
+      "origem": "src/components/workflow-stats/TopEmailTemplatesByEngagement.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "26332a6caa16e1820667e20fecafcd26d3ecd08c"
+    },
+    "src/components/workflow-stats/TopTemplatesByEngagement.tsx": {
+      "origem": "src/components/workflow-stats/TopTemplatesByEngagement.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "32e14c125629281c49841e83959342ee53a0f245"
+    },
+    "src/components/workflow-stats/v2/ChannelSummaryCards.tsx": {
+      "origem": "src/components/workflow-stats/v2/ChannelSummaryCards.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "b73e7bf9b2d87e404586e3a67a0169e87ffc6f57"
+    },
+    "src/components/workflow-stats/v2/EmailChart.tsx": {
+      "origem": "src/components/workflow-stats/v2/EmailChart.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "4b32db6ba355c976f061108d715b4ed27a5ba54d"
+    },
+    "src/components/workflow-stats/v2/EmailFunnel.tsx": {
+      "origem": "src/components/workflow-stats/v2/EmailFunnel.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "6b901ffe33a8a32526ff6c6f6c68d5eaddb62776"
+    },
+    "src/components/workflow-stats/v2/EmailKpis.tsx": {
+      "origem": "src/components/workflow-stats/v2/EmailKpis.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "9713a34fc5f59a62d6c15cd1dca6556ad9217bf5"
+    },
+    "src/components/workflow-stats/v2/SmsWorkflowTab.tsx": {
+      "origem": "src/components/workflow-stats/v2/SmsWorkflowTab.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "134861341638bb46ceadf08971c3130b274efcc9"
+    },
+    "src/components/workflow-stats/v2/WhatsAppChartTabs.tsx": {
+      "origem": "src/components/workflow-stats/v2/WhatsAppChartTabs.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "1920e146d219be986e74f957f32636935e128efd"
+    },
+    "src/components/workflow-stats/v2/WhatsAppKpis.tsx": {
+      "origem": "src/components/workflow-stats/v2/WhatsAppKpis.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "8b1a1ec52a5f686a83596fd9237cd901e4c1d9ff"
     },
     "src/components/workflow/BulkDispatchPanel.tsx": {
       "origem": "src/components/workflow/BulkDispatchPanel.tsx",
@@ -879,6 +994,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "9ce1a4f7dacd1cc0ddddc30a99510c9aa1dac5ee"
     },
+    "src/hooks/useEmailPerformance.ts": {
+      "origem": "src/hooks/useEmailPerformance.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "e1340f78a9140f2de509633129894d7c32732d18"
+    },
     "src/hooks/useMarketplaceAliases.ts": {
       "origem": "src/hooks/useMarketplaceAliases.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -943,6 +1063,11 @@
       "origem": "src/hooks/useWindowCountdown.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "d413fd3ba2565fa7e9ddb268a6e3217964e8c791"
+    },
+    "src/hooks/useWorkflowStatsData.ts": {
+      "origem": "src/hooks/useWorkflowStatsData.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "2551994ca68169acd7d9f80b897d699f102790f0"
     },
     "src/hooks/useWorkflowTestRun.ts": {
       "origem": "src/hooks/useWorkflowTestRun.ts",
@@ -1024,6 +1149,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "08668fc7070b0b39c7938d77802cba1583040693"
     },
+    "src/utils/emailTemplateHealth.ts": {
+      "origem": "src/utils/emailTemplateHealth.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "62acc64dd8d3042ef4312021194c63b6ac355dcb"
+    },
     "src/utils/formatters.ts": {
       "origem": "src/utils/formatters.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -1059,6 +1189,16 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "f2bd8483f4c38b7e93ef6e4028facedca2e94ca8"
     },
+    "src/utils/security.ts": {
+      "origem": "src/utils/security.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "a9d2b08dd13900acc61d69812e7413da8e92c2ce"
+    },
+    "src/utils/sessaoAdmin.ts": {
+      "origem": "src/utils/sessaoAdmin.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "0943580630332c92122e47b545a001fc9b2ba7a5"
+    },
     "src/utils/shipmentStatus.ts": {
       "origem": "src/utils/shipmentStatus.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -1078,6 +1218,16 @@
       "origem": "src/utils/storageKey.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "ce8770dae6427ca5ac9e3006241604d62624d913"
+    },
+    "src/utils/templateHealth.ts": {
+      "origem": "src/utils/templateHealth.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "0445f942f786cdad34394eb8b9ca9706e1f70707"
+    },
+    "src/utils/templateName.ts": {
+      "origem": "src/utils/templateName.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "7e00eb00268038caf8adc78b50686a470c449927"
     },
     "src/utils/validation.ts": {
       "origem": "src/utils/validation.ts",
@@ -1517,6 +1667,42 @@
         {
           "caminho": "src/pages/Pedidos.tsx",
           "blob": "e87dc1aa17a779ee2bc453735ad40616d41bf838"
+        }
+      ]
+    },
+    "src/app/telas/Performance.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/WorkflowStats.tsx",
+          "blob": "d3e798547e3301f5b11f0e4ebf74ea5addc141f7"
+        }
+      ]
+    },
+    "src/app/telas/PerformanceModeloEmail.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/EmailTemplatePerformance.tsx",
+          "blob": "3d4d2bf9faf5ec004bf7591e32d4fc4f2ca44596"
+        }
+      ]
+    },
+    "src/app/telas/PerformanceModeloSms.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/SmsTemplatePerformance.tsx",
+          "blob": "46e35a27c8df2e08617ab498d3ebfaa3d22c06fd"
+        }
+      ]
+    },
+    "src/app/telas/PerformanceModeloWhatsApp.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/TemplatePerformance.tsx",
+          "blob": "d2e0bf9ffbd6b3a2c8a6a939e0338c7c54ef158f"
         }
       ]
     },
