@@ -991,6 +991,135 @@
     }
   },
   "derivados": {
+    "src/app/blocos/CartaoDaEtapa.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/components/workflow/TriggerNode.tsx",
+          "blob": "bd391a2a9a7c9739fedea64495b0cf47593c659c"
+        },
+        {
+          "caminho": "src/components/workflow/RetroactiveTriggerNode.tsx",
+          "blob": "82a3e5e31183758860735c0d72953c61c0aaa0fb"
+        },
+        {
+          "caminho": "src/components/workflow/ScheduleNode.tsx",
+          "blob": "4bf549ba6ae138f4fb536c60fbd737f00d07d923"
+        },
+        {
+          "caminho": "src/components/workflow/WhatsAppNode.tsx",
+          "blob": "22eb0c6bf0abecdc7619c85f202f874133ec20f6"
+        },
+        {
+          "caminho": "src/components/workflow/WhatsAppReplyNode.tsx",
+          "blob": "f4b86148580ec5d6a2f6fddad5c243fd39357f3c"
+        },
+        {
+          "caminho": "src/components/workflow/MessageReceivedNode.tsx",
+          "blob": "eee23893eb8d7d3fc283da2cd8699cb339712850"
+        },
+        {
+          "caminho": "src/components/workflow/PipelineStageChangeNode.tsx",
+          "blob": "e85582eb71aee34eba7a19baf888ed0c6b883cbc"
+        },
+        {
+          "caminho": "src/components/workflow/RfvSegmentChangeNode.tsx",
+          "blob": "4da930bc4639b611a374123726fc0f59592d323b"
+        },
+        {
+          "caminho": "src/components/workflow/MoveToStageNode.tsx",
+          "blob": "67087440fda4c8de934152534359d9fd2bc2d64d"
+        },
+        {
+          "caminho": "src/components/workflow/AddInteractionNode.tsx",
+          "blob": "2190b3e96bb755db5360632b03401f936b22b04d"
+        },
+        {
+          "caminho": "src/components/workflow/AIProcessorNode.tsx",
+          "blob": "44e781999a269db497dca9b3297d9b6276a1dc2b"
+        },
+        {
+          "caminho": "src/components/workflow/AIClassifierNode.tsx",
+          "blob": "bda0ccd70eec2dfbbfda651e38d3ce37c70d71ec"
+        },
+        {
+          "caminho": "src/components/workflow/ConditionNode.tsx",
+          "blob": "9e401c3c19c5decdcf15c44e1c4bec1ce1d2d368"
+        },
+        {
+          "caminho": "src/components/workflow/SendTemplateNode.tsx",
+          "blob": "a6ccf84d832b9c3021e8d28c30de378d0c60c185"
+        },
+        {
+          "caminho": "src/components/workflow/WebhookCallNode.tsx",
+          "blob": "db71602a0b3c43a3e13918ddebdfc72729b73ab0"
+        },
+        {
+          "caminho": "src/components/workflow/InvalidNumberNode.tsx",
+          "blob": "a4c48059b0f53cbb597047f0c89a48b541e16cb2"
+        },
+        {
+          "caminho": "src/components/workflow/DelayDynamicNode.tsx",
+          "blob": "1c9ed8d0b062a8fcb1a303f67a4b123d7b201f27"
+        },
+        {
+          "caminho": "src/components/workflow/WaitForReplyNode.tsx",
+          "blob": "9d54028a6a1441ea43d6ff61d0d26f3e8e606ec7"
+        },
+        {
+          "caminho": "src/components/workflow/OrderStatusChangeNode.tsx",
+          "blob": "8a7d98762a9fc4daa63eaf04042315c72e3ccd5c"
+        },
+        {
+          "caminho": "src/components/workflow/ShipmentStatusChangeNode.tsx",
+          "blob": "0e6559d0176ec33a5462f7decd66e043f513300c"
+        },
+        {
+          "caminho": "src/components/workflow/DistributeToStagesNode.tsx",
+          "blob": "7e6cac12113510be87d6fd3522f89deb13a5f1e0"
+        },
+        {
+          "caminho": "src/components/workflow/nodes/QueueThrottleNode.tsx",
+          "blob": "b37f9b6aa2929fb3c1d5d29762d80e2ed05d392b"
+        },
+        {
+          "caminho": "src/components/workflow/WaitForStatusChangeNode.tsx",
+          "blob": "c22b9d401ccc254722c17e01b9f549c23abb3946"
+        },
+        {
+          "caminho": "src/components/workflow/DeliveryForecastNode.tsx",
+          "blob": "1c4ea2b012b89af3c496757a2541f2591d6fcbd7"
+        },
+        {
+          "caminho": "src/components/workflow/MarkForecastOptInNode.tsx",
+          "blob": "461e912840fba3a7e155d7878d97ef9e03c7d7c0"
+        },
+        {
+          "caminho": "src/components/workflow/SendMediaNode.tsx",
+          "blob": "24b19c172b76dbcd12ce13bbf2167bad66edb3f9"
+        },
+        {
+          "caminho": "src/components/workflow/SendDocumentNode.tsx",
+          "blob": "c436606e3d097e8e5128c9d7713e5d1f4c296d4a"
+        },
+        {
+          "caminho": "src/components/workflow/EmailSendNode.tsx",
+          "blob": "ebf98e33c42b30de33069103e7b3b4ba6d791b14"
+        },
+        {
+          "caminho": "src/components/workflow/EmailTemplateNode.tsx",
+          "blob": "52dd17b7ae8960e2e49a7f7c4c52b01722d32990"
+        },
+        {
+          "caminho": "src/components/workflow/SendSmsFreeNode.tsx",
+          "blob": "f300ca988f160bcab3eac3d22c2b9cd3a550e89b"
+        },
+        {
+          "caminho": "src/components/workflow/SendSmsTemplateNode.tsx",
+          "blob": "efd6a09c549cc740e44275ac2406b73926d8d837"
+        }
+      ]
+    },
     "src/app/blocos/FluxoSomenteLeitura.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [

@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent } from "react";
-import { BaseNode } from "@/components/workflow/nodes/BaseNode";
-import { NODE_CATALOG, nodeLabel } from "@/components/workflow/nodeCatalog";
+import { NODE_CATALOG } from "@/components/workflow/nodeCatalog";
 import { getNodeStyle } from "@/utils/workflowColors";
-import { isNodeConfigured } from "@/utils/nodeValidation";
 import type { WorkflowEdge, WorkflowNode } from "@/types/workflow";
 import { cn } from "@/lib/utils";
+import { CartaoDaEtapa } from "@/app/blocos/CartaoDaEtapa";
 
 /**
  * O fluxo aberto no celular, só para ver: cada etapa no lugar em que foi posta
@@ -12,10 +11,11 @@ import { cn } from "@/lib/utils";
  *
  * No site isto é o React Flow (@xyflow/react) em modo leitura. O app não traz
  * essa biblioteca (o editor fica no computador), então o quadro é desenhado
- * aqui com o mesmo cartão das etapas (BaseNode), a mesma linha das ligações, o
- * mesmo fundo de pontos e o mesmo enquadramento inicial. O que fica de fora é o
- * resumo de configuração que cada tipo de etapa mostra dentro do cartão: ele
- * mora nos componentes de nó do editor, que dependem do React Flow.
+ * aqui com o mesmo cartão das etapas (BaseNode, com o cabeçalho de cada tipo em
+ * CartaoDaEtapa), a mesma linha das ligações, o mesmo fundo de pontos e o mesmo
+ * enquadramento inicial. O que fica de fora é o corpo do cartão (o resumo da
+ * configuração e os rótulos das saídas): ele mora nos componentes de nó do
+ * editor, que dependem do React Flow.
  */
 
 type Vista = { x: number; y: number; k: number };
@@ -269,12 +269,7 @@ export function FluxoSomenteLeitura({
               className={cn("react-flow__node absolute", noEmTeste === n.id && "workflow-node-active-test")}
               style={{ left: n.position.x, top: n.position.y }}
             >
-              <BaseNode
-                icon={NODE_CATALOG[n.type]?.icon ?? IconeDesconhecido}
-                title={n.data?.label || nodeLabel(n.type)}
-                style={estilo}
-                isConfigured={isNodeConfigured(n.type, n.data)}
-              />
+              <CartaoDaEtapa no={n} />
               {(!ehGatilho || temEntrada.has(n.id)) && alca(t.w / 2, 0, "entrada")}
               {(fracoes.length ? fracoes : [0.5]).map((f, i) => alca(t.w * f, t.h, `saida-${i}`))}
             </div>
@@ -283,9 +278,4 @@ export function FluxoSomenteLeitura({
       </div>
     </div>
   );
-}
-
-/** Tipo de etapa que o catálogo não conhece (gravado por uma versão mais nova do site). */
-function IconeDesconhecido({ className }: { className?: string }) {
-  return <span className={cn("block rounded-full bg-current opacity-40", className)} />;
 }

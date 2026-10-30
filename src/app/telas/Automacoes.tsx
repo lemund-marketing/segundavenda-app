@@ -13,7 +13,6 @@ import TestWorkflowDialog from "@/components/workflow/TestWorkflowDialog";
 import { BulkDispatchPanel } from "@/components/workflow/BulkDispatchPanel";
 import { NODE_CATALOG } from "@/components/workflow/nodeCatalog";
 import { useSellerContext } from "@/contexts/SellerContext";
-import { useToast } from "@/hooks/use-toast";
 import type { Workflow } from "@/types/workflow";
 import { cn } from "@/lib/utils";
 import { LayoutApp } from "@/app/LayoutApp";
@@ -46,7 +45,6 @@ export default function Automacoes() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { activeSeller } = useSellerContext();
-  const { toast } = useToast();
 
   const fluxoId = searchParams.get("fluxo");
   const abriuFluxoPorToque = useRef(false);
@@ -86,17 +84,6 @@ export default function Automacoes() {
   };
   useVoltarFecha(!!fluxo, fecharFluxo);
 
-  const abrirTeste = () => {
-    if (!fluxo) {
-      toast({
-        title: "Nenhum workflow selecionado",
-        description: "Selecione ou salve um workflow primeiro",
-        variant: "destructive",
-      });
-      return;
-    }
-    setTesteAberto(true);
-  };
   const abrirDisparo = (workflowId: string | null) => {
     setDisparoConfig(workflowId ? { workflowId } : null);
     setDisparoAberto(true);
@@ -251,8 +238,10 @@ export default function Automacoes() {
 
   // O fluxo cobre a tela inteira, sem o topo do app nem a barra de baixo, como
   // no site. A lista continua montada embaixo: ao fechar, ela está onde estava.
+  // `touch-none`: o dedo no cabeçalho ou no rodapé do fluxo não rola a lista
+  // escondida embaixo (no site ela nem fica montada).
   const fluxoView = fluxo && (
-    <div className="fixed inset-0 z-[45] flex flex-col bg-background">
+    <div className="fixed inset-0 z-[45] flex touch-none flex-col bg-background">
       <div className="flex shrink-0 items-center gap-2 border-b border-border/60 bg-card px-2 pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))]">
         <button
           type="button"
@@ -289,7 +278,7 @@ export default function Automacoes() {
       </div>
 
       <div className="flex shrink-0 gap-2 border-t border-border/60 bg-card px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3">
-        <Button variant="outline" className="h-11 flex-1 rounded-full border-border/60" onClick={abrirTeste}>
+        <Button variant="outline" className="h-11 flex-1 rounded-full border-border/60" onClick={() => setTesteAberto(true)}>
           <TestTube2 className="mr-2 h-4 w-4" />
           Testar
         </Button>
