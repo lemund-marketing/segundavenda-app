@@ -19,19 +19,34 @@ worker.
 | Pedidos | `/pedidos` | `src/pages/Pedidos.tsx` |
 | Clientes | `/clientes` | `src/pages/Clientes.tsx` + `ClientesScreen` |
 | Marketplaces | `/lojas`, `/lojas/:marketplace` | `src/pages/Lojas.tsx`, `src/pages/LojaDetail.tsx` |
+| WhatsApp | `/omnichannel` (aceita `?client_id=`) | `src/pages/Omnichannel.tsx` |
+| CRM | `/crm` | `src/pages/CRM.tsx` |
+| Automações | `/workflows` (`?fluxo=<id>` abre o fluxo, só para ver) | `src/pages/Workflows.tsx` |
+| Performance | `/workflow-stats`, `/workflow-stats/template/:nome`, `/workflow-stats/email-template/:id`, `/workflow-stats/sms-template/:nome` | `src/pages/WorkflowStats.tsx` e as três páginas de detalhe de modelo |
+| Análise RFV | `/rfv` | `src/pages/RFV.tsx` |
+| Produtos | `/produtos` | `src/pages/Produtos.tsx` |
+| Regiões | `/regioes` | `src/pages/Regioes.tsx` |
 | Minha Conta (sem plano) | `/account` | `src/pages/Account.tsx` |
 | Menu | `/menu` | o menu do site |
 
 Cada tela é o desenho de **celular** do redesenho (o ramo `isMobile` das
-páginas do site), sem o de computador. As áreas que o app ainda não tem
-(WhatsApp, CRM, Regiões, RFV, Automações, Produtos...) aparecem no Menu e
-abrem o site no navegador. Uma tela nova entra em `src/app/App.tsx` (rota,
-com a guarda de área `ComArea`) e em `TELAS_DO_APP`
+páginas do site), sem o de computador. Uma tela nova entra em
+`src/app/App.tsx` (rota, com a guarda de área `ComArea`) e em `TELAS_DO_APP`
 (`src/app/navegacao/itensMenu.ts`), que a barra de baixo e o Menu usam.
 
+Ficam no site, abertos no navegador do celular, só o que não pode ou não
+funciona dentro do app:
+
+- plano, pagamento e Afiliados (regra da Play, abaixo);
+- conectar o número de WhatsApp e as configurações de e-mail e SMS (abas de
+  Minha Conta): o login da Meta não funciona dentro de app;
+- criar e editar automações: no app o fluxo abre só para ver, ligar ou pausar,
+  como no desenho de celular;
+- "Adicionar Membro" e exportar pedidos.
+
 Login, Início e Menu vão no pacote inicial; as outras telas ficam em arquivos
-próprios, lidos do celular na primeira vez e adiantados logo depois da
-abertura.
+próprios, lidos do celular na primeira vez e adiantados um por um logo depois
+da abertura, na ordem da barra de baixo.
 
 ## Onde fica cada coisa
 
@@ -141,8 +156,9 @@ ligada, `chrome://inspect` no Chrome (o de teste permite; o oficial não).
   abas Plano e Número virtual, e Afiliados fica fora do Menu até ter tela
   própria sem plano.
 - **Sem Meta Pixel** ou outro rastreador de anúncio.
-- Telas que o app ainda não tem aparecem no Menu com o ícone de "abre fora" e
-  abrem a página do site no navegador do celular.
+- O que fica no site (Afiliados no Menu, as abas de WhatsApp, e-mail e SMS de
+  Minha Conta) aparece com o ícone de "abre fora" e abre a página do site no
+  navegador do celular.
 
 ## Comportamento nativo
 
@@ -152,16 +168,25 @@ Em `android/app/src/main/java/br/com/segundavenda/app/MainActivity.java`:
   opções, calendário ou menu (a página responde por `window.svVoltar()`, em
   `src/app/nativo/useVoltarFecha.tsx`; os componentes Sheet, Dialog,
   AlertDialog, Select, Popover e DropdownMenu já entram nessa pilha).
-  Sem nada aberto, volta de tela. No Início e no login, manda o app para
-  segundo plano (não fecha, não perde a sessão).
+  Também sai da seleção do CRM e da aba Itens de Produtos, e no WhatsApp volta
+  da ficha para a conversa e da conversa para a lista. Sem nada aberto, volta
+  de tela. No Início e no login, manda o app para segundo plano (não fecha, não
+  perde a sessão).
 - **Sem internet**: as telas abrem do mesmo jeito (estão no celular). Ao abrir
   com sessão guardada, o app mostra "Sem internet" e continua sozinho quando a
   conexão volta, sem deslogar. Dentro das telas, os números esperam a conexão
   com o aviso "Sem internet" em vez de aparecerem zerados.
+- **Sem internet** depende da permissão `ACCESS_NETWORK_STATE` no
+  AndroidManifest (normal, não pergunta nada): sem ela o WebView não acompanha
+  a rede e `navigator.onLine` fica sempre `true`.
 - **Downloads**: arquivo com endereço (o CSV de clientes) abre no navegador.
-  Arquivo gerado na própria tela (exportar CSV de produto) ainda não é salvo:
-  aparece o aviso "Este download ainda não funciona no app". Exportar pedidos
-  abre o site.
+  Arquivo gerado na própria tela (CSV de produto, de categoria, das colunas e
+  da seleção do CRM, dos destinatários em Performance) e baixar mídia de uma
+  conversa do WhatsApp ainda não são salvos: aparece o aviso "Este download
+  ainda não funciona no app". Exportar pedidos abre o site.
+- **Mensagem nova no WhatsApp** com o app aberto toca o som do site; não há
+  notificação do sistema (o WebView não tem a API de notificação; push pede
+  trabalho nativo).
 - Se o Android matar a página por falta de memória, o app recria a tela em vez
   de fechar.
 - Link para outro endereço (o site, um arquivo) abre no navegador do celular.

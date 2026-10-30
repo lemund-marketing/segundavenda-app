@@ -37,15 +37,20 @@ const PerformanceModeloSms = lazyComRecarga(() => import("@/app/telas/Performanc
 const RFV = lazyComRecarga(() => import("@/app/telas/RFV"));
 const Produtos = lazyComRecarga(() => import("@/app/telas/Produtos"));
 const Regioes = lazyComRecarga(() => import("@/app/telas/Regioes"));
-const TELAS_SOB_DEMANDA = [Pedidos, Clientes, Lojas, LojaDetalhe, Conta, WhatsApp, CRM, Automacoes, RFV, Produtos, Regioes];
+// Na ordem em que a pessoa deve abrir: a barra de baixo primeiro.
 const TELAS_SOB_DEMANDA = [
-  Pedidos, Clientes, Lojas, LojaDetalhe, Conta,
-  Performance, PerformanceModeloWhatsApp, PerformanceModeloEmail, PerformanceModeloSms,
+  WhatsApp, Pedidos, Clientes, CRM, Automacoes, Performance, Lojas, LojaDetalhe,
+  Produtos, Regioes, RFV, Conta, PerformanceModeloWhatsApp, PerformanceModeloEmail, PerformanceModeloSms,
 ];
 
 function PreCarregarTelas() {
   useEffect(() => {
-    const t = window.setTimeout(() => TELAS_SOB_DEMANDA.forEach((tela) => tela.preload()), 1500);
+    // Uma tela por vez: as 15 juntas disputariam o processador com o Início.
+    let i = 0;
+    let t = window.setTimeout(function proxima() {
+      TELAS_SOB_DEMANDA[i++].preload();
+      if (i < TELAS_SOB_DEMANDA.length) t = window.setTimeout(proxima, 250);
+    }, 1500);
     return () => window.clearTimeout(t);
   }, []);
   return null;

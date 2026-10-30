@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { MessageCircle, ArrowUpRight, User } from "lucide-react";
 
 import {
@@ -15,7 +16,6 @@ import { relativeLabel } from "@/utils/relativeDate";
 import { avatarToneFor, getInitials, tintaPorTema } from "@/components/clients/sections/shared";
 import type { ClientesFilterPayload } from "@/components/clients/clientesFilters";
 import { filtersKey } from "@/hooks/useClientesKpis";
-import { noSite } from "@/app/site";
 
 interface ActiveConversationRow {
   client_id: string;
@@ -64,6 +64,8 @@ export function ActiveConversationSheet({
   filters = NO_FILTERS,
   onSelectClient,
 }: ActiveConversationSheetProps) {
+  const navigate = useNavigate();
+
   const { data: rows = [], isLoading } = useQuery<ActiveConversationRow[]>({
     queryKey: ["active-conversation-clients", sellerId, windowHours, filtersKey(filters)],
     enabled: open && !!sellerId,
@@ -83,8 +85,7 @@ export function ActiveConversationSheet({
   // A página Omnichannel lê o parâmetro `client_id` da URL para abrir a conversa certa.
   const abrirConversa = (clientId: string) => {
     onOpenChange(false);
-    // app: o Omnichannel ainda não tem tela no app; abre a conversa no site, no navegador.
-    window.open(noSite(`/omnichannel?client_id=${clientId}`), "_blank", "noopener,noreferrer");
+    navigate(`/omnichannel?client_id=${clientId}`);
   };
 
   return (

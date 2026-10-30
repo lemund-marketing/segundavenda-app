@@ -12,9 +12,7 @@ import { DAY_KEY_FMT, localDoCliente, parseOrderDate } from "@/components/pedido
 import { getInitials } from "@/components/clients/sections/shared";
 import { PedidoCardMobile } from "@/components/pedidos/PedidoCardMobile";
 import { supabase } from "@/integrations/supabase/client";
-// app: o CRM não tem tela no app; os links dele abrem o site.
-import { noSite } from "@/app/site";
-import { VerTudoNoSite } from "@/app/blocos/VerTudoNoSite";
+import { Link } from "react-router-dom";
 import { RowFill, VAZIAS_NOMEADAS, brl, corSegura, int, variacao } from "./shared";
 import {
   Bloco, BolinhaMarca, Distribuicao, Linha, Pilulas, Secao, Selo, ValorPartes, pct0,
@@ -424,7 +422,7 @@ export function DashboardMobile({
       {(fases.length > 0 || funilErro) && (
         <Secao
           titulo="Funil do CRM"
-          direita={<VerTudoNoSite caminho="/crm" titulo="Funil do CRM" />} // app: abre o site
+          to="/crm"
           semLista
           rodape={!funilErro && (funil?.no_stage ?? 0) > 0 ? `${int(funil!.no_stage)} clientes ainda sem fase` : undefined}
         >
@@ -441,11 +439,8 @@ export function DashboardMobile({
                 {fasesAtivas.map((f) => (
                   <li key={f.id} className="relative overflow-hidden rounded-xl">
                     {fasesAtivas.length > 1 && <RowFill share={maiorFase > 0 ? f.clients / maiorFase : 0} color={f.color} />}
-                    {/* app: abre o CRM do site */}
-                    <a
-                      href={noSite("/crm")}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to="/crm"
                       className="relative flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors active:bg-muted/60"
                     >
                       <span className="h-8 w-1 shrink-0 rounded-full" style={{ backgroundColor: corSegura(f.color) }} />
@@ -459,7 +454,7 @@ export function DashboardMobile({
                           {funil?.total_base ? `${pct0((f.clients / funil.total_base) * 100)} da base` : f.clients === 1 ? "cliente" : "clientes"}
                         </p>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

@@ -40,4 +40,9 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Sem esta (permissão normal, não pergunta nada), o WebView não acompanha
+         a rede: navigator.onLine fica sempre true e os eventos online/offline
+         não chegam, e o "Sem internet" e a recarga quando a rede volta não
+         funcionam. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>
