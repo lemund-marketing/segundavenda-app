@@ -320,7 +320,7 @@ export default function RFV() {
   // e volta sozinha com a conexão: a tela não pode ficar vazia sem explicação.
   const semInternet = resumo.isPending && resumo.isPaused;
 
-  const clientesQ = useClientesDoSegmento(activeSeller?.id, selected);
+  const clientesQ = useClientesDoSegmento(activeSeller?.id, selected, folhaAberta);
   const clients = clientesQ.data;
   const loadingClients = clientesQ.isLoading;
   const clientesSemInternet = clientesQ.isPending && clientesQ.isPaused;
