@@ -24,6 +24,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "2e7af2b7f1a6f391da1631d93968a9d487ba977d"
     },
+    "public/notification-bell.wav": {
+      "origem": "public/notification-bell.wav",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "abf4dc7e475db3886d9986c69e283ae543213d04"
+    },
     "src/assets/logo-segunda-venda-final.svg": {
       "origem": "src/assets/logo-segunda-venda-final.svg",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -268,6 +273,91 @@
       "origem": "src/components/lojas/lojaDetailShared.tsx",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "f1f2ea82303174c85e17012a38447b99ed276212"
+    },
+    "src/components/omnichannel/ChannelToggle.tsx": {
+      "origem": "src/components/omnichannel/ChannelToggle.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ad97b3769bbbf421a5acf9c2ecfa80172cfaf8f2"
+    },
+    "src/components/omnichannel/ChatHeader.tsx": {
+      "origem": "src/components/omnichannel/ChatHeader.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "95f93d984ab59949102c08a284503d533722c6f3"
+    },
+    "src/components/omnichannel/ConversationCard.tsx": {
+      "origem": "src/components/omnichannel/ConversationCard.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "d8993f092afbc9f1799df8010a1ba13cbd64e631"
+    },
+    "src/components/omnichannel/MessageMediaContent.tsx": {
+      "origem": "src/components/omnichannel/MessageMediaContent.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "386c7ddefb1bb2a3fc9c05317ed07f647a8dbd55"
+    },
+    "src/components/omnichannel/OmnichannelClientPanel.tsx": {
+      "origem": "src/components/omnichannel/OmnichannelClientPanel.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "3fe9359d2ea95ab76bf7cc34ee5d5b7a41fef75c"
+    },
+    "src/components/omnichannel/OmnichannelFiltersSheet.tsx": {
+      "origem": "src/components/omnichannel/OmnichannelFiltersSheet.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "3dbad88c1b881b02f2caa64f14b4ba1fea16bfd9"
+    },
+    "src/components/omnichannel/QuickRepliesPopover.tsx": {
+      "origem": "src/components/omnichannel/QuickRepliesPopover.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "62de49bdc0d324c4bc180ee6e74d6e8bfc4e75b0"
+    },
+    "src/components/omnichannel/TemplateButtonsPreview.tsx": {
+      "origem": "src/components/omnichannel/TemplateButtonsPreview.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "4d782a7a696efe72f109ffd6075c7e21b8b017b4"
+    },
+    "src/components/omnichannel/TemplateParamsDialog.tsx": {
+      "origem": "src/components/omnichannel/TemplateParamsDialog.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "05f56983ea0f550570a517060e7045df965b6323"
+    },
+    "src/components/omnichannel/ml/MercadoLivreSelo.tsx": {
+      "origem": "src/components/omnichannel/ml/MercadoLivreSelo.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "9e636fe2cae76f510832b09ef7581c21c09902bd"
+    },
+    "src/components/omnichannel/ml/MlChatView.tsx": {
+      "origem": "src/components/omnichannel/ml/MlChatView.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "480a93935e0a1c07c50ecbb13b65d62426b33411"
+    },
+    "src/components/omnichannel/ml/MlConversationCard.tsx": {
+      "origem": "src/components/omnichannel/ml/MlConversationCard.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "2f1d271640006ee79725ff69c2f8f4764d0cb253"
+    },
+    "src/components/omnichannel/ml/MlFalhaLista.tsx": {
+      "origem": "src/components/omnichannel/ml/MlFalhaLista.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ac06e166032d39e6753d0a42fc24ac4f8409a0ad"
+    },
+    "src/components/omnichannel/ml/MlOrderPanel.tsx": {
+      "origem": "src/components/omnichannel/ml/MlOrderPanel.tsx",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "bb22738c97a7713e7fafd15ea2f72fff41471b09"
+    },
+    "src/components/omnichannel/ml/mlTipos.ts": {
+      "origem": "src/components/omnichannel/ml/mlTipos.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "d021435cfcf2f670e7a0bc518c56f6bed7d70747"
+    },
+    "src/components/omnichannel/ml/useMlConversations.ts": {
+      "origem": "src/components/omnichannel/ml/useMlConversations.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "3ac8e864e30174833cb98ccb6d9f71ece089cf7b"
+    },
+    "src/components/omnichannel/templateCorpo.ts": {
+      "origem": "src/components/omnichannel/templateCorpo.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "c7b20ef8e5a9227a365f44e293641258e344e31b"
     },
     "src/components/orders/OrderShipmentSheet.tsx": {
       "origem": "src/components/orders/OrderShipmentSheet.tsx",
@@ -689,6 +779,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "408a2058d0a702225e0872e402b17f73ca38568a"
     },
+    "src/hooks/useNotifications.ts": {
+      "origem": "src/hooks/useNotifications.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "a67ea6f120cec8d57217d3b2ac6fee233a1f3c98"
+    },
     "src/hooks/useNumeroErrado.ts": {
       "origem": "src/hooks/useNumeroErrado.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -728,6 +823,11 @@
       "origem": "src/hooks/useWhatsAppConversao7d.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "c7ad3af13731a04aa4e423b3f4309e5ddd1e2838"
+    },
+    "src/hooks/useWindowCountdown.ts": {
+      "origem": "src/hooks/useWindowCountdown.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "d413fd3ba2565fa7e9ddb268a6e3217964e8c791"
     },
     "src/index.css": {
       "origem": "src/index.css",
@@ -784,6 +884,16 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "8f590489e35913bdd1d52785df77beeba269e740"
     },
+    "src/utils/conversationChannels.ts": {
+      "origem": "src/utils/conversationChannels.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "a6af6b22a44650aa440595081113fdd8e2233c77"
+    },
+    "src/utils/conversionIntent.ts": {
+      "origem": "src/utils/conversionIntent.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "08668fc7070b0b39c7938d77802cba1583040693"
+    },
     "src/utils/formatters.ts": {
       "origem": "src/utils/formatters.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -824,6 +934,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "52acf0ec73d3c4a2e2dad846d99dfc0ad190b54a"
     },
+    "src/utils/storageKey.ts": {
+      "origem": "src/utils/storageKey.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "ce8770dae6427ca5ac9e3006241604d62624d913"
+    },
     "src/utils/validation.ts": {
       "origem": "src/utils/validation.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
@@ -838,6 +953,11 @@
       "origem": "src/vite-env.d.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "11f02fe2a0061d6e6e1f271b21da95423b448b32"
+    },
+    "supabase/functions/_shared/textoMl.ts": {
+      "origem": "supabase/functions/_shared/textoMl.ts",
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "blob": "4186585c1fe367d1023b554aef45b901e70f7cdf"
     },
     "tailwind.config.ts": {
       "origem": "tailwind.config.ts",
@@ -938,12 +1058,39 @@
         }
       ]
     },
+    "src/app/blocos/whatsapp/BolhaMensagem.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Omnichannel.tsx",
+          "blob": "9ece54d49c32311f035f7fad4a65f4c22d0d4eea"
+        }
+      ]
+    },
+    "src/app/dados/useConversas.ts": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Omnichannel.tsx",
+          "blob": "9ece54d49c32311f035f7fad4a65f4c22d0d4eea"
+        }
+      ]
+    },
     "src/app/dados/useEhAfiliado.ts": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
         {
           "caminho": "src/components/AppSidebar.tsx",
           "blob": "72731c8b442995bdeb8a0f9034dc03ce5b7de48d"
+        }
+      ]
+    },
+    "src/app/dados/useMensagens.ts": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Omnichannel.tsx",
+          "blob": "9ece54d49c32311f035f7fad4a65f4c22d0d4eea"
         }
       ]
     },
@@ -1055,6 +1202,15 @@
         {
           "caminho": "src/pages/Pedidos.tsx",
           "blob": "e87dc1aa17a779ee2bc453735ad40616d41bf838"
+        }
+      ]
+    },
+    "src/app/telas/WhatsApp.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Omnichannel.tsx",
+          "blob": "9ece54d49c32311f035f7fad4a65f4c22d0d4eea"
         }
       ]
     }

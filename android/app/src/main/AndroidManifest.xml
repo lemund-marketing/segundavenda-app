@@ -40,4 +40,9 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Microfone para gravar áudio de voz pela página (getUserMedia): sem estas
+         o WebView recusa o pedido calado. O Capacitor pergunta à pessoa na hora
+         da primeira gravação. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 </manifest>
