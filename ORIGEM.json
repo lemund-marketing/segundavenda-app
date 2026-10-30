@@ -911,15 +911,6 @@
     }
   },
   "derivados": {
-    "src/app/LayoutApp.tsx": {
-      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
-      "origens": [
-        {
-          "caminho": "src/components/layouts/AppLayout.tsx",
-          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
-        }
-      ]
-    },
     "src/app/blocos/LimiteCaptura.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
@@ -962,6 +953,15 @@
         {
           "caminho": "src/pages/Lojas.tsx",
           "blob": "ee209d8608cea7804bfb9746db77725b67234d0f"
+        }
+      ]
+    },
+    "src/app/LayoutApp.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/components/layouts/AppLayout.tsx",
+          "blob": "de59a6102e1999ab48d62895942f4b6eea7ffbe9"
         }
       ]
     },
@@ -1055,6 +1055,15 @@
         {
           "caminho": "src/pages/Pedidos.tsx",
           "blob": "e87dc1aa17a779ee2bc453735ad40616d41bf838"
+        }
+      ]
+    },
+    "src/app/telas/Regioes.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Regioes.tsx",
+          "blob": "99b78a07e65fe3bcaa6054a412ff9c276b97d37f"
         }
       ]
     }

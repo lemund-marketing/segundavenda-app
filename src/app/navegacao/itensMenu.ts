@@ -57,7 +57,7 @@ export const gestaoItems: ItemMenu[] = [
  * página do site no navegador (app/site.ts). A cada tela portada, o caminho
  * entra aqui e ela passa a abrir dentro do app.
  */
-export const TELAS_DO_APP = new Set<string>(["/", "/pedidos", "/clientes", "/lojas", "/account"]);
+export const TELAS_DO_APP = new Set<string>(["/", "/pedidos", "/clientes", "/lojas", "/account", "/regioes"]);
 
 /**
  * Fora do app até ter tela própria sem plano: a Play não aceita app que leve
