@@ -69,8 +69,9 @@ export default function Regioes() {
           <Pilulas rotulo="Período" opcoes={PERIODOS} valor={periodo} onChange={setPeriodo} />
         </div>
 
-        {/* Erro não é "sem pedidos": a RPC que falha devolve lista vazia, e a
-            loja que vendeu não pode ler que não há pedido com endereço. */}
+        {/* Erro não é "sem pedidos": a consulta que falha fica sem dado, que
+            aqui vira lista vazia, e a loja que vendeu não pode ler que não há
+            pedido com endereço. */}
         {regioes.isError ? (
           <div className="flex flex-col items-center gap-3 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
             <AlertTriangle className="h-6 w-6 text-muted-foreground" />
@@ -169,7 +170,9 @@ export default function Regioes() {
               </Secao>
             )}
 
-            <RegionRollup rows={rows} />
+            {/* Carregando, a lista ainda vazia daria "Sem dados no período";
+                o cartão entra com os números, como o ranking acima. */}
+            {!isLoading && <RegionRollup rows={rows} />}
           </>
         )}
       </div>
