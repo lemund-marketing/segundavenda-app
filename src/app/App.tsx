@@ -36,7 +36,8 @@ const PerformanceModeloEmail = lazyComRecarga(() => import("@/app/telas/Performa
 const PerformanceModeloSms = lazyComRecarga(() => import("@/app/telas/PerformanceModeloSms"));
 const RFV = lazyComRecarga(() => import("@/app/telas/RFV"));
 const Produtos = lazyComRecarga(() => import("@/app/telas/Produtos"));
-const TELAS_SOB_DEMANDA = [Pedidos, Clientes, Lojas, LojaDetalhe, Conta, WhatsApp, CRM, Automacoes, RFV, Produtos];
+const Regioes = lazyComRecarga(() => import("@/app/telas/Regioes"));
+const TELAS_SOB_DEMANDA = [Pedidos, Clientes, Lojas, LojaDetalhe, Conta, WhatsApp, CRM, Automacoes, RFV, Produtos, Regioes];
 const TELAS_SOB_DEMANDA = [
   Pedidos, Clientes, Lojas, LojaDetalhe, Conta,
   Performance, PerformanceModeloWhatsApp, PerformanceModeloEmail, PerformanceModeloSms,
@@ -205,6 +206,7 @@ function Telas() {
           <Route path="/workflow-stats/sms-template/:templateName" element={<ComConta><PerformanceModeloSms /></ComConta>} />
           <Route path="/rfv" element={<ComConta><ComArea area="rfv"><RFV /></ComArea></ComConta>} />
           <Route path="/produtos" element={<ComConta><ComArea area="produtos"><Produtos /></ComArea></ComConta>} />
+          <Route path="/regioes" element={<ComConta><ComArea area="regioes"><Regioes /></ComArea></ComConta>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

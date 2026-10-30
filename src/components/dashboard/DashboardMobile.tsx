@@ -12,7 +12,7 @@ import { DAY_KEY_FMT, localDoCliente, parseOrderDate } from "@/components/pedido
 import { getInitials } from "@/components/clients/sections/shared";
 import { PedidoCardMobile } from "@/components/pedidos/PedidoCardMobile";
 import { supabase } from "@/integrations/supabase/client";
-// app: CRM e Regiões não têm tela no app; os links deles abrem o site.
+// app: o CRM não tem tela no app; os links dele abrem o site.
 import { noSite } from "@/app/site";
 import { VerTudoNoSite } from "@/app/blocos/VerTudoNoSite";
 import { RowFill, VAZIAS_NOMEADAS, brl, corSegura, int, variacao } from "./shared";
@@ -482,8 +482,7 @@ export function DashboardMobile({
 
       {/* Ranking verde, o mesmo da tela Regiões (pedido de 22/10). */}
       {estados.length > 0 && (
-        <Secao titulo="Regiões" direita={<VerTudoNoSite caminho="/regioes" titulo="Regiões" />} semLista>
-          {/* app: "Ver tudo" abre o site; o toque no estado abre a gaveta aqui mesmo */}
+        <Secao titulo="Regiões" to="/regioes" semLista>
           <RankingEstados estados={estados} totalPedidos={pedidosEstados} onSelecionar={onSelecionarUf} />
         </Secao>
       )}

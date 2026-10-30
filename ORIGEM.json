@@ -1724,6 +1724,15 @@
         }
       ]
     },
+    "src/app/telas/Regioes.tsx": {
+      "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
+      "origens": [
+        {
+          "caminho": "src/pages/Regioes.tsx",
+          "blob": "99b78a07e65fe3bcaa6054a412ff9c276b97d37f"
+        }
+      ]
+    },
     "src/app/telas/RFV.tsx": {
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "origens": [
