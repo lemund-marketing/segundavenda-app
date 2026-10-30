@@ -1,5 +1,7 @@
-import { useSyncExternalStore } from "react";
-import { UserCheck, WifiOff } from "lucide-react";
+import { useCallback, useSyncExternalStore } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { AlertTriangle, UserCheck, WifiOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useSellerContext } from "@/contexts/SellerContext";
 import { KanbanBoard } from "@/components/crm/KanbanBoard";
 import { CabecalhoTela } from "@/components/mobile/blocos";
@@ -15,6 +17,17 @@ const assinarRede = (avisar: () => void) => {
 };
 
 /**
+ * Estado da consulta das fases, que mora dentro do KanbanBoard copiado do
+ * site (mesma chave). Só lê o cache: um segundo useQuery com a mesma chave
+ * trocaria as opções da consulta.
+ */
+function useEstadoDasFases(sellerId: string | undefined) {
+  const queryClient = useQueryClient();
+  const assinar = useCallback((avisar: () => void) => queryClient.getQueryCache().subscribe(avisar), [queryClient]);
+  return useSyncExternalStore(assinar, () => queryClient.getQueryState(["pipeline-stages", sellerId]));
+}
+
+/**
  * Kanban CRM: a casca da página do site (src/pages/CRM.tsx) no desenho de
  * celular. O corpo (resumo do funil, busca e filtros, uma fase por vez com as
  * abas no topo, mover de fase, seleção em massa e a ficha do cliente) é o
@@ -23,9 +36,15 @@ const assinarRede = (avisar: () => void) => {
  */
 export default function CRM() {
   const { activeSeller } = useSellerContext();
+  const queryClient = useQueryClient();
   // Sem internet as consultas ficam em espera (nem dado, nem erro, nem
   // carregando) e as colunas diriam "Nenhum lead nesta fase" com contagem 0.
   const semRede = useSyncExternalStore(assinarRede, () => !navigator.onLine);
+  // Erro não é "loja sem fases": com a leitura das fases falhando, o quadro
+  // desenhava só o "Nova fase", como se o funil estivesse vazio.
+  const fases = useEstadoDasFases(activeSeller?.id);
+  const erroNasFases = fases?.status === "error" && fases.data === undefined;
+  const tentando = fases?.fetchStatus === "fetching";
 
   return (
     <LayoutApp>
@@ -45,7 +64,30 @@ export default function CRM() {
         <div className="px-4 pt-4">
           <CabecalhoTela icone={UserCheck} titulo="CRM" />
         </div>
-        {activeSeller && <KanbanBoard sellerId={activeSeller.id} />}
+        {erroNasFases && (
+          <div className="px-4 pb-6 pt-4">
+            <div className="flex flex-col items-center gap-3 rounded-3xl border border-border/60 bg-card px-6 py-8 text-center">
+              <AlertTriangle className="h-6 w-6 text-muted-foreground" />
+              <p className="text-sm font-medium text-foreground">Não foi possível carregar as fases do funil.</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full"
+                disabled={tentando}
+                onClick={() => queryClient.refetchQueries({ queryKey: ["pipeline-stages", activeSeller?.id] })}
+              >
+                {tentando ? "Tentando…" : "Tentar de novo"}
+              </Button>
+            </div>
+          </div>
+        )}
+        {/* O quadro fica montado, só escondido, durante o erro: é ele que busca
+            as fases, também de novo ao voltar para a tela. */}
+        {activeSeller && (
+          <div className={erroNasFases ? "hidden" : "contents"}>
+            <KanbanBoard sellerId={activeSeller.id} />
+          </div>
+        )}
       </div>
     </LayoutApp>
   );
