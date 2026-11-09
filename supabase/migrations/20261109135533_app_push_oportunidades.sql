@@ -115,11 +115,14 @@ create policy app_push_aparelhos_apagar on public.app_push_aparelhos
 -- Estado do coletor: uma linha só.
 -- somente_lojas: null = todas as lojas; '{}' = nenhuma (o valor de nascença,
 -- para que ligar sem escolher o piloto não avise ninguém).
+-- perfis_extras: contas que recebem os avisos de todas as lojas coletadas sem
+-- ser membro delas (quem acompanha o piloto, como a conta da Lemund).
 -- ---------------------------------------------------------------------
 create table if not exists public.app_push_estado (
   id integer primary key default 1 check (id = 1),
   ligado boolean not null default false,
   somente_lojas uuid[] default '{}',
+  perfis_extras uuid[] not null default '{}',
   cursor timestamptz,
   coletado_em timestamptz,
   ultimo_erro text,
@@ -317,6 +320,18 @@ as $$
                         and mp.seller_id = sm.seller_id
                         and mp.area = 'omnichannel'
                         and mp.access_level in ('ver', 'editar')))
+     and not exists (select 1
+                       from public.app_push_aparelhos b
+                      where b.token = a.token
+                        and b.profile_id <> a.profile_id
+                        and (b.visto_em > a.visto_em
+                             or (b.visto_em = a.visto_em and b.profile_id > a.profile_id)))
+  union
+  select s.id, s.name, a.profile_id, a.token
+    from public.sellers s
+    join public.app_push_estado e on e.id = 1
+    join public.app_push_aparelhos a on a.profile_id = any (e.perfis_extras)
+   where s.id = any (app_push_alvos.seller_ids)
      and not exists (select 1
                        from public.app_push_aparelhos b
                       where b.token = a.token

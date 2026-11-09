@@ -212,7 +212,7 @@ Como aplicar, ligar e remover: LEIA-ME, "Notificações de oportunidade
 | Objeto | Tipo | O que é | Quem acessa |
 |---|---|---|---|
 | `app_push_aparelhos` | tabela | token do FCM por conta e celular: `id, profile_id, token, plataforma, visto_em, criado_em`, único `(profile_id, token)`; o banco carimba `visto_em` (gatilho `app_push_aparelhos_carimbar`, na tabela do app); se o mesmo token está em mais de uma conta, vale a de maior `visto_em` | o app (`authenticated`, só as próprias linhas pela RLS): upsert ao abrir, delete ao sair; a edge apaga token inválido |
-| `app_push_estado` | tabela | linha única: `ligado` (nasce `false`), `somente_lojas` (nasce `'{}'`, nenhuma; `null` = todas), `cursor`, `coletado_em`, `ultimo_erro` | só `postgres` e `service_role` |
+| `app_push_estado` | tabela | linha única: `ligado` (nasce `false`), `somente_lojas` (nasce `'{}'`, nenhuma; `null` = todas), `perfis_extras` (contas que recebem sem ser membro da loja), `cursor`, `coletado_em`, `ultimo_erro` | só `postgres` e `service_role` |
 | `app_push_enviadas` | tabela | fila e registro, só ids: `case_id` (chave), `conversation_id, client_id, seller_id, intent_type, status` (`pendente, enviando, enviada, sem_aparelho, falhou, expirada`), `tentativas, motivo, criado_em, processado_em`; linhas com mais de 7 dias são apagadas | só `postgres` e `service_role` |
 | `app_push_coletar()` | função | coleta os casos novos, cuida da fila e chama a edge se houver pendente | job (`postgres`), `service_role` |
 | `app_push_reservar(limite)` | função | reserva um lote (`FOR UPDATE SKIP LOCKED`) | `service_role` (edge) |

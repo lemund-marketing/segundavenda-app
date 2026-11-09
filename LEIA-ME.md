@@ -273,6 +273,9 @@ Os comandos estão no fim do arquivo da migração. Em resumo:
 - **Piloto**: `update public.app_push_estado set ligado = true,
   somente_lojas = array['<seller_id>']::uuid[] where id = 1;`. Nasce com
   `somente_lojas = '{}'` (nenhuma loja); `null` é todas.
+  `perfis_extras` lista contas que recebem os avisos das lojas coletadas sem
+  ser membro delas (quem acompanha o piloto). Piloto atual: Hope Metais, com a
+  conta da Lemund como extra.
 - **Pausar**: `ligado = false`. O job continua rodando e sai na primeira
   linha; o que estava pendente expira.
 - **Acompanhar**: `app_push_estado.ultimo_erro`, contagem por `status` em
