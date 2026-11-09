@@ -44,8 +44,9 @@ export default function CRM() {
       {/* Altura exata da área entre a faixa do logo (h-12) e o espaço da
           cápsula de navegação, como o `alturaCheia` do AppLayout do site: o
           quadro mede 100cqh deste contêiner, então rolando até ele as abas
-          das fases encostam no topo e a lista de cards rola por dentro. */}
-      <div className="h-[calc(100dvh-8.5rem-env(safe-area-inset-bottom))] overflow-y-auto overflow-x-hidden [container-type:size]">
+          das fases encostam no topo e a lista de cards rola por dentro. Desconta
+          a faixa do admin que entrou como cliente (--faixa-admin). */}
+      <div className="h-[calc(100dvh-8.5rem-env(safe-area-inset-bottom)-var(--faixa-admin,0px))] overflow-y-auto overflow-x-hidden [container-type:size]">
         {semRede && (
           <FaixaSemRede>
             Sem internet. Até a conexão voltar, as fases e os números abaixo podem estar zerados ou desatualizados.

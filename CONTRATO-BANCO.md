@@ -47,6 +47,7 @@ está logado (`authenticated`).
 | Renovar e ler a sessão (`getSession`, renovação automática) | `AuthContext.tsx`, Minha Conta antes de salvar o perfil |
 | Sair **só deste aparelho** (`signOut({ scope: "local" })`): o site continua logado | `AuthContext.tsx`, `SellerContext.tsx` |
 | E-mail de troca de senha (`resetPasswordForEmail`), com retorno para a página do site `https://app.segundavenda.com.br/reset-password` | `src/app/telas/Entrar.tsx` |
+| Admin "entra como" o dono de um cliente: o `token` do magic link que a edge `admin-impersonate-user` gera (o `hashed_token`) vai para `verifyOtp({ token_hash, type: "magiclink" })`; o "Voltar para Admin" restaura a sessão guardada do admin com `setSession` e encerra a sessão do magic link com `POST /auth/v1/logout?scope=local` (só ela; nunca `global`) | `src/app/dados/impersonacao.ts` |
 
 O app **não cria conta** (`signUp`) nem convida membro (o "Adicionar Membro"
 abre o site). O dono da loja pode trocar a senha de um membro pela edge
@@ -57,7 +58,8 @@ function `update-member-password`, igual ao site.
 |---|---|---|
 | `seller_members` | lojas do usuário (`seller_id, created_at`); `seller_id` do usuário nas respostas rápidas e nos números de WhatsApp | todas (SellerContext); WhatsApp, Automações |
 | `sellers` | `*` das lojas do usuário; `max_members` da loja | todas; Minha Conta |
-| `admin_users` | `id` do usuário logado (`maybeSingle`): o admin vê a chave "Incluir dados de teste" | Performance |
+| `admin_users` | `id` do usuário logado (`maybeSingle`): o admin vê a chave "Incluir dados de teste"; a conta admin ganha "Escolher cliente" / "Entrar como cliente" (RLS: "Users can view own admin mapping") | Performance, Escolher cliente, Menu |
+| `sellers` (admin) | `id, name, contact_email, created_at, created_by` de todas as lojas, 30 por página, busca `ilike` no nome (RLS: "Admins can view all sellers", `is_admin_user`) | Escolher cliente (só admin) |
 | `profiles` | `full_name, email, company_name, cnpj, whatsapp` do usuário logado | Minha Conta |
 | `member_permissions` | `member_id` da loja (contagem de áreas) | Minha Conta (Membros) |
 | `orders` | lista, contagem, busca e sugestões de pedidos; últimos pedidos; pedidos do cliente; `id, whatsapp_contacted_at`; último pedido do card e fase por regra; marketplace dos clientes da conversa; estimativa do disparo | Início, Pedidos, Marketplaces, WhatsApp, CRM, Automações, ficha |
@@ -147,6 +149,7 @@ function `update-member-password`, igual ao site.
 | `sync-whatsapp-templates` | abrir Testar numa automação | Automações |
 | `start-workflow-test` | teste interativo de uma automação | Automações |
 | `bulk-dispatch` | disparo retroativo | Automações |
+| `admin-impersonate-user` | admin toca num cliente (`{ targetUserId: sellers.created_by }`); do retorno o app usa `actionUrl` (só o `token`) e `targetEmail` | Escolher cliente (só admin) |
 
 Fora do Supabase, igual ao site: ao pausar uma automação à mão, o app avisa
 `https://api-hook.segundavenda.com.br/webhook/alerta-workflow` (POST `no-cors`).

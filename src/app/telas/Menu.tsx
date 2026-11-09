@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChevronRight, ExternalLink, LogOut } from "lucide-react";
+import { ChevronRight, ExternalLink, LogOut, UserCog } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSellerContext } from "@/contexts/SellerContext";
 import { useAreaPermissions, PATH_AREA } from "@/hooks/useAreaPermissions";
@@ -10,7 +10,8 @@ import {
   overviewItems, gestaoItems, TELAS_DO_APP, SO_NO_SITE, type ItemMenu,
 } from "@/app/navegacao/itensMenu";
 import { noSite } from "@/app/site";
-import { esquecerAparelho } from "@/app/nativo/push";
+import { useEhAdmin } from "@/app/dados/useEhAdmin";
+import { useSairDaConta } from "@/app/dados/useSairDaConta";
 
 /**
  * Menu (último botão da barra de baixo), no padrão dos apps de banco: quem é a
@@ -19,9 +20,12 @@ import { esquecerAparelho } from "@/app/nativo/push";
  * o ícone de "sai do app" no lugar da seta.
  */
 export default function Menu() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const { activeSeller } = useSellerContext();
   const { canView } = useAreaPermissions();
+  const { ehAdmin } = useEhAdmin();
+  // Durante a impersonação "Sair" volta para o admin (useSairDaConta).
+  const { sair, saindo, impersonando } = useSairDaConta();
 
   const visivel = (i: ItemMenu) => {
     if (SO_NO_SITE.has(i.path)) return false;
@@ -73,13 +77,30 @@ export default function Menu() {
           </p>
         )}
 
+        {ehAdmin && (
+          <section className="flex flex-col gap-2">
+            <h2 className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Admin</h2>
+            <Link
+              to="/admin/clientes"
+              className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3.5 transition-colors active:bg-muted"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <UserCog className="h-[18px] w-[18px]" strokeWidth={1.75} />
+              </span>
+              <span className="flex-1 text-[15px] font-medium text-foreground">Entrar como cliente</span>
+              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+            </Link>
+          </section>
+        )}
+
         <button
           type="button"
-          onClick={() => void esquecerAparelho().finally(signOut)}
+          onClick={() => void sair()}
+          disabled={saindo}
           className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-3.5 text-[15px] font-medium text-destructive transition-colors active:bg-destructive/10"
         >
           <LogOut className="h-[18px] w-[18px]" strokeWidth={1.75} />
-          Sair da conta
+          {impersonando ? "Voltar para Admin" : "Sair da conta"}
         </button>
       </div>
     </LayoutApp>

@@ -36,10 +36,16 @@ export function LayoutApp({
   const iniciais = (activeSeller?.name || user?.email || "SV").substring(0, 2).toUpperCase();
 
   return (
-    // dvh e não vh: acompanha o teclado subindo.
-    <div className={cn("flex flex-col bg-background", alturaCheia ? "h-[100dvh] overflow-hidden" : "min-h-[100dvh]")}>
+    // dvh e não vh: acompanha o teclado subindo. `--faixa-admin` é a altura da
+    // faixa do admin que entrou como cliente (FaixaImpersonacao); sem ela, 0.
+    <div
+      className={cn(
+        "flex flex-col bg-background",
+        alturaCheia ? "h-[calc(100dvh-var(--faixa-admin,0px))] overflow-hidden" : "min-h-[calc(100dvh-var(--faixa-admin,0px))]",
+      )}
+    >
       {!ocultarTopoMobile && (
-        <div className="sticky top-0 z-40 flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border bg-background px-4">
+        <div className="sticky top-[var(--faixa-admin,0px)] z-40 flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border bg-background px-4">
           <Link to="/" aria-label="Início">
             <img src={logoFinal} alt="Segunda Venda" className="h-6 w-auto object-contain" />
           </Link>

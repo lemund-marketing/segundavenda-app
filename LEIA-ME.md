@@ -28,6 +28,7 @@ worker.
 | Regiões | `/regioes` | `src/pages/Regioes.tsx` |
 | Minha Conta (sem plano) | `/account` | `src/pages/Account.tsx` |
 | Menu | `/menu` | o menu do site |
+| Escolher cliente (só admin) | `/admin/clientes`; e no lugar do "Sua conta ainda não tem loja" para o admin sem loja | "Logar como este usuário" do site (`src/utils/impersonarCliente.ts`, `ImpersonationBanner`) |
 
 Cada tela é o desenho de **celular** do redesenho (o ramo `isMobile` das
 páginas do site), sem o de computador. Uma tela nova entra em

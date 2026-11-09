@@ -15,7 +15,10 @@ import { TELAS_DO_APP } from "@/app/navegacao/itensMenu";
 import { noSite } from "@/app/site";
 import { lazyComRecarga } from "@/utils/lazyComRecarga";
 import { ErroNaTela } from "@/app/blocos/ErroNaTela";
-import { esquecerAparelho, usePushNativo } from "@/app/nativo/push";
+import { usePushNativo } from "@/app/nativo/push";
+import { FaixaImpersonacao } from "@/app/blocos/FaixaImpersonacao";
+import { useEhAdmin } from "@/app/dados/useEhAdmin";
+import { useSairDaConta } from "@/app/dados/useSairDaConta";
 import Entrar from "@/app/telas/Entrar";
 import Inicio from "@/app/telas/Inicio";
 import Menu from "@/app/telas/Menu";
@@ -38,6 +41,8 @@ const PerformanceModeloSms = lazyComRecarga(() => import("@/app/telas/Performanc
 const RFV = lazyComRecarga(() => import("@/app/telas/RFV"));
 const Produtos = lazyComRecarga(() => import("@/app/telas/Produtos"));
 const Regioes = lazyComRecarga(() => import("@/app/telas/Regioes"));
+// Só a conta admin abre: fica fora do pré-carregamento.
+const EscolherCliente = lazyComRecarga(() => import("@/app/telas/EscolherCliente"));
 // Na ordem em que a pessoa deve abrir: a barra de baixo primeiro.
 const TELAS_SOB_DEMANDA = [
   WhatsApp, Pedidos, Clientes, CRM, Automacoes, Performance, Lojas, LojaDetalhe,
@@ -71,11 +76,13 @@ const queryClient = new QueryClient({
 
 /**
  * Porta das telas de quem está logado: espera a sessão e a loja, manda para o
- * login quem não tem sessão e explica quando a conta não tem loja.
+ * login quem não tem sessão e explica quando a conta não tem loja. A conta
+ * admin sem loja escolhe um cliente para entrar como ele.
  */
 function ComConta({ children }: { children: ReactNode }) {
   const { user, loading, semConexao } = useAuth();
   const { activeSeller, loading: carregandoLoja } = useSellerContext();
+  const { ehAdmin, carregando: carregandoAdmin, falhou: falhouAdmin, tentarDeNovo } = useEhAdmin();
 
   if (loading) return <Abertura />;
   if (!user && semConexao) {
@@ -90,6 +97,19 @@ function ComConta({ children }: { children: ReactNode }) {
   }
   if (!user) return <Navigate to="/entrar" replace />;
   if (carregandoLoja && !activeSeller) return <Abertura />;
+  if (!activeSeller && carregandoAdmin) return <Abertura />;
+  if (!activeSeller && ehAdmin) return <EscolherCliente />;
+  // Sem loja e sem saber se é admin (a consulta caiu): não afirma "sem loja".
+  if (!activeSeller && falhouAdmin) {
+    return (
+      <Aviso
+        icone={<WifiOff className="h-6 w-6" />}
+        titulo="Sem conexão"
+        texto="Não deu para carregar a sua conta. Confira a internet e tente de novo."
+        botao={{ rotulo: "Tentar de novo", acao: tentarDeNovo }}
+      />
+    );
+  }
   if (!activeSeller) {
     return (
       <Aviso
@@ -99,6 +119,14 @@ function ComConta({ children }: { children: ReactNode }) {
       />
     );
   }
+  return <>{children}</>;
+}
+
+/** "Entrar como cliente" do Menu: só a conta admin; as outras voltam ao Início. */
+function SoAdmin({ children }: { children: ReactNode }) {
+  const { ehAdmin, carregando } = useEhAdmin();
+  if (carregando) return <Abertura />;
+  if (!ehAdmin) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 
@@ -185,7 +213,7 @@ function Aviso({
   link?: { rotulo: string; href: string };
   botao?: { rotulo: string; acao: () => void };
 }) {
-  const { signOut } = useAuth();
+  const { sair, impersonando } = useSairDaConta();
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-background px-8 text-center">
       {icone && <span className="text-muted-foreground">{icone}</span>}
@@ -210,8 +238,8 @@ function Aviso({
           {botao.rotulo}
         </button>
       )}
-      <button type="button" onClick={() => void esquecerAparelho().finally(signOut)} className="mt-1 py-2 text-sm text-muted-foreground">
-        Sair da conta
+      <button type="button" onClick={() => void sair()} className="mt-1 py-2 text-sm text-muted-foreground">
+        {impersonando ? "Voltar para Admin" : "Sair da conta"}
       </button>
     </div>
   );
@@ -243,6 +271,7 @@ function Telas() {
           <Route path="/rfv" element={<ComConta><ComArea area="rfv"><RFV /></ComArea></ComConta>} />
           <Route path="/produtos" element={<ComConta><ComArea area="produtos"><Produtos /></ComArea></ComConta>} />
           <Route path="/regioes" element={<ComConta><ComArea area="regioes"><Regioes /></ComArea></ComConta>} />
+          <Route path="/admin/clientes" element={<ComConta><SoAdmin><EscolherCliente comVoltar /></SoAdmin></ComConta>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
@@ -260,6 +289,7 @@ export default function App() {
             <TooltipProvider>
               <BrowserRouter>
                 <TopoAoTrocarDeTela />
+                <FaixaImpersonacao />
                 <PushNativo />
                 <PreCarregarTelas />
                 <Telas />

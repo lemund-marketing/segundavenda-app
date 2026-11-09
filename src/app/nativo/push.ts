@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSellerContext } from "@/contexts/SellerContext";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction, type ToastActionElement } from "@/components/ui/toast";
+import { contaImpersonada } from "@/app/dados/impersonacao";
 
 /**
  * Notificação de oportunidade de venda (FCM). O servidor manda uma por
@@ -19,7 +20,11 @@ import { ToastAction, type ToastActionElement } from "@/components/ui/toast";
  * - o toque na notificação (também com o app fechado) troca a loja ativa, se
  *   for o caso, e abre a conversa;
  * - com o app aberto, a notificação vira o aviso da própria tela;
- * - sair da conta apaga o token e desliga o aparelho no Firebase.
+ * - sair da conta apaga o token e desliga o aparelho no Firebase;
+ * - com o admin dentro da conta de um cliente (impersonacao.ts), o aparelho
+ *   não vai para a conta do cliente nem é apagado de lugar nenhum: as
+ *   oportunidades do cliente não chegam ao celular do admin, e a linha do
+ *   admin fica como estava. Ao voltar para o admin, o registro normal regrava.
  *
  * No navegador (o `npm run dev` e o teste com banco simulado) nada aqui chama
  * o plugin.
@@ -73,6 +78,7 @@ async function gravarToken() {
   const token = tokenAtual;
   const usuario = usuarioAtual;
   if (!token || !usuario || gravado === `${usuario}:${token}`) return;
+  if (contaImpersonada(usuario)) return;
   const { error } = await banco.from(TABELA).upsert(
     {
       profile_id: usuario,
@@ -117,7 +123,7 @@ async function prepararAparelho() {
 function definirUsuario(id: string | null) {
   usuarioAtual = id;
   window.clearTimeout(esperaRegistro);
-  if (!id) return;
+  if (!id || contaImpersonada(id)) return;
   if (tokenAtual) void gravarToken();
   // Um pouco depois da abertura: a janela de permissão não disputa com a
   // primeira tela.
@@ -206,6 +212,22 @@ export async function esquecerAparelho(): Promise<void> {
 }
 
 /**
+ * Saída sem poder apagar a linha: o "Voltar para Admin" recusado, com a sessão
+ * ainda do cliente (a RLS não deixa apagar a linha do admin). Só desliga o
+ * aparelho no Firebase: o token morre e a linha do admin deixa de receber.
+ * Nada é apagado na conta do cliente. Nunca segura a saída por mais de 2,5 s.
+ */
+export async function desligarAparelho(): Promise<void> {
+  if (!ativo()) return;
+  tokenAtual = null;
+  gravado = null;
+  registrou = false;
+  definirPendente(null);
+  const trabalho = PushNotifications.unregister().catch((e) => console.warn("[push] desligar:", e));
+  await Promise.race([trabalho, new Promise((r) => window.setTimeout(r, 2500))]);
+}
+
+/**
  * Dentro do Router: acompanha a conta logada (registro do aparelho) e leva o
  * toque pendente até a conversa, trocando a loja ativa antes se a
  * oportunidade for de outra loja.
@@ -235,10 +257,19 @@ export function usePushNativo() {
         return;
       }
       definirPendente(null);
-      toast({
-        title: "Oportunidade de outra loja",
-        description: "Esta conta não tem acesso à loja dessa oportunidade.",
-      });
+      // Com o admin dentro de um cliente, o aparelho continua na conta do
+      // admin: a oportunidade é de uma loja dele, que abre depois de voltar.
+      toast(
+        contaImpersonada(userId)
+          ? {
+              title: "Oportunidade da sua loja",
+              description: "Volte para o Admin para abrir esta oportunidade.",
+            }
+          : {
+              title: "Oportunidade de outra loja",
+              description: "Esta conta não tem acesso à loja dessa oportunidade.",
+            },
+      );
       return;
     }
     definirPendente(null);
