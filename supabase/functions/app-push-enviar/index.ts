@@ -80,8 +80,17 @@ async function chavePrivada(pem: string): Promise<CryptoKey> {
   const corpo = pem
     .replace(/-----BEGIN PRIVATE KEY-----/, '')
     .replace(/-----END PRIVATE KEY-----/, '')
-    .replace(/\\n/g, '')
-    .replace(/\s+/g, '');
+    // O painel de segredos do Supabase pode guardar a quebra de linha como \n,
+    // \\n ou \r\n literais, conforme foi colada: sai qualquer barra seguida de
+    // n/r e, depois, tudo o que não é base64.
+    .replace(/\\+[nr]/g, '')
+    .replace(/[^A-Za-z0-9+/=]/g, '');
+  if (corpo.length < 100) {
+    // Só o formato, nunca o conteúdo: diz o que o segredo trouxe.
+    throw new Error(
+      `chave privada vazia (private_key ${pem.length} car., BEGIN ${pem.includes('BEGIN')}, END ${pem.includes('END')}, base64 ${corpo.length} car.)`,
+    );
+  }
   const der = Uint8Array.from(atob(corpo), (c) => c.charCodeAt(0));
   return await crypto.subtle.importKey(
     'pkcs8',
