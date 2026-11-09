@@ -15,6 +15,7 @@ import { TELAS_DO_APP } from "@/app/navegacao/itensMenu";
 import { noSite } from "@/app/site";
 import { lazyComRecarga } from "@/utils/lazyComRecarga";
 import { ErroNaTela } from "@/app/blocos/ErroNaTela";
+import { esquecerAparelho, usePushNativo } from "@/app/nativo/push";
 import Entrar from "@/app/telas/Entrar";
 import Inicio from "@/app/telas/Inicio";
 import Menu from "@/app/telas/Menu";
@@ -165,6 +166,12 @@ function LimparCacheAoSair() {
   return null;
 }
 
+/** Notificação de oportunidade: registro do aparelho e o toque que abre a conversa. */
+function PushNativo() {
+  usePushNativo();
+  return null;
+}
+
 function Aviso({
   icone,
   titulo,
@@ -203,7 +210,7 @@ function Aviso({
           {botao.rotulo}
         </button>
       )}
-      <button type="button" onClick={() => void signOut()} className="mt-1 py-2 text-sm text-muted-foreground">
+      <button type="button" onClick={() => void esquecerAparelho().finally(signOut)} className="mt-1 py-2 text-sm text-muted-foreground">
         Sair da conta
       </button>
     </div>
@@ -253,6 +260,7 @@ export default function App() {
             <TooltipProvider>
               <BrowserRouter>
                 <TopoAoTrocarDeTela />
+                <PushNativo />
                 <PreCarregarTelas />
                 <Telas />
               </BrowserRouter>

@@ -255,6 +255,10 @@ export default function WhatsApp() {
     // Com a lista sem rede (erroLista), espera a conexão em vez de avisar
     // "Erro ao buscar conversa" e perder o pedido.
     if (!clientIdFromUrl || !activeSellerId || loading || erroLista) return;
+    // Na troca de loja (o toque numa notificação de outra loja) a lista ainda
+    // é da anterior por um instante: procurar ali daria "Sem conversa" e
+    // perderia o pedido.
+    if (activeSellerId !== activeSeller?.id) return;
 
     const openConversationForClient = async () => {
       try {
@@ -281,7 +285,7 @@ export default function WhatsApp() {
 
     void openConversationForClient();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clientIdFromUrl, activeSellerId, loading, erroLista]);
+  }, [clientIdFromUrl, activeSellerId, activeSeller?.id, loading, erroLista]);
 
   // Rolagem infinita: o mesmo gatilho do site, a 200px do fim.
   const handleConversationsScroll = (e: UIEvent<HTMLDivElement>) => {

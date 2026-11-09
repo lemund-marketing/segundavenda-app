@@ -183,5 +183,45 @@ pelas consultas, como no site.
 - `src/components/SecurityMonitor.tsx` (lê `security_logs`): copiado, mas
   nenhuma tela importa, então nem entra no APK.
 
+### Lido pelo servidor da notificação de oportunidade
+O job `app_push_coletar` (como `postgres`) e a edge `app-push-enviar` (como
+`service_role`) leem, sem gravar nada, o que está abaixo. Se o site mudar
+alguma destas colunas ou valores, a notificação para ou erra de destinatário.
+
+| Objeto | Colunas e valores | Quem |
+|---|---|---|
+| `whatsapp_conversion_cases` | `id, seller_id, client_id, conversation_id, intent_type, status, analyzed_at, created_at`; `status in ('detected', 'validated_case')`, `intent_type <> 'nenhum'`; o índice `idx_conv_cases_analyzed_at` (a busca depende dele); a reanálise da IA continua sendo UPDATE da mesma linha (upsert por `conversation_id`), sem mudar `created_at` | `app_push_coletar` |
+| `conversations` | `id, status` (`'open'`) | `app_push_coletar` |
+| `seller_members` | `id, seller_id, profile_id, role` (enum `app_role`, `'owner'`), `status` (`'active'`) | `app_push_alvos` |
+| `member_permissions` | `member_id` (= `seller_members.id`), `seller_id, area` (`'omnichannel'`), `access_level` (`'ver'`, `'editar'`) | `app_push_alvos` |
+| `sellers` | `id, name` (vai no texto da notificação) | `app_push_alvos` |
+| `system_secrets` | `cron_secret` (`id = 1`), pela cópia de `_shared/auth-servico.ts` | `app-push-enviar` |
+| Funções `url_edge_functions()` e `cron_secret_utilizavel()` | URL das edges deste ambiente e o segredo dos jobs | `app_push_coletar` |
+
+A regra de quem recebe é a mesma do site para ver o WhatsApp
+(`my_member_permissions` + `useAreaPermissions.canView`), com `status =
+'active'` a mais. Se o site mudar essa regra, `app_push_alvos` muda junto.
+
 ### Objetos próprios do app (`app_`)
-Nenhum ainda.
+Ainda **não aplicados** (nem no teste nem na produção): estão em
+`supabase/migrations/20261109135533_app_push_oportunidades.sql` e
+`supabase/functions/app-push-enviar/`, esperando a revisão da pessoa do site.
+Como aplicar, ligar e remover: LEIA-ME, "Notificações de oportunidade
+(servidor)".
+
+| Objeto | Tipo | O que é | Quem acessa |
+|---|---|---|---|
+| `app_push_aparelhos` | tabela | token do FCM por conta e celular: `id, profile_id, token, plataforma, visto_em, criado_em`, único `(profile_id, token)`; o banco carimba `visto_em` (gatilho `app_push_aparelhos_carimbar`, na tabela do app); se o mesmo token está em mais de uma conta, vale a de maior `visto_em` | o app (`authenticated`, só as próprias linhas pela RLS): upsert ao abrir, delete ao sair; a edge apaga token inválido |
+| `app_push_estado` | tabela | linha única: `ligado` (nasce `false`), `somente_lojas` (nasce `'{}'`, nenhuma; `null` = todas), `cursor`, `coletado_em`, `ultimo_erro` | só `postgres` e `service_role` |
+| `app_push_enviadas` | tabela | fila e registro, só ids: `case_id` (chave), `conversation_id, client_id, seller_id, intent_type, status` (`pendente, enviando, enviada, sem_aparelho, falhou, expirada`), `tentativas, motivo, criado_em, processado_em`; linhas com mais de 7 dias são apagadas | só `postgres` e `service_role` |
+| `app_push_coletar()` | função | coleta os casos novos, cuida da fila e chama a edge se houver pendente | job (`postgres`), `service_role` |
+| `app_push_reservar(limite)` | função | reserva um lote (`FOR UPDATE SKIP LOCKED`) | `service_role` (edge) |
+| `app_push_alvos(seller_ids)` | função | `(seller_id, nome_loja, profile_id, token)` de quem recebe | `service_role` (edge) |
+| `app_push_coletar` | job do pg_cron | `* * * * *`, `select public.app_push_coletar()` | — |
+| `app-push-enviar` | edge function | envia pelo FCM HTTP v1; deploy com `--no-verify-jwt`, autenticada por `x-service-secret` | o job |
+| `FCM_SERVICE_ACCOUNT` | segredo das edges | JSON da conta de serviço do Firebase (`app-2v-352ef`); visível a todas as edges do projeto | `app-push-enviar` |
+
+As quatro funções são `SECURITY INVOKER` e ninguém além de `postgres` e
+`service_role` pode executá-las (o `pg_default_acl` do projeto daria
+`EXECUTE` a `authenticated`; a migração tira). Nenhum gatilho, índice ou FK
+em tabela do site.

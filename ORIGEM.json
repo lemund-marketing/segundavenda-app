@@ -1249,6 +1249,11 @@
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",
       "blob": "11f02fe2a0061d6e6e1f271b21da95423b448b32"
     },
+    "supabase/functions/_shared/auth-servico.ts": {
+      "origem": "supabase/functions/_shared/auth-servico.ts",
+      "commit": "ddd18c41f390106b823909181bdeb92e6302cb8b",
+      "blob": "688111155cc301e3ff13f27e9f8b148bf37ed9fe"
+    },
     "supabase/functions/_shared/nodeCatalogData.ts": {
       "origem": "supabase/functions/_shared/nodeCatalogData.ts",
       "commit": "af475feb9e8e455c0e61c0b776c062dae2ddc408",

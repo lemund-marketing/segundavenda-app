@@ -10,6 +10,7 @@ import {
   overviewItems, gestaoItems, TELAS_DO_APP, SO_NO_SITE, type ItemMenu,
 } from "@/app/navegacao/itensMenu";
 import { noSite } from "@/app/site";
+import { esquecerAparelho } from "@/app/nativo/push";
 
 /**
  * Menu (último botão da barra de baixo), no padrão dos apps de banco: quem é a
@@ -74,7 +75,7 @@ export default function Menu() {
 
         <button
           type="button"
-          onClick={() => void signOut()}
+          onClick={() => void esquecerAparelho().finally(signOut)}
           className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-3.5 text-[15px] font-medium text-destructive transition-colors active:bg-destructive/10"
         >
           <LogOut className="h-[18px] w-[18px]" strokeWidth={1.75} />

@@ -189,14 +189,96 @@ Em `android/app/src/main/java/br/com/segundavenda/app/MainActivity.java`:
   `blob:`/`data:`, sem mexer nas cópias). No Android 9 ou anterior, que
   pediria permissão de armazenamento, abre o "Compartilhar" para escolher onde
   guardar. Exportar pedidos abre o site.
-- **Mensagem nova no WhatsApp** com o app aberto toca o som do site; não há
-  notificação do sistema (o WebView não tem a API de notificação; push pede
-  trabalho nativo).
+- **Mensagem nova no WhatsApp** com o app aberto toca o som do site. Mensagem
+  comum e pedido não viram notificação do sistema.
+- **Notificação de oportunidade de venda**: quando a IA marca uma conversa
+  como oportunidade (a aba Oportunidades do WhatsApp), chega uma notificação
+  do sistema, uma por oportunidade, para o dono e os membros da loja que veem
+  o WhatsApp. Na tela bloqueada aparece só o tipo e o nome da loja
+  ("Oportunidade de venda · Recompra" / "Um cliente de Loja X quer comprar de
+  novo."), sem nome nem telefone do cliente. Ela vai no canal **Oportunidades
+  de venda**, que a pessoa pode silenciar nas configurações do Android.
+  - A permissão de notificação (Android 13 ou mais novo) é pedida **uma vez**,
+    logo depois de entrar na conta. Quem negou liga depois nas configurações
+    do Android.
+  - **Tocar** na notificação, também com o app fechado, abre a conversa no
+    WhatsApp; se a oportunidade for de outra loja da conta, o app troca a loja
+    antes. Com o app aberto, ela aparece como aviso na tela, com o botão
+    **Abrir**.
+  - **Sair da conta** desliga as notificações neste aparelho (o token sai do
+    banco e do Firebase). Outra conta que entrar no mesmo celular passa a
+    receber as dela.
+  - O lado do app está em `src/app/nativo/push.ts`. O projeto do Firebase é o
+    `app-2v-352ef`, com os dois pacotes (oficial e teste) no
+    `android/app/google-services.json`, que fica no repositório de propósito: a
+    chave de API do Firebase não é segredo e vai dentro do APK de qualquer
+    forma. O ícone da barra é `res/drawable/ic_stat_notificacao.xml` (branco
+    sobre transparente, como o Android exige).
+  - Enquanto o servidor não estiver ligado, o app abre normalmente e só não
+    recebe nada.
 - Se o Android matar a página por falta de memória, o app recria a tela em vez
   de fechar.
 - Link para outro endereço (o site, um arquivo) abre no navegador do celular.
 - **Sair da conta** desconecta só este aparelho; o site continua logado no
   navegador.
+
+## Notificações de oportunidade (servidor)
+
+O lado do servidor da notificação acima. Nada disso está aplicado: nasce
+**desligado** e vai primeiro ao projeto de teste, depois de a pessoa do site
+revisar (CONTRATO-BANCO.md, regra 5).
+
+| Peça | Onde | O que faz |
+|---|---|---|
+| Migração | `supabase/migrations/20261109135533_app_push_oportunidades.sql` | Tabelas `app_push_aparelhos` (token de cada celular, gravado pelo app), `app_push_estado` (liga/desliga e lojas do piloto) e `app_push_enviadas` (fila e registro, só ids); funções `app_push_coletar`, `app_push_reservar`, `app_push_alvos`; job `app_push_coletar` no pg_cron, a cada minuto |
+| Edge | `supabase/functions/app-push-enviar/index.ts` | Manda pelo Firebase (FCM HTTP v1), um envio por celular |
+| Cópia do site | `supabase/functions/_shared/auth-servico.ts` | A mesma autenticação `x-service-secret` das edges de sistema do site (registrada no `ORIGEM.json`) |
+
+Como funciona: o job lê os casos novos de `whatsapp_conversion_cases` (pelo
+índice de `analyzed_at`, sem gatilho nem índice novo na tabela do site), põe
+cada um uma vez só na fila e, se houver pendente, chama a edge com o mesmo
+segredo e a mesma URL que os jobs do site usam (`cron_secret_utilizavel()`,
+`url_edge_functions()`). A edge escolhe quem recebe (dono e membros ativos com
+a área WhatsApp, a mesma regra do site) e manda. Celular que desinstalou o app
+some da tabela sozinho; Firebase fora do ar devolve para a fila (até 3
+tentativas); aviso com mais de 30 minutos não sai mais.
+
+### Aplicar (teste, depois produção)
+
+1. **Banco**: colar o arquivo da migração no editor de SQL do painel do
+   Supabase (roda como `postgres`), primeiro no teste
+   (`tbkgkifybhuaqlhywfby`). **Nunca** `supabase db push`, `migration repair`
+   ou `config push` a partir deste repositório: o histórico de migrações e o
+   `config.toml` do projeto são do site, e esses comandos mexeriam nos dele.
+   O arquivo pode ser colado de novo sem estragar nada.
+2. **Segredo**: no painel, Edge Functions → Secrets, criar
+   `FCM_SERVICE_ACCOUNT` com o JSON inteiro da conta de serviço do Firebase
+   (projeto `app-2v-352ef`, papel *Firebase Cloud Messaging API Admin*). O
+   segredo fica visível para **todas** as edge functions do projeto, inclusive
+   as do site. Nunca vai para o repositório.
+3. **Edge**:
+   ```bash
+   supabase functions deploy app-push-enviar --no-verify-jwt --project-ref <ref>
+   ```
+   O `--no-verify-jwt` é obrigatório em **todo** deploy: o job chama sem JWT, e
+   sem a opção o gateway recusa antes de a função rodar (o job continua
+   dizendo "succeeded"). Quem barra a chamada é o `x-service-secret`.
+   No teste o `cron_secret` é curto e o job não chama a edge; lá ela se testa
+   à mão, com o Bearer da service role.
+
+### Ligar, pausar, remover
+
+Os comandos estão no fim do arquivo da migração. Em resumo:
+
+- **Piloto**: `update public.app_push_estado set ligado = true,
+  somente_lojas = array['<seller_id>']::uuid[] where id = 1;`. Nasce com
+  `somente_lojas = '{}'` (nenhuma loja); `null` é todas.
+- **Pausar**: `ligado = false`. O job continua rodando e sai na primeira
+  linha; o que estava pendente expira.
+- **Acompanhar**: `app_push_estado.ultimo_erro`, contagem por `status` em
+  `app_push_enviadas` e as respostas da edge em `net._http_response`.
+- **Remover**: na ordem do bloco "Para remover" (job, funções, tabelas) e
+  `supabase functions delete app-push-enviar --project-ref <ref>`.
 
 ## Criar a chave oficial (quando for para a Play)
 

@@ -26,6 +26,19 @@
 
         </activity>
 
+        <!-- Notificação de oportunidade de venda (FCM). Com o app fechado é o
+             Android que desenha a notificação: estes dois valem quando a
+             mensagem não traz ícone ou canal (a edge manda os dois, iguais a
+             estes). O canal "oportunidades" é criado pelo app ao abrir
+             (src/app/nativo/push.ts); antes disso o Android usa o canal
+             genérico do Firebase. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_notificacao" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="oportunidades" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -45,4 +58,7 @@
          não chegam, e o "Sem internet" e a recarga quando a rede volta não
          funcionam. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Android 13 ou mais novo: sem esta (pergunta à pessoa), a notificação
+         de oportunidade não aparece. O app pede uma vez, depois do login. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

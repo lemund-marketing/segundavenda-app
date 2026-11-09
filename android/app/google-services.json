@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "536798613787",
+    "project_id": "app-2v-352ef",
+    "storage_bucket": "app-2v-352ef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:536798613787:android:fbec5da087742ee6e603be",
+        "android_client_info": {
+          "package_name": "br.com.segundavenda.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1v3ODvrQCfSOvW1u1aezGwlOGINkUHhM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:536798613787:android:46588aa449465e6fe603be",
+        "android_client_info": {
+          "package_name": "br.com.segundavenda.app.teste"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1v3ODvrQCfSOvW1u1aezGwlOGINkUHhM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
