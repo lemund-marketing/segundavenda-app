@@ -9,7 +9,9 @@
 // O que faz: reserva até 50 oportunidades (app_push_reservar), descobre quem
 // recebe em cada loja (app_push_alvos: dono e membros ativos que veem o
 // WhatsApp, um dono por token) e manda pelo FCM HTTP v1, um envio por token.
-// O texto da tela bloqueada não leva nome, telefone nem o resumo da IA.
+// Título fixo "Oportunidade de venda"; o corpo traz o primeiro nome do cliente
+// numa de 8 frases (decisão do dono). Nada de telefone nem do resumo da IA, e
+// visibility PRIVATE esconde o corpo na tela bloqueada com senha.
 //
 // Segredo: FCM_SERVICE_ACCOUNT, o JSON inteiro da conta de serviço do
 // Firebase (papel Firebase Cloud Messaging API Admin). O token OAuth sai de
@@ -28,19 +30,31 @@ const json = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { 'Content-Type': 'application/json' } });
 
 // ---------------------------------------------------------------------
-// Texto (decisão do dono). intent_type que não estiver aqui cai em "outro".
+// Texto (decisão do dono): 8 frases sem gênero, escolhidas pelo id do caso
+// (a mesma oportunidade repetida sai com a mesma frase).
 // ---------------------------------------------------------------------
-const ROTULOS: Record<string, { rotulo: string; frase: string }> = {
-  recompra: { rotulo: 'Recompra', frase: 'quer comprar de novo.' },
-  cross_sell: { rotulo: 'Cross-sell', frase: 'tem interesse em outro produto.' },
-  catalogo: { rotulo: 'Pediu catálogo', frase: 'pediu o catálogo.' },
-  variacao: { rotulo: 'Variação', frase: 'perguntou por outra variação.' },
-  outro: { rotulo: 'Interesse', frase: 'demonstrou interesse em comprar.' },
-};
+const FRASES = [
+  (n: string) => `${n} quer realizar mais uma compra.`,
+  (n: string) => `${n} quer comprar de novo com você.`,
+  (n: string) => `${n} demonstrou interesse em comprar.`,
+  (n: string) => `${n} pode fechar uma nova compra agora.`,
+  (n: string) => `${n} quer saber mais sobre seus produtos.`,
+  (n: string) => `${n} está de olho em mais um pedido.`,
+  (n: string) => `${n} sinalizou uma nova compra. Responda rápido!`,
+  (n: string) => `${n} está esperando seu contato para comprar.`,
+];
 
-export function textoDaNotificacao(intent: string, nomeLoja: string): { title: string; body: string } {
-  const t = ROTULOS[intent] ?? ROTULOS.outro;
-  return { title: `Oportunidade de venda · ${t.rotulo}`, body: `Um cliente de ${nomeLoja} ${t.frase}` };
+/** "MARIA DA SILVA" vira "Maria"; sem nome, "Um cliente". */
+export function primeiroNome(completo: string | null | undefined): string {
+  const p = String(completo ?? '').trim().split(/\s+/)[0] ?? '';
+  if (!/\p{L}/u.test(p)) return 'Um cliente';
+  return p.charAt(0).toLocaleUpperCase('pt-BR') + p.slice(1).toLocaleLowerCase('pt-BR');
+}
+
+export function textoDaNotificacao(nomeCliente: string | null | undefined, caseId: string): { title: string; body: string } {
+  let h = 0;
+  for (const c of caseId) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return { title: 'Oportunidade de venda', body: FRASES[h % FRASES.length](primeiroNome(nomeCliente)) };
 }
 
 // ---------------------------------------------------------------------
@@ -202,8 +216,8 @@ function erroDoToken(status: number, erro: ErroFcm | null): boolean {
   return false;
 }
 
-function montarMensagem(op: Reservada, alvo: Alvo) {
-  const { title, body } = textoDaNotificacao(op.intent_type, alvo.nome_loja);
+function montarMensagem(op: Reservada, alvo: Alvo, nomeCliente: string | null) {
+  const { title, body } = textoDaNotificacao(nomeCliente, op.case_id);
   return {
     message: {
       token: alvo.token,
@@ -231,9 +245,9 @@ function montarMensagem(op: Reservada, alvo: Alvo) {
   };
 }
 
-async function enviarUm(conta: ContaServico, op: Reservada, alvo: Alvo): Promise<Resultado> {
+async function enviarUm(conta: ContaServico, op: Reservada, alvo: Alvo, nomeCliente: string | null): Promise<Resultado> {
   const url = `https://fcm.googleapis.com/v1/projects/${conta.project_id}/messages:send`;
-  const corpo = JSON.stringify(montarMensagem(op, alvo));
+  const corpo = JSON.stringify(montarMensagem(op, alvo, nomeCliente));
   let recusado: string | undefined;
   for (;;) {
     let acesso: string;
@@ -378,8 +392,18 @@ Deno.serve(async (req: Request) => {
     for (const alvo of alvos) envios.push({ op, alvo });
   }
 
+  // Nome do cliente para o texto. Se a leitura falhar, sai "Um cliente".
+  const nomes = new Map<string, string | null>();
+  const clientIds = [...new Set(ops.map((o) => o.client_id))];
+  const { data: clientes, error: erroClientes } = await supabase
+    .from('clients')
+    .select('id, full_name')
+    .in('id', clientIds);
+  if (erroClientes) console.warn('[app-push] nomes dos clientes:', erroClientes.message);
+  for (const c of (clientes ?? []) as { id: string; full_name: string | null }[]) nomes.set(c.id, c.full_name);
+
   const resultados = await emParalelo(
-    envios.map((e) => () => enviarUm(conta, e.op, e.alvo)),
+    envios.map((e) => () => enviarUm(conta, e.op, e.alvo, nomes.get(e.op.client_id) ?? null)),
     CONCORRENCIA,
   );
 

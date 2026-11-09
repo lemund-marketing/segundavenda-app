@@ -194,9 +194,10 @@ Em `android/app/src/main/java/br/com/segundavenda/app/MainActivity.java`:
 - **Notificação de oportunidade de venda**: quando a IA marca uma conversa
   como oportunidade (a aba Oportunidades do WhatsApp), chega uma notificação
   do sistema, uma por oportunidade, para o dono e os membros da loja que veem
-  o WhatsApp. Na tela bloqueada aparece só o tipo e o nome da loja
-  ("Oportunidade de venda · Recompra" / "Um cliente de Loja X quer comprar de
-  novo."), sem nome nem telefone do cliente. Ela vai no canal **Oportunidades
+  o WhatsApp. O título é "Oportunidade de venda" e o texto traz o primeiro
+  nome do cliente numa de 8 frases ("Maria quer realizar mais uma compra.");
+  sem telefone nem o resumo da IA, e com o celular bloqueado por senha o
+  Android esconde o texto. Ela vai no canal **Oportunidades
   de venda**, que a pessoa pode silenciar nas configurações do Android.
   - A permissão de notificação (Android 13 ou mais novo) é pedida **uma vez**,
     logo depois de entrar na conta. Quem negou liga depois nas configurações

@@ -62,7 +62,7 @@ function `update-member-password`, igual ao site.
 | `member_permissions` | `member_id` da loja (contagem de áreas) | Minha Conta (Membros) |
 | `orders` | lista, contagem, busca e sugestões de pedidos; últimos pedidos; pedidos do cliente; `id, whatsapp_contacted_at`; último pedido do card e fase por regra; marketplace dos clientes da conversa; estimativa do disparo | Início, Pedidos, Marketplaces, WhatsApp, CRM, Automações, ficha |
 | `shipments`, `shipment_events` | entrega dos pedidos da página e linha do tempo | Pedidos, Marketplaces |
-| `clients` | ficha e edição do cliente; cliente das conversas; busca por nome, e-mail e WhatsApp; exportar a seleção do CRM | Pedidos, WhatsApp, CRM, ficha |
+| `clients` | ficha e edição do cliente; cliente das conversas; busca por nome, e-mail e WhatsApp; exportar a seleção do CRM; `full_name` para o texto da notificação (edge `app-push-enviar`) | Pedidos, WhatsApp, CRM, ficha, notificação |
 | `clients_sellers` | contagem para exportar clientes; clientes da loja achados na busca; estimativa do disparo | Clientes, WhatsApp, Automações |
 | `client_pipeline` (com `pipeline_stages`), `pipeline_stages` | fase do cliente e fases da loja; colunas do Kanban (contagem e página de 20); filtro por fase | Clientes, WhatsApp, CRM, Automações, Performance, ficha |
 | `client_interactions`, `client_metrics`, `client_rfv` | histórico, métricas e RFV do cliente; etiqueta RFV dos cards; condição das fases por regra | CRM, WhatsApp, ficha |
